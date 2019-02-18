@@ -25,9 +25,10 @@ def boom_spacing(ha, Ca, n):
     spacing = Circ/n
    
     
-    return spacing
+    return spacing, Cr
 
 def boom_placement():
-    spacing = boom_spacing(ha, Ca, n)
-    
-    
+    spacing, Cr = boom_spacing(ha, Ca, n)
+    node = list()
+    node = node.append([0, 0, -Cr])
+    print (node[0])
