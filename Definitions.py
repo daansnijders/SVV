@@ -1,9 +1,15 @@
 # -*- coding: utf-8 -*-
 import math
 
-ha = 0.161
-Ca = 0.505
-n = 11
+ha = 0.161 #height of thickest part of airfoil
+Ca = 0.505 #dist from trailing to leading edge
+n = 11 #number of stringers
+list_length = n+3 #number of idealised booms INCLUDING two added AND Ghost nodeloc
+
+
+"""EXAMPLE AREAS, TO BE DEFINED / PROGRAMED / FILLED IN"""
+B = [[0], [0.1], [0.2], [0.3], [0.4], [0.5], [0.6], [0.5], [0.4], [0.3], [0.2], [0.1], [0.12], [0.13]]
+"""END OF EXAMPLE AREAS"""
 
 def beambending(ray,rby,rcy,rdy,q,dx,moi,centroid):
 
@@ -27,18 +33,55 @@ def boom_spacing(ha, Ca, n):
     
     return spacing, Cr, alpharad
 
-def boom_locations():
+def boom_location():
     spacing, Cr, alpharad = boom_spacing(ha, Ca, n)
     alphadeg = math.degrees(alpharad)
-    list_length = n+3
-    node = [[] for _ in range(list_length)]
+    nodeloc = [[] for _ in range(list_length)]
     #appending the n nodes to location list
-    node[0] = [0, 0, -Cr]
-    node[1] = [0, 0.5 * spacing * math.sin(alphadeg), 0.5 * spacing * math.cos(alphadeg)]
-    node[2] = [0, node[1][1] + spacing * math.sin(alphadeg), node[1][2] + spacing * math.cos(alphadeg)]
-    node[3] = [0, node[2][1] + spacing * math.sin(alphadeg), node[2][2] + spacing * math.cos(alphadeg)]
-    node[3] = [0, node[3][1] + spacing * math.sin(alphadeg), node[3][2] + spacing * math.cos(alphadeg)]    
+    nodeloc[0] = [0, 0, -Cr]
+    nodeloc[1] = [0, 0.5 * spacing * math.sin(alphadeg), 0.5 * spacing * math.cos(alphadeg)]
+    nodeloc[2] = [0, nodeloc[1][1] + spacing * math.sin(alphadeg), nodeloc[1][2] + spacing * math.cos(alphadeg)]
+    nodeloc[3] = [0, nodeloc[2][1] + spacing * math.sin(alphadeg), nodeloc[2][2] + spacing * math.cos(alphadeg)]
+    nodeloc[3] = [0, nodeloc[3][1] + spacing * math.sin(alphadeg), nodeloc[3][2] + spacing * math.cos(alphadeg)]    
+    
+    print (nodeloc)
     
     
     
-    print (node[0:4])
+    
+    
+    
+    
+    
+def boom_inertia():
+
+    Ixx = [[] for _ in range(list_length)] #Moments of inertia over the x axis
+    Iyy = [[] for _ in range(list_length)] #Moments of inertia over the y axis
+    Izz = [[] for _ in range(list_length)] #Etc.
+    
+    
+    """ As its idealized as booms, only the Steiner terms are aken into account:
+        eg:     Ixx = A * dy ^ 2            """ 
+    
+    Ixx = Ixx.append(0)
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
