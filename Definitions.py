@@ -1,10 +1,6 @@
 # -*- coding: utf-8 -*-
 import math
 
-ha = 0.161 #height of thickest part of airfoil
-Ca = 0.505 #dist from trailing to leading edge
-n = 11 #number of stringers
-list_length = n+3 #number of idealised booms INCLUDING two added AND Ghost nodepos
 
 """EXAMPLE AREAS, TO BE DEFINED / PROGRAMED / FILLED IN"""
 B = [[0.0], [0.1], [0.2], [0.3], [0.4], [0.5], [0.6], [0.5], [0.4], [0.3], [0.2], [0.1], [0.12], [0.13]] #This is now a 2D list but could be transfered to 1D?
@@ -14,6 +10,7 @@ def beambending(ray,rby,rcy,rdy,q,dx,moi,centroid):
 
 
 def centroid():
+    
     print ('Test')
     
   
@@ -29,8 +26,7 @@ def boom_spacing(ha, Ca, n):
     
     return spacing, Cr, alpharad
 
-def boom_location():
-    spacing, Cr, alpharad = boom_spacing(ha, Ca, n)
+def boom_location(spacing, Cr, alpharad, list_length):
     alphadeg = math.degrees(alpharad)
     nodepos = [[] for _ in range(list_length)]
     #appending the n nodes to location list
@@ -56,7 +52,6 @@ def boom_location():
     
     return nodepos
 
-    
 def boom_inertia(): #TO BE CHECKED
     
     nodepos = boom_location() #getting positions from previous function
