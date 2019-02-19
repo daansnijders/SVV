@@ -9,9 +9,16 @@ def beambending(ray,rby,rcy,rdy,q,dx,moi,centroid):
     print('test')
 
 
-def centroid():
+def centroid(nodepos, boom_area, list_length):  #TO BE CHECKED
+    frac1 = 0.
+    frac2 = 0.
+    for i in range (list_length):    
+       frac1 = frac1 + nodepos[i][2]*boom_area[i]
+       frac2 = frac2 + boom_area[i]
     
-    print ('Test')
+    centroid = frac1/frac2
+    
+    return centroid
     
   
 #ha = 0.161 m, Ca = 0.505 and n = 11
@@ -52,7 +59,16 @@ def boom_location(spacing, Cr, alpharad, list_length):
     
     return nodepos
 
-def boom_inertia(): #TO BE CHECKED
+def boom_area_inclskin():
+    #...
+    return boom_area
+    
+def boom_area_exclskin():
+    #...
+    return boom_area
+    
+
+def boom_inertia(list_length): #TO BE CHECKED
     
     nodepos = boom_location() #getting positions from previous function
 
