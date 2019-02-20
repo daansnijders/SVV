@@ -160,11 +160,11 @@ def scatter(nodepos):
     plt.scatter(z,y)
     plt.show()
     
-def find_shear_center(boom_area_excl_skin,Izz,node_pos,ha):
+def find_shear_center(boom_area_excluding_skin,Izz,node_pos,ha):
     #finding shear center
     #counter-clockwise movement
-    baes = boom_area_excl_skin
-    bxyz = boom_position
+    baes = boom_area_excluding_skin
+    bxyz = node_pos
     #define the order of booms for circular and triangular cells
     tring_booms = [1,2,3,4,12,13,8,9,10,11]
     circ_booms = [12,5,6,7,13]
@@ -179,18 +179,17 @@ def find_shear_center(boom_area_excl_skin,Izz,node_pos,ha):
     for i in tring_booms:
         tring_q.append((1/Izz)*baes[i-1]*bxyz[i-1][1]+tring_q[-1])
     for j in circ_booms:
-        circ_q.append((1/Izz)*baes[i-1]*bxyz[i-1][1]+circ_q[-1])
+        circ_q.append((1/Izz)*baes[j-1]*bxyz[j-1][1]+circ_q[-1])
     #find redundant shear flow
     tring_qr = 0
     circ_qr = 0
-    for i in range (len(tring_dist)):
+    for i in range(len(tring_dist)):
         tring_qr += tring_q[i+1]*tring_dist[i]
-    tring_qr=tring_qr/(sum(tring_dist)
-                       
-    for j in range (len(circ_dist)):
-        circ_qr += circ_q[i+1]*circ_dist[i]
-    circ_qr=circ_qr/(sum(circ_dist)
-                       
+    tring_qr=tring_qr/(sum(tring_dist))
+
+    for j in range(len(circ_dist)):
+        circ_qr += circ_q[j+1]*circ_dist[i]
+    circ_qr=circ_qr/(sum(circ_dist))
     #find total shear flow
     tring_qt = [x+tring_qr for x in tring_q]
     circ_qt = [x+circ_qr for x in circ_q]
@@ -200,49 +199,50 @@ def find_shear_center(boom_area_excl_skin,Izz,node_pos,ha):
     circ_fz= []
     circ_fy= []
     for i in range (len(tring_booms)):
-        if i = len(tring_booms)-1:
-            tring_fz.append(tring_qt[i+1]*(bxyz[tring_booms[0]-1][2]-bxyz[tring_booms[i]-1][2])
+        if i == len(tring_booms)-1:
+            tring_fz.append(tring_qt[i+1]*(bxyz[tring_booms[0]-1][2]-bxyz[tring_booms[i]-1][2]))
         else:
-            tring_fz.append(tring_qt[i+1]*(bxyz[tring_booms[i+1]-1][2]-bxyz[tring_booms[i]-1][2])
-                            
+            tring_fz.append(tring_qt[i+1]*(bxyz[tring_booms[i+1]-1][2]-bxyz[tring_booms[i]-1][2]))
+
     for i in range (len(tring_booms)):
-        if i = len(tring_booms)-1:
-            tring_fy.append(tring_qt[i+1]*(bxyz[tring_booms[0]-1][1]-bxyz[tring_booms[i]-1][1])
+        if i == len(tring_booms)-1:
+            tring_fy.append(tring_qt[i+1]*(bxyz[tring_booms[0]-1][1]-bxyz[tring_booms[i]-1][1]))
         else:
-            tring_fy.append(tring_qt[i+1]*(bxyz[tring_booms[i+1]-1][1]-bxyz[tring_booms[i]-1][1])
-                            
+            tring_fy.append(tring_qt[i+1]*(bxyz[tring_booms[i+1]-1][1]-bxyz[tring_booms[i]-1][1]))
+
     for i in range (len(circ_booms)):
-        if i = len(circ_booms)-1:
-            circ_fz.append(circ_qt[i+1]*(bxyz[circ_booms[0]-1][2]-bxyz[circ_booms[i]-1][2])
+        if i == len(circ_booms)-1:
+            circ_fz.append(circ_qt[i+1]*(bxyz[circ_booms[0]-1][2]-bxyz[circ_booms[i]-1][2]))
         else:
-            circ_fz.append(circ_qt[i+1]*(bxyz[circ_booms[i+1]-1][2]-bxyz[circ_booms[i]-1][2])
-    
+            circ_fz.append(circ_qt[i+1]*(bxyz[circ_booms[i+1]-1][2]-bxyz[circ_booms[i]-1][2]))
+
     for i in range (len(circ_booms)):
-        if i = len(circ_booms)-1:
-            circ_fy.append(circ_qt[i+1]*(bxyz[circ_booms[0]-1][1]-bxyz[circ_booms[i]-1][1])
+        if i == len(circ_booms)-1:
+            circ_fy.append(circ_qt[i+1]*(bxyz[circ_booms[0]-1][1]-bxyz[circ_booms[i]-1][1]))
         else:
-            circ_fy.append(circ_qt[i+1]*(bxyz[circ_booms[i+1]-1][1]-bxyz[circ_booms[i]-1][1])
-    
+            circ_fy.append(circ_qt[i+1]*(bxyz[circ_booms[i+1]-1][1]-bxyz[circ_booms[i]-1][1]))
+
     #find sum of moments about center of coordinate system
     #clockwise positive
     moments=0
     for i in range(len(tring_fz)):
         moments += tring_fz[i]*(-1)*bxyz[tring_booms[i]-1][1]
-                           
+
     for i in range(len(tring_fy)):
         moments += tring_fy[i]*bxyz[tring_booms[i]-1][2]
-                           
+
     for i in range(len(circ_fz)):
         moments += circ_fz[i]*(-1)*bxyz[tring_booms[i]-1][1]          
-                           
+
     for i in range(len(circ_fy)):
-        moments += circ_fy[i]*bxyz[tring_booms[i]-1][2]         
-                           
-        
-    
+        moments += circ_fy[i]*bxyz[tring_booms[i]-1][2] 
+
+
+
     #value will equal z distance of shear center
     sc_position= [0,0,moments]
     return sc_position
+                           
 
 
 
