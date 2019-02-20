@@ -183,11 +183,11 @@ def find_shear_center(boom_area_excl_skin,Izz,node_pos,ha):
     #find redundant shear flow
     tring_qr = 0
     circ_qr = 0
-    for i in range(len(tring_dist)):
+    for i in range (len(tring_dist)):
         tring_qr += tring_q[i+1]*tring_dist[i]
     tring_qr=tring_qr/(sum(tring_dist)
                        
-    for j in range(len(circ_dist)):
+    for j in range (len(circ_dist)):
         circ_qr += circ_q[i+1]*circ_dist[i]
     circ_qr=circ_qr/(sum(circ_dist)
                        
