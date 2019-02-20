@@ -26,36 +26,53 @@ def boom_spacing(ha, Ca, n):
     Cr = Ca-ha/2.
     Ct = math.sqrt(Cr**2+(ha/2)**2)
     Cb = Ct
-    Cc = math.pi*ha
+    Cc = math.pi*ha/2.
     Circ = Ct+Cb+Cc
     spacing = Circ/n
     alpharad = math.atan2((ha/2), Cr)
     
     return spacing, Cr, alpharad
 
-def boom_location(spacing, Cr, alpharad, list_length):
+def boom_location(spacing, Cr, alpharad, list_length, ha):
     alphadeg = math.degrees(alpharad)
     nodepos = [[] for _ in range(list_length)]
     #appending the n nodes to location list
     nodepos[0] = [0, 0., -Cr]
-    nodepos[1] = [0, 0.5 * spacing * math.sin(alphadeg), 0.5 * spacing * math.cos(alphadeg)]
-    nodepos[2] = [0, nodepos[1][1] + spacing * math.sin(alphadeg), nodepos[1][2] + spacing * math.cos(alphadeg)]
-    nodepos[3] = [0, nodepos[2][1] + spacing * math.sin(alphadeg), nodepos[2][2] + spacing * math.cos(alphadeg)]
-    nodepos[3] = [0, nodepos[3][1] + spacing * math.sin(alphadeg), nodepos[3][2] + spacing * math.cos(alphadeg)]    
-    """THE FOLLOWING ONES ARE NOT YET CORRECT BUT REQUIRE FURTHER CODING"""
-    nodepos[4] = [0, nodepos[1][1] + spacing * math.sin(alphadeg), nodepos[1][2] + spacing * math.cos(alphadeg)]
-    nodepos[5] = [0, nodepos[2][1] + spacing * math.sin(alphadeg), nodepos[2][2] + spacing * math.cos(alphadeg)]
-    nodepos[6] = [0, nodepos[3][1] + spacing * math.sin(alphadeg), nodepos[3][2] + spacing * math.cos(alphadeg)]
-    nodepos[7] = [0, nodepos[1][1] + spacing * math.sin(alphadeg), nodepos[1][2] + spacing * math.cos(alphadeg)]
-    nodepos[8] = [0, nodepos[2][1] + spacing * math.sin(alphadeg), nodepos[2][2] + spacing * math.cos(alphadeg)]
-    nodepos[9] = [0, nodepos[3][1] + spacing * math.sin(alphadeg), nodepos[3][2] + spacing * math.cos(alphadeg)]
-    nodepos[10] = [0, nodepos[1][1] + spacing * math.sin(alphadeg), nodepos[1][2] + spacing * math.cos(alphadeg)]
-    nodepos[11] = [0, nodepos[2][1] + spacing * math.sin(alphadeg), nodepos[2][2] + spacing * math.cos(alphadeg)]
-    nodepos[12] = [0, nodepos[3][1] + spacing * math.sin(alphadeg), nodepos[3][2] + spacing * math.cos(alphadeg)]
-    nodepos[13] = [0, nodepos[1][1] + spacing * math.sin(alphadeg), nodepos[1][2] + spacing * math.cos(alphadeg)]
+    nodepos[1] = [0, nodepos[0][1] + 0.5 * spacing * math.sin(alpharad), nodepos[0][2] + 0.5 * spacing * math.cos(alpharad)]
+    nodepos[2] = [0, nodepos[1][1] + spacing * math.sin(alpharad), nodepos[1][2] + spacing * math.cos(alpharad)]
+    nodepos[3] = [0, nodepos[2][1] + spacing * math.sin(alpharad), nodepos[2][2] + spacing * math.cos(alpharad)]    
+    nodepos[4] = [0, nodepos[3][1] + spacing * math.sin(alpharad), nodepos[3][2] + spacing * math.cos(alpharad)]
+    
+    
+    s_y = ha/2. - nodepos[4][1]
+    s_z = -nodepos[4][2]
+    dist = math.sqrt(s_y**2 + s_z**2)
+    arc = spacing - dist
+    theta = 2*arc/ha
+
+    #boog
+    nodepos[5] = [0, nodepos[4][1] + ha/2*math.cos(theta), ha/2*math.sin(theta)]
+    nodepos[6] = [0, 0, ha/2]
+    nodepos[7] = [0, -nodepos[5][1], nodepos[5][2]]
+    
+    check = spacing + arc
+    check_two = 1/4*2*math.pi*ha/2
+    
+    #print (check)
+    #print (check_two)
+    
+    #negative of upper side
+    nodepos[8] = [0, -nodepos[4][1], nodepos[4][2]]
+    nodepos[9] = [0, -nodepos[3][1], nodepos[3][2]]
+    nodepos[10] = [0, -nodepos[2][1], nodepos[2][2]]
+    nodepos[11] = [0, -nodepos[1][1], nodepos[1][2]]
+    
+    #added booms for spar
+    nodepos[12] = [0, nodepos[11][1] + spacing * math.sin(alpharad), nodepos[11][2] + spacing * math.cos(alpharad)]
+    nodepos[13] = [0, nodepos[12][1] + spacing * math.sin(alpharad), nodepos[12][2] + spacing * math.cos(alpharad)]
 
     
-    print (nodepos)
+    #print (nodepos)
     
     return nodepos
 
