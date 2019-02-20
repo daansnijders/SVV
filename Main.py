@@ -24,6 +24,8 @@ nodepos, arc, dist = Definitions.boom_location(spacing, Cr, alpharad, list_lengt
 area_stiff = Definitions.area_stiff(t_stiff, h_stiff, w_stiff)
 boom_area = Definitions.boom_area_inclskin(tskin, spacing, nodepos, area_stiff, dist, arc, ha)
 
+boom_area = Definitions.boom_area_exclskin(area_stiff, nodepos, tskin)
+
 print (boom_area)
 
 Ixx, Iyy, Izz = Definitions.boom_inertia(list_length, nodepos)
