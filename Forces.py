@@ -6,8 +6,9 @@ Created on Mon Feb 18 14:35:45 2019
 """
 import numpy as np
 from math import *
+import Definitions
 
-def ReactionForces(theta,P,q,Ca,ha,E,Ixx,Iyy,x1,x2,x3,xa,span,d1,d3): 
+def ReactionForces(theta,P,q,Ca,ha,E,Izz,x1,x2,x3,xa,span,d1,d3): 
     """ Reaction Forces in x direction """
     R2x = 0.                                    #sum of forces in x
     
@@ -21,9 +22,9 @@ def ReactionForces(theta,P,q,Ca,ha,E,Ixx,Iyy,x1,x2,x3,xa,span,d1,d3):
     eq5 = [(-(x3-x1)**3.)/6., (-(x3-x2)**3.)/6., 0., x3, 1.]    #deflection of hinge 3
     ans1 = [span*q]
     ans2 = [(span/2. - x2)*span*q]
-    ans3 = [E*Iyy*d1 - q/24.* x1**4.]
+    ans3 = [E*Izz*d1 - q/24.* x1**4.]
     ans4 = [-q/24.*(x2**4.)]
-    ans5 = [E*Ixx*d3 - q/24.* x3**4.]
+    ans5 = [E*Izz*d3 - q/24.* x3**4.]
     
     A = np.array([eq1, eq2, eq3, eq4, eq5])
     b = np.array([ans1,ans2,ans3,ans4,ans5])
@@ -72,7 +73,34 @@ def ReactionForces(theta,P,q,Ca,ha,E,Ixx,Iyy,x1,x2,x3,xa,span,d1,d3):
 def Torsion(theta,P,q,Ca,ha):
     return R1y, R1z, R2x, R2y, R2z, R3y, R3z, A1
     
+def ExactMOI(theta,Ca,ha,tskin,Ct,tspar,nodepos,area_stiff)
+
+    ycg = 0
     
+    #moment LE
+    A_LE = tskin*0.5*math.pi*ha
+    Qyy_LE = A_LE * (2 * (ha/2) / math.pi)
+    
+    #moment TE
+    A_TE = 2 * tskin * Ct
+    Qyy_TE = A_TE * -(Ca - ha/2) / 2
+    
+    #moment spar
+    A_sp = tspar * ha
+    Qyy_sp = A_sp * 0
+    
+    Qyy_stiff = 0
+    
+    for i in range (11):
+        Qyy_stiff =+ area_stiff * nodepos[i+1][2]
+        
+    A_stiff = 11 * area_stiff
+    Qyy_sum = Qyy_LE + Qyy_TE + Qyy_sp + Qyy_stiff
+    A_sum = A_LE + A_TE + A_sp + A_stiff
+    
+    zcg = Qyy_sum / A_sum
+    
+    return ycg, zcg
     
 def Torsion(theta,P,q,Ca,ha,A1):
     move = 0.25*Ca - ha/2.
@@ -96,6 +124,5 @@ span = 1.611
 d1 = 0.00389
 d3 = 0.01245
 E = 73084430000         #N/m2
-Ixx = 0.0013            #m4
-Iyy = 0.0042            #m4
-test = ReactionForces(theta,P,q,Ca,ha,E,Ixx,Iyy,x1,x2,x3,xa,span,d1,d3)
+Izz = 0.0013            #m4
+test = ReactionForces(theta,P,q,Ca,ha,E,Izz,x1,x2,x3,xa,span,d1,d3)
