@@ -271,7 +271,7 @@ def find_shear_center(boom_area_excluding_skin,Izz,node_pos,ha):
     return sc_position
                            
 
-def shear_flow_shear(boom_area_incl_skin, node_pos, Vy, Vz):
+def shear_flow_shear(boom_area_incl_skin, node_pos, Vy, Vz,ha,Izz,Iyy):
     #finding shear center
     #counter-clockwise movement
     baes = boom_area_incl_skin
@@ -306,6 +306,10 @@ def shear_flow_shear(boom_area_incl_skin, node_pos, Vy, Vz):
     tring_qt = [x+tring_qr for x in tring_q]
     circ_qt = [x+circ_qr for x in circ_q]
 
+    
+    return tring_qt, circ_qt
+
+def shear_flow_torsion(T,A1,A2):
     
     
     
