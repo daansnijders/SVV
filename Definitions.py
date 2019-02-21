@@ -204,9 +204,9 @@ def find_shear_center(boom_area_excluding_skin,Izz,node_pos,ha):
     tring_q = [0]
     circ_q = [0]
     for i in tring_booms:
-        tring_q.append(-(1/Izz)*baes[i-1]*bxyz[i-1][1]+tring_q[-1])
+        tring_q.append(-(1/Izz)*baes[i]*bxyz[i][1]+tring_q[-1])
     for j in circ_booms:
-        circ_q.append(-(1/Izz)*baes[j-1]*bxyz[j-1][1]+circ_q[-1])
+        circ_q.append(-(1/Izz)*baes[j]*bxyz[j][1]+circ_q[-1])
     #find redundant shear flow
     tring_qr = 0
     circ_qr = 0
@@ -227,42 +227,42 @@ def find_shear_center(boom_area_excluding_skin,Izz,node_pos,ha):
     circ_fy= []
     for i in range (len(tring_booms)):
         if i == len(tring_booms)-1:
-            tring_fz.append(tring_qt[i+1]*(bxyz[tring_booms[0]-1][2]-bxyz[tring_booms[i]-1][2]))
+            tring_fz.append(tring_qt[i+1]*(bxyz[tring_booms[0]][2]-bxyz[tring_booms[i]][2]))
         else:
-            tring_fz.append(tring_qt[i+1]*(bxyz[tring_booms[i+1]-1][2]-bxyz[tring_booms[i]-1][2]))
+            tring_fz.append(tring_qt[i+1]*(bxyz[tring_booms[i+1]][2]-bxyz[tring_booms[i]][2]))
 
     for i in range (len(tring_booms)):
         if i == len(tring_booms)-1:
-            tring_fy.append(tring_qt[i+1]*(bxyz[tring_booms[0]-1][1]-bxyz[tring_booms[i]-1][1]))
+            tring_fy.append(tring_qt[i+1]*(bxyz[tring_booms[0]][1]-bxyz[tring_booms[i]][1]))
         else:
-            tring_fy.append(tring_qt[i+1]*(bxyz[tring_booms[i+1]-1][1]-bxyz[tring_booms[i]-1][1]))
+            tring_fy.append(tring_qt[i+1]*(bxyz[tring_booms[i+1]][1]-bxyz[tring_booms[i]][1]))
 
     for i in range (len(circ_booms)):
         if i == len(circ_booms)-1:
-            circ_fz.append(circ_qt[i+1]*(bxyz[circ_booms[0]-1][2]-bxyz[circ_booms[i]-1][2]))
+            circ_fz.append(circ_qt[i+1]*(bxyz[circ_booms[0]][2]-bxyz[circ_booms[i]][2]))
         else:
-            circ_fz.append(circ_qt[i+1]*(bxyz[circ_booms[i+1]-1][2]-bxyz[circ_booms[i]-1][2]))
+            circ_fz.append(circ_qt[i+1]*(bxyz[circ_booms[i+1]][2]-bxyz[circ_booms[i]][2]))
 
     for i in range (len(circ_booms)):
         if i == len(circ_booms)-1:
-            circ_fy.append(circ_qt[i+1]*(bxyz[circ_booms[0]-1][1]-bxyz[circ_booms[i]-1][1]))
+            circ_fy.append(circ_qt[i+1]*(bxyz[circ_booms[0]][1]-bxyz[circ_booms[i]][1]))
         else:
-            circ_fy.append(circ_qt[i+1]*(bxyz[circ_booms[i+1]-1][1]-bxyz[circ_booms[i]-1][1]))
+            circ_fy.append(circ_qt[i+1]*(bxyz[circ_booms[i+1]][1]-bxyz[circ_booms[i]][1]))
 
     #find sum of moments about center of coordinate system
     #clockwise positive
     moments=0
     for i in range(len(tring_fz)):
-        moments += tring_fz[i]*(-1)*bxyz[tring_booms[i]-1][1]
+        moments += tring_fz[i]*(-1)*bxyz[tring_booms[i]][1]
 
     for i in range(len(tring_fy)):
-        moments += tring_fy[i]*bxyz[tring_booms[i]-1][2]
+        moments += tring_fy[i]*bxyz[tring_booms[i]][2]
 
     for i in range(len(circ_fz)):
-        moments += circ_fz[i]*(-1)*bxyz[tring_booms[i]-1][1]          
+        moments += circ_fz[i]*(-1)*bxyz[tring_booms[i]][1]          
 
     for i in range(len(circ_fy)):
-        moments += circ_fy[i]*bxyz[tring_booms[i]-1][2] 
+        moments += circ_fy[i]*bxyz[tring_booms[i]][2] 
 
 
 
