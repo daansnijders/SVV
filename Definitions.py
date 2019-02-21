@@ -204,9 +204,9 @@ def find_shear_center(boom_area_excluding_skin,Izz,node_pos,ha):
     tring_q = [0]
     circ_q = [0]
     for i in tring_booms:
-        tring_q.append((1/Izz)*baes[i-1]*bxyz[i-1][1]+tring_q[-1])
+        tring_q.append(-(1/Izz)*baes[i-1]*bxyz[i-1][1]+tring_q[-1])
     for j in circ_booms:
-        circ_q.append((1/Izz)*baes[j-1]*bxyz[j-1][1]+circ_q[-1])
+        circ_q.append(-(1/Izz)*baes[j-1]*bxyz[j-1][1]+circ_q[-1])
     #find redundant shear flow
     tring_qr = 0
     circ_qr = 0
@@ -271,7 +271,26 @@ def find_shear_center(boom_area_excluding_skin,Izz,node_pos,ha):
     return sc_position
                            
 
-
+def shear_flow_shear(boom_area_incl_skin, node_pos, Vy, Vx):
+    #finding shear center
+    #counter-clockwise movement
+    baes = boom_area_incl_skin
+    bxyz = node_pos
+    #define the order of booms for circular and triangular cells
+    tring_booms = [1,2,3,4,12,13,8,9,10,11]
+    circ_booms = [12,5,6,7,13]
+    #define distances between boom and the next one 
+    spac = 0.1015545
+    edge = 0.0766246
+    tring_dist = [spac, spac, spac, edge, ha, edge, spac, spac, spac, spac]
+    circ_dist = [spac-edge, spac, spac, spac-edge, ha]
+    #find base shear flow for each cell
+    tring_q = [0]
+    circ_q = [0]
+    for i in tring_booms:
+        tring_q.append((Vy/Izz)*baes[i-1]*bxyz[i-1][1]+tring_q[-1])
+    for j in circ_booms:
+        circ_q.append((Vy/Izz)*baes[j-1]*bxyz[j-1][1]+circ_q[-1])    
 
     
     
