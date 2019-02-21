@@ -7,8 +7,103 @@ import numpy as np
 """EXAMPLE AREAS, TO BE DEFINED / PROGRAMED / FILLED IN"""
 B = [[0.0], [0.1], [0.2], [0.3], [0.4], [0.5], [0.6], [0.5], [0.4], [0.3], [0.2], [0.1], [0.12], [0.13]] #This is now a 2D list but could be transfered to 1D?
 
-def beambending(ray,rby,rcy,rdy,q,dx,moi,centroid):
-    print('test')
+def bending(q,n,r3a,r3b,l1,l2,l3,l4,E,I,d1,d2,d3):
+    #r3a and r3b relate to the initial reaction forces used to iterate bisection method
+    #n is for the number of sections per section
+    #I is an array that must follow the discretisation of xt, v2, thus len(I)=n*4+1
+
+    def deflection(q,n,r3,l1,l2,l3,l4,E,I,d1,d2,d3):
+        # calculation of reaction forces by static equalibrium
+        r2 = (q*(l4)*(1.611/2-l1)-r3*(l3-l1))/(l2-l1)
+        r1 = q*l4-r2-r3
+
+        #Moment, curvature, slope and deflection calculations
+        M = np.array([0])
+        vdouble = np.array([0])
+        vsingle = np.array([0])
+        v = np.array([0])
+
+        xt = np.array([0])
+
+        i = 1
+
+        for x in np.linspace(0,l1,n+1)[1:]:
+            xt = np.append(xt, x)
+            dx = l1/(n)
+
+            M = np.append(M, q*(x**2)/2)
+            vdouble = np.append(vdouble,(-M[i]/(E*I[i])))
+            vsingle = np.append(vsingle,vsingle[i-1]+vdouble[i]*dx)
+            v = np.append(v, v[i-1] + vsingle[i-1]*dx + vdouble[i]*(dx**2)/2)
+
+            i = i+1
+        for x in np.linspace(l1,l2,n+1)[1:]:
+            xt = np.append(xt, x)
+            dx = (l2-l1)/(n)
+            
+            M = np.append(M, q*(x**2)/2-r1*(x-l1))
+            vdouble = np.append(vdouble,(-M[i]/(E*I[i])))
+            vsingle = np.append(vsingle,vsingle[i-1]+vdouble[i]*dx)
+            v = np.append(v, v[i-1] + vsingle[i-1]*dx + vdouble[i]*(dx**2)/2)
+            
+            i = i+1
+        for x in np.linspace(l2,l3,n+1)[1:]:
+            xt = np.append(xt, x)
+            dx = (l3-l2)/(n)
+            
+            M = np.append(M, q*(x**2)/2-r1*(x-l1)-r2*(x-l2))
+            vdouble = np.append(vdouble,(-M[i]/(E*I[i])))
+            vsingle = np.append(vsingle,vsingle[i-1]+vdouble[i]*dx)
+            v = np.append(v, v[i-1] + vsingle[i-1]*dx + vdouble[i]*(dx**2)/2)
+            
+            i = i+1
+        for x in np.linspace(l3,l4,n+1)[1:]:
+            xt = np.append(xt, x)
+            dx = (l4-l3)/(n)
+            
+            M = np.append(M, q*(x**2)/2-r1*(x-l1)-r2*(x-l2)-r3*(x-l3))
+            vdouble = np.append(vdouble,(-M[i]/(E*I[i])))
+            vsingle = np.append(vsingle,vsingle[i-1]+vdouble[i]*dx)
+            v = np.append(v, v[i-1] + vsingle[i-1]*dx + vdouble[i]*(dx**2)/2)
+            
+            i = i+1
+
+            deltav = ((v[2*n]-d2)*l1-(v[n]-d1)*l2)/(l1-l2)
+            deltavsingle = ((v[n]-d1)-deltav)/l1
+
+            v2 = -deltavsingle*xt-deltav+v
+            
+        return [v2, xt, r1, r2]
+    #v2 is the array of vertical positions for a all points, where xt is the x position of the point
+
+    v2r3a = deflection(q,n,r3a,l1,l2,l3,l4,E,I,d1,d2,d3)[0]
+
+    v2r3b = deflection(q,n,r3b,l1,l2,l3,l4,E,I,d1,d2,d3)[0]
+
+    if v2r3a[3*n] > d3 and v2r3b[3*n] < d3:
+        print('Please select a more apropriate reaction force')
+        
+    else:
+        r3mid = (r3b+r3a)/2
+
+        v2 = deflection(q,n,r3mid,l1,l2,l3,l4,E,I,d1,d2,d3)[0]
+
+
+        while round(v2[3*n],12) != d3:
+            
+            v2, xt, r1, r2 = deflection(q,n,r3mid,l1,l2,l3,l4,E,I,d1,d2,d3)
+
+            if v2[3*n] < d3:
+                r3a = r3mid
+                r3b = r3b
+            elif v2[3*n] > d3:
+                r3a = r3a
+                r3b = r3mid
+
+            r3mid = (r3b+r3a)/2
+    r3 = r3mid
+    return v2, xt, r1, r2, r3
+
 
 
 def centroid(nodepos, boom_area, list_length):  #TO BE CHECKED
