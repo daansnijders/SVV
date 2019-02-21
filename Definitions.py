@@ -288,9 +288,9 @@ def shear_flow_shear(boom_area_incl_skin, node_pos, Vy, Vx):
     tring_q = [0]
     circ_q = [0]
     for i in tring_booms:
-        tring_q.append((Vy/Izz)*baes[i-1]*bxyz[i-1][1]+tring_q[-1])
+        tring_q.append(-(Vy/Izz)*baes[i-1]*bxyz[i-1][1]+tring_q[-1]-(Vy/Izz)*baes[i-1]*bxyz[i-1][1]+tring_q[-1])
     for j in circ_booms:
-        circ_q.append((Vy/Izz)*baes[j-1]*bxyz[j-1][1]+circ_q[-1])    
+        circ_q.append(-(Vy/Izz)*baes[j-1]*bxyz[j-1][1]+circ_q[-1])    
 
     
     
