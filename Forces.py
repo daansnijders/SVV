@@ -68,9 +68,34 @@ def ReactionForces(theta,P,q,Ca,ha,E,Izz,x1,x2,x3,xa,span,d1,d3):
     
     return R1y, R1z, R2x, R2y, R2z, R3y, R3z, A1
     
-def ExactMOI(theta,Ca,ha,)
+def ExactMOI(theta,Ca,ha,tskin,Ct,tspar,nodepos,area_stiff)
 
+    ycg = 0
     
+    #moment LE
+    A_LE = tskin*0.5*math.pi*ha
+    Qyy_LE = A_LE * (2 * (ha/2) / math.pi)
+    
+    #moment TE
+    A_TE = 2 * tskin * Ct
+    Qyy_TE = A_TE * -(Ca - ha/2) / 2
+    
+    #moment spar
+    A_sp = tspar * ha
+    Qyy_sp = A_sp * 0
+    
+    Qyy_stiff = 0
+    
+    for i in range (11):
+        Qyy_stiff =+ area_stiff * nodepos[i+1][2]
+        
+    A_stiff = 11 * area_stiff
+    Qyy_sum = Qyy_LE + Qyy_TE + Qyy_sp + Qyy_stiff
+    A_sum = A_LE + A_TE + A_sp + A_stiff
+    
+    zcg = Qyy_sum / A_sum
+    
+    return ycg, zcg
     
 def Torsion(theta,P,q,Ca,ha,A1):
     move = 0.25*Ca - ha/2.
