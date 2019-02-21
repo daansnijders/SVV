@@ -21,6 +21,8 @@ def centroid(nodepos, boom_area, list_length):  #TO BE CHECKED
     centroid = frac1/frac2
     
     return centroid
+
+def centroid_nonidealized():
     
   
 #ha = 0.161 m, Ca = 0.505 and n = 11
@@ -88,7 +90,7 @@ def boom_area_inclskin(tskin, tspar, spacing, nodepos, area_stiff, dist, arc, ha
     boom_area[3] = area_stiff + tskin*spacing/6*(2+nodepos[2][1]/nodepos[3][1]) + tskin*spacing/6*(2+nodepos[4][1]/nodepos[3][1])
     boom_area[4] = area_stiff + tskin*spacing/6*(2+nodepos[3][1]/nodepos[4][1]) + tskin*dist/6*(2+nodepos[12][1]/nodepos[4][1])
     boom_area[5] = area_stiff + tskin*arc/6*(2+nodepos[12][1]/nodepos[5][1]) + tskin*spacing/6*(2+nodepos[6][1]/nodepos[5][1])
-    boom_area[6] = area_stiff + tskin*spacing/6*(2+nodepos[5][1]/nodepos[6][1]) + tskin*spacing/6*(2+nodepos[7][1]/nodepos[6][1])
+    boom_area[6] = area_stiff 
     boom_area[7] = area_stiff + tskin*spacing/6*(2+nodepos[6][1]/nodepos[7][1]) + tskin*arc/6*(2+nodepos[13][1]/nodepos[7][1])
     boom_area[8] = area_stiff + tskin*dist/6*(2+nodepos[13][1]/nodepos[8][1]) + tskin*spacing/6*(2+nodepos[9][1]/nodepos[8][1])
     boom_area[9] = area_stiff + tskin*spacing/6*(2+nodepos[8][1]/nodepos[9][1]) + tskin*spacing/6*(2+nodepos[10][1]/nodepos[9][1])
