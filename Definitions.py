@@ -22,8 +22,33 @@ def centroid(nodepos, boom_area, list_length):  #TO BE CHECKED
     
     return centroid
 
-def centroid_nonidealized():
+def centroid_nonidealized(tskin, ha, Ca, Ct, tspar, nodepos, area_stiff):
+    ycg = 0
     
+    #moment LE
+    A_LE = tskin*0.5*math.pi*ha
+    Qyy_LE = A_LE * (2 * (ha/2) / math.pi)
+    
+    #moment TE
+    A_TE = 2 * tskin * Ct
+    Qyy_TE = A_TE * -(Ca - ha/2) / 2
+    
+    #moment spar
+    A_sp = tspar * ha
+    Qyy_sp = A_sp * 0
+    
+    Qyy_stiff = 0
+    
+    for i in range (11):
+        Qyy_stiff =+ area_stiff * nodepos[i+1][2]
+        
+    A_stiff = 11 * area_stiff
+    Qyy_sum = Qyy_LE + Qyy_TE + Qyy_sp + Qyy_stiff
+    A_sum = A_LE + A_TE + A_sp + A_stiff
+    
+    zcg = Qyy_sum / A_sum
+    
+    return ycg, zcg
   
 #ha = 0.161 m, Ca = 0.505 and n = 11
 def boom_spacing(ha, Ca, n):
@@ -35,7 +60,7 @@ def boom_spacing(ha, Ca, n):
     spacing = Circ/n
     alpharad = math.atan2((ha/2), Cr)
     
-    return spacing, Cr, alpharad
+    return spacing, Cr, alpharad, Ct
 
 def boom_location(spacing, Cr, alpharad, list_length, ha):
     alphadeg = math.degrees(alpharad)
