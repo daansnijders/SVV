@@ -65,17 +65,19 @@ def ReactionForces(theta,P,q,Ca,ha,E,Ixx,Iyy,x1,x2,x3,xa,span,d1,d3):
     R2z = float(y[1])
     R3z = float(y[2])
     
-    return R2x, R1y, R2y, R3y, R1z, R2z, R3z
+    return R1y, R1z, R2x, R2y, R2z, R3y, R3z, A1
     
     
     
-def Torsion(theta,P,q,Ca,ha):
+def Torsion(theta,P,q,Ca,ha,A1):
     move = 0.25*Ca - ha/2.
     movez = move*cos(theta)
     movey = move*sin(theta)
     
     M_add_P = P*movey
     M_add_q = q*movex
+
+    
 
 
 theta = (30./180.*pi)
