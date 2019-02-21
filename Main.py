@@ -23,12 +23,12 @@ alphadeg = math.degrees(alpharad)
 nodepos, arc, dist = Definitions.boom_location(spacing, Cr, alpharad, list_length, ha)
 
 area_stiff = Definitions.area_stiff(t_stiff, h_stiff, w_stiff)
-boom_area = Definitions.boom_area_inclskin(tskin, tspar, spacing, nodepos, area_stiff, dist, arc, ha)
+boom_area_incl_skin = Definitions.boom_area_inclskin(tskin, tspar, spacing, nodepos, area_stiff, dist, arc, ha)
 
-boom_area_excl = Definitions.boom_area_exclskin(area_stiff, nodepos, tspar, ha)
+boom_area_excl_skin = Definitions.boom_area_exclskin(area_stiff, nodepos, tspar, ha)
 
 ycg, zcg = Definitions.centroid_nonidealized(tskin, ha, Ca, Ct, tspar, nodepos, area_stiff)
 
-print (boom_area)
+print (boom_area_incl_skin)
 
 Ixx, Iyy, Izz = Definitions.boom_inertia(list_length, nodepos)
