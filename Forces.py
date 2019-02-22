@@ -94,7 +94,8 @@ def ExactMOI(theta,Ca,ha,t_sk,t_sp,t_st,w_st,h_st,zcg,n,spacing,nodepos):
     """ Overall MOI """
     Izz = 0.
     Iyy = 0.
-    loc = []
+    loyc = []
+    loyz = []
     #For loop for all stringers
     for i in range(n):
         if i <= ((n - 1.)/2. - 2):
@@ -125,7 +126,14 @@ def ExactMOI(theta,Ca,ha,t_sk,t_sp,t_st,w_st,h_st,zcg,n,spacing,nodepos):
         
         Izz += Izz_new + A * (z_loc)**2.
         Iyy += Iyy_new + A * (y_loc)**2.
-        loc.append([z_loc, y_loc])
+        locy.append(y_loc)
+        locz.append(z_loc)
+        
+    plt.plot(z_loc, y_loc, "bo")
+    plt.grid(True)
+    plt.show
+    
+    
     
     #Add half arc
     Izz += Izz_arc
