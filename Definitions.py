@@ -4,8 +4,6 @@ import matplotlib.pyplot as plt
 plt.style.use('seaborn-whitegrid')
 import numpy as np
 
-"""EXAMPLE AREAS, TO BE DEFINED / PROGRAMED / FILLED IN"""
-B = [[0.0], [0.1], [0.2], [0.3], [0.4], [0.5], [0.6], [0.5], [0.4], [0.3], [0.2], [0.1], [0.12], [0.13]] #This is now a 2D list but could be transfered to 1D?
 
 def bending(q,n,r3a,r3b,l1,l2,l3,l4,E,I,d1,d2,d3):
     #r3a and r3b relate to the initial reaction forces used to iterate bisection method
@@ -103,8 +101,6 @@ def bending(q,n,r3a,r3b,l1,l2,l3,l4,E,I,d1,d2,d3):
             r3mid = (r3b+r3a)/2
     r3 = r3mid
     return v2, xt, r1, r2, r3
-
-
 
 def centroid(nodepos, boom_area, list_length):  #TO BE CHECKED
     ycg = 0
@@ -241,17 +237,16 @@ def boom_area_exclskin(area_stiff, nodepos, tspar, ha):
     return boom_area
     
 
-def boom_inertia(list_length, nodepos): #TO BE CHECKED
+def boom_inertia(list_length, nodepos, B): #TO BE CHECKED
     
     #nodepos = boom_location() #getting positions from previous function
-
     Ixx = [0 for _ in range(list_length)] #Defining lists of Ixx Iyy and Izz
     Iyy = [] #Etc.
     Izz = [] #Etc.
     
     for i in range(list_length):
-        Iyy.append( B[i][0] * (nodepos[i][2]) ** 2) # Iyy = Boom Area * Z distance squared
-        Izz.append( B[i][0] * (nodepos[i][1]) ** 2) # Izz = Boom Area * Y distance squared
+        Iyy.append( B[i] * (nodepos[i][2]) ** 2) # Iyy = Boom Area * Z distance squared
+        Izz.append( B[i] * (nodepos[i][1]) ** 2) # Izz = Boom Area * Y distance squared
         
     #print()
     #print("Ixx is: ",Ixx)

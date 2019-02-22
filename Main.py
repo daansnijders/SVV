@@ -14,11 +14,10 @@ h_stiff = 0.013
 w_stiff = 0.017
 
 
+
 spacing, Cr, alpharad, Ct = Definitions.boom_spacing(ha, Ca, n)
 
-
 alphadeg = math.degrees(alpharad)
-
 
 nodepos, arc, dist = Definitions.boom_location(spacing, Cr, alpharad, list_length, ha)
 
@@ -32,3 +31,6 @@ ycg, zcg = Definitions.centroid_nonidealized(tskin, ha, Ca, Ct, tspar, nodepos, 
 print (boom_area_incl_skin)
 
 Ixx, Iyy, Izz = Definitions.boom_inertia(list_length, nodepos)
+
+B = Definitions.boom_area_inclskin(tskin, tspar, spacing, nodepos, area_stiff, dist, arc, ha)
+
