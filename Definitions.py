@@ -7,91 +7,145 @@ import numpy as np
 """EXAMPLE AREAS, TO BE DEFINED / PROGRAMED / FILLED IN"""
 B = [[0.0], [0.1], [0.2], [0.3], [0.4], [0.5], [0.6], [0.5], [0.4], [0.3], [0.2], [0.1], [0.12], [0.13]] #This is now a 2D list but could be transfered to 1D?
 
-def bending(q,n,r3a,r3b,l1,l2,l3,l4,E,I,d1,d2,d3):
+def deflection(q,n,r3,l1,l2,l3,l4,E,I,d1,d2,d3,rz3,P2,xa,Ca,ha,theta2):
+    #theta2 is the angle of section 2 where hinge 2 is
+    
+    # calculation of reaction forces by static equalibrium
+    r2 = (q*(l4)*(1.611/2-l1)-r3*(l3-l1))/(l2-l1)
+    r1 = q*l4-r2-r3
+
+    P1 = (r2*(0.25*Ca-ha/2)*np.cos(theta2))/(-ha/2*np.sin(theta2)-ha/2*np.cos(theta2))+P2
+    rz2 = (-P1*(l2-l1-xa/2)+P2*(l2-l1+xa/2)-rz3*(l3-l1))/(l2-l1)
+    rz1 = P2-P1-rz3-rz2
+
+    #Moment, curvature, slope and deflection calculations
+    
+    Mz = np.array([0])
+    My = np.array([0])
+    
+    vdouble = np.array([0])
+    vsingle = np.array([0])
+    v = np.array([0])
+
+    udouble = np.array([0])
+    usingle = np.array([0])
+    u = np.array([0])
+
+    xt = np.array([0])
+
+
+    i = 1
+
+    for x in np.linspace(0,l1,n+1)[1:]:
+        xt = np.append(xt, x)
+        dx = l1/(n)
+
+        Mz = np.append(Mz, q*(x**2)/2)
+        My = np.append(My, 0)
+
+        vdouble = np.append(vdouble,-(Mz[i]*I[0][0][i]-My[i]*I[0][1][i])/(E*(I[0][0][i]*I[1][1][i]-I[0][1][i]**2)))
+        vsingle = np.append(vsingle,vsingle[i-1]+vdouble[i]*dx)
+        v = np.append(v, v[i-1] + vsingle[i-1]*dx + vdouble[i]*(dx**2)/2)
+
+        udouble = np.append(udouble, -(-Mz[i]*I[0][1][i]-My[i]*I[1][1][i])/(E*(I[0][0][i]*I[1][1][i]-I[0][1][i]**2)))
+        usingle = np.append(usingle,usingle[i-1]+udouble[i]*dx)
+        u = np.append(u, u[i-1] + usingle[i-1]*dx + udouble[i]*(dx**2)/2)
+
+        i = i+1
+    for x in np.linspace(l1,l2,n+1)[1:]:
+        xt = np.append(xt, x)
+        dx = (l2-l1)/(n)
+        
+        Mz = np.append(Mz, q*(x**2)/2-r1*(x-l1))
+        My = np.append(My, rz1*(x-l1)+P1*(np.sign((x-l2+xa/2)) == 1)*(x-l2+xa/2))
+
+        vdouble = np.append(vdouble,-(Mz[i]*I[0][0][i]-My[i]*I[0][1][i])/(E*(I[0][0][i]*I[1][1][i]-I[0][1][i]**2)))
+        vsingle = np.append(vsingle,vsingle[i-1]+vdouble[i]*dx)
+        v = np.append(v, v[i-1] + vsingle[i-1]*dx + vdouble[i]*(dx**2)/2)
+
+        udouble = np.append(udouble, -(-Mz[i]*I[0][1][i]-My[i]*I[1][1][i])/(E*(I[0][0][i]*I[1][1][i]-I[0][1][i]**2)))
+        usingle = np.append(usingle,usingle[i-1]+udouble[i]*dx)
+        u = np.append(u, u[i-1] + usingle[i-1]*dx + udouble[i]*(dx**2)/2)
+
+        i = i+1
+    for x in np.linspace(l2,l3,n+1)[1:]:
+        xt = np.append(xt, x)
+        dx = (l3-l2)/(n)
+        
+        Mz = np.append(Mz, q*(x**2)/2-r1*(x-l1)-r2*(x-l2))
+        My = np.append(My, rz1*(x-l1)+P1*(np.sign((x-l2+xa/2)) == 1)*(x-l2+xa/2)+rz2*(x-l2)-P2*(np.sign((x-l2-xa/2)) == 1)*(x-l2-xa/2))
+
+        
+        vdouble = np.append(vdouble,-(Mz[i]*I[0][0][i]-My[i]*I[0][1][i])/(E*(I[0][0][i]*I[1][1][i]-I[0][1][i]**2)))
+        vsingle = np.append(vsingle,vsingle[i-1]+vdouble[i]*dx)
+        v = np.append(v, v[i-1] + vsingle[i-1]*dx + vdouble[i]*(dx**2)/2)
+
+        udouble = np.append(udouble, -(-Mz[i]*I[0][1][i]-My[i]*I[1][1][i])/(E*(I[0][0][i]*I[1][1][i]-I[0][1][i]**2)))
+        usingle = np.append(usingle,usingle[i-1]+udouble[i]*dx)
+        u = np.append(u, u[i-1] + usingle[i-1]*dx + udouble[i]*(dx**2)/2)
+        
+        i = i+1
+    for x in np.linspace(l3,l4,n+1)[1:]:
+        xt = np.append(xt, x)
+        dx = (l4-l3)/(n)
+        
+        Mz = np.append(Mz, q*(x**2)/2-r1*(x-l1)-r2*(x-l2)-r3*(x-l3))
+        My = np.append(My, 0)
+        
+        vdouble = np.append(vdouble,-(Mz[i]*I[0][0][i]-My[i]*I[0][1][i])/(E*(I[0][0][i]*I[1][1][i]-I[0][1][i]**2)))
+        vsingle = np.append(vsingle,vsingle[i-1]+vdouble[i]*dx)
+        v = np.append(v, v[i-1] + vsingle[i-1]*dx + vdouble[i]*(dx**2)/2)
+
+        udouble = np.append(udouble, -(-Mz[i]*I[0][1][i]-My[i]*I[1][1][i])/(E*(I[0][0][i]*I[1][1][i]-I[0][1][i]**2)))
+        usingle = np.append(usingle,usingle[i-1]+udouble[i]*dx)
+        u = np.append(u, u[i-1] + usingle[i-1]*dx + udouble[i]*(dx**2)/2)
+        
+        i = i+1
+    
+    deltav = ((v[2*n]-d2)*l1-(v[n]-d1)*l2)/(l1-l2)
+    deltavsingle = ((v[n]-d1)-deltav)/l1
+
+    v2 = -deltavsingle*xt-deltav+v
+
+    deltau = ((u[2*n]-0)*l1-(u[n]-0)*l2)/(l1-l2)
+    deltausingle = ((u[n]-0)-deltau)/l1
+    u2 = -deltausingle*xt-deltau+u
+            
+    return [v2, u2, xt, r1, r2, My, Mz, rz1, rz2]
+
+def bendingconvergence(q,n,r3a,r3b,l1,l2,l3,l4,E,I,d1,d2,d3,rz3a,rz3b,P2,xa,Ca,ha,theta2):
     #r3a and r3b relate to the initial reaction forces used to iterate bisection method
     #n is for the number of sections per section
     #I is an array that must follow the discretisation of xt, v2, thus len(I)=n*4+1
 
-    def deflection(q,n,r3,l1,l2,l3,l4,E,I,d1,d2,d3):
-        # calculation of reaction forces by static equalibrium
-        r2 = (q*(l4)*(1.611/2-l1)-r3*(l3-l1))/(l2-l1)
-        r1 = q*l4-r2-r3
-
-        #Moment, curvature, slope and deflection calculations
-        M = np.array([0])
-        vdouble = np.array([0])
-        vsingle = np.array([0])
-        v = np.array([0])
-
-        xt = np.array([0])
-
-        i = 1
-
-        for x in np.linspace(0,l1,n+1)[1:]:
-            xt = np.append(xt, x)
-            dx = l1/(n)
-
-            M = np.append(M, q*(x**2)/2)
-            vdouble = np.append(vdouble,(-M[i]/(E*I[i])))
-            vsingle = np.append(vsingle,vsingle[i-1]+vdouble[i]*dx)
-            v = np.append(v, v[i-1] + vsingle[i-1]*dx + vdouble[i]*(dx**2)/2)
-
-            i = i+1
-        for x in np.linspace(l1,l2,n+1)[1:]:
-            xt = np.append(xt, x)
-            dx = (l2-l1)/(n)
-            
-            M = np.append(M, q*(x**2)/2-r1*(x-l1))
-            vdouble = np.append(vdouble,(-M[i]/(E*I[i])))
-            vsingle = np.append(vsingle,vsingle[i-1]+vdouble[i]*dx)
-            v = np.append(v, v[i-1] + vsingle[i-1]*dx + vdouble[i]*(dx**2)/2)
-            
-            i = i+1
-        for x in np.linspace(l2,l3,n+1)[1:]:
-            xt = np.append(xt, x)
-            dx = (l3-l2)/(n)
-            
-            M = np.append(M, q*(x**2)/2-r1*(x-l1)-r2*(x-l2))
-            vdouble = np.append(vdouble,(-M[i]/(E*I[i])))
-            vsingle = np.append(vsingle,vsingle[i-1]+vdouble[i]*dx)
-            v = np.append(v, v[i-1] + vsingle[i-1]*dx + vdouble[i]*(dx**2)/2)
-            
-            i = i+1
-        for x in np.linspace(l3,l4,n+1)[1:]:
-            xt = np.append(xt, x)
-            dx = (l4-l3)/(n)
-            
-            M = np.append(M, q*(x**2)/2-r1*(x-l1)-r2*(x-l2)-r3*(x-l3))
-            vdouble = np.append(vdouble,(-M[i]/(E*I[i])))
-            vsingle = np.append(vsingle,vsingle[i-1]+vdouble[i]*dx)
-            v = np.append(v, v[i-1] + vsingle[i-1]*dx + vdouble[i]*(dx**2)/2)
-            
-            i = i+1
-
-            deltav = ((v[2*n]-d2)*l1-(v[n]-d1)*l2)/(l1-l2)
-            deltavsingle = ((v[n]-d1)-deltav)/l1
-
-            v2 = -deltavsingle*xt-deltav+v
-            
-        return [v2, xt, r1, r2]
     #v2 is the array of vertical positions for a all points, where xt is the x position of the point
 
-    v2r3a = deflection(q,n,r3a,l1,l2,l3,l4,E,I,d1,d2,d3)[0]
+    v2r3a = deflection(q,n,r3a,l1,l2,l3,l4,E,I,d1,d2,d3,rz3a,P2,xa,Ca,ha,theta2)[0]
 
-    v2r3b = deflection(q,n,r3b,l1,l2,l3,l4,E,I,d1,d2,d3)[0]
+    v2r3b = deflection(q,n,r3b,l1,l2,l3,l4,E,I,d1,d2,d3,rz3b,P2,xa,Ca,ha,theta2)[0]
 
-    if v2r3a[3*n] > d3 and v2r3b[3*n] < d3:
-        print('Please select a more apropriate reaction force')
+    u2rz3a = deflection(q,n,r3a,l1,l2,l3,l4,E,I,d1,d2,d3,rz3a,P2,xa,Ca,ha,theta2)[1]
+
+    u2rz3b = deflection(q,n,r3b,l1,l2,l3,l4,E,I,d1,d2,d3,rz3b,P2,xa,Ca,ha,theta2)[1]  
+
+    if v2r3a[3*n] > d3 or v2r3b[3*n] < d3:
+        print('Please select a more apropriate y reaction force')
+        
+    if u2rz3a[3*n] > 0 or u2rz3b[3*n] < 0:
+        print('Please select a more apropriate z reaction force')
         
     else:
+
         r3mid = (r3b+r3a)/2
 
-        v2 = deflection(q,n,r3mid,l1,l2,l3,l4,E,I,d1,d2,d3)[0]
+        rz3mid = (rz3b+rz3a)/2
 
+        v2, u2 = deflection(q,n,r3mid,l1,l2,l3,l4,E,I,d1,d2,d3,rz3mid,P2,xa,Ca,ha,theta2)[0:2]
 
-        while round(v2[3*n],12) != d3:
+        
+        while round(v2[3*n],12) != d3 or round(u2[3*n],12) != 0:
             
-            v2, xt, r1, r2 = deflection(q,n,r3mid,l1,l2,l3,l4,E,I,d1,d2,d3)
+            v2, u2, xt, r1, r2, My, Mz, rz1, rz2 = deflection(q,n,r3mid,l1,l2,l3,l4,E,I,d1,d2,d3,rz3mid,P2,xa,Ca,ha,theta2)
 
             if v2[3*n] < d3:
                 r3a = r3mid
@@ -99,10 +153,20 @@ def bending(q,n,r3a,r3b,l1,l2,l3,l4,E,I,d1,d2,d3):
             elif v2[3*n] > d3:
                 r3a = r3a
                 r3b = r3mid
-
+            if u2[3*n] < 0:
+                rz3a = rz3mid
+                rz3b = rz3b
+            elif u2[3*n] > 0:
+                rz3a = rz3a
+                rz3b = rz3mid
+                
             r3mid = (r3b+r3a)/2
+            rz3mid = (rz3b+rz3a)/2
+            
     r3 = r3mid
-    return v2, xt, r1, r2, r3
+    rz3 = rz3mid
+    
+    return v2, u2, xt, r1, r2, r3, rz1, rz2, rz3
 
 
 
@@ -384,9 +448,9 @@ def shear_flow_shear(boom_area_incl_skin, node_pos, Vy, Vz,ha,Izz,Iyy):
     tring_q = [0]
     circ_q = [0]
     for i in tring_booms:
-        tring_q.append(-(Vy/Izz)*baes[i-1]*bxyz[i-1][1]+tring_q[-1]-(Vz/Iyy)*baes[i-1]*bxyz[i-1][1]+tring_q[-1])
+        tring_q.append(-(Vy/Izz)*baes[i-1]*bxyz[i-1][1]-(Vz/Iyy)*baes[i-1]*bxyz[i-1][1]+tring_q[-1])
     for j in circ_booms:
-        circ_q.append(-(Vy/Izz)*baes[j-1]*bxyz[j-1][1]+circ_q[-1]-(Vz/Iyy)*baes[j-1]*bxyz[j-1][1]+circ_q[-1]) 
+        circ_q.append(-(Vy/Izz)*baes[j-1]*bxyz[j-1][1]-(Vz/Iyy)*baes[j-1]*bxyz[j-1][1]+circ_q[-1]) 
     
      #find redundant shear flow
     tring_qr = 0
@@ -436,15 +500,70 @@ def shear_flow_total(tring_qt,circ_qt,q1,q2):
     
     for i in tring_qt:
         
-        trinq_sum_element=i+q1
-        tring_qsum.append(trinq_sum_element)
+        tring_qsum_element=i+q1
+        tring_qsum.append(tring_qsum_element)
         
     for j in circ_qt:
         
-        cirq_sum_element=j+q2
-        circ_qsum.append(cirq_sum_element)
+        circ_qsum_element=j+q2
+        circ_qsum.append(circ_qsum_element)
         
         return tring_qsum, circ_qsum
+
+def shear_flow_rib(tring_qsum,circ_qsum):
+    
+    lst_circ=[] # list containing the wing skin shear flows excluding the shear flows along the spar
+    lst_tri=[]
+    
+    for i in range(len(tring_qsum)):
+        
+        lst_tri.append(tring_qsum(i))
+        
+        if i==4:
+            
+            lst_tri.revove(tring_qsum(i))
+    
+    for j in range(len(circ_qsum)):
+        
+        lst_circ.append(circ_qsum(i))
+        
+        
+def boom_area_updater(tsk, spacing, Mz, My, Izz, Iyy, stiff_area, zcg, nodepos, dist, arc, tspar):
+    a= -1
+    b= -(Mz*Iyy)/(My*Izz)
+    c= zcg
+    
+    d=[0]
+    for i in range(13):
+        x=0.
+        x=abs(a*nodepos[i+1][2]+b*nodepos[i+1][1]+c)/(math.sqrt(a**2+b**2))
+        if nodepos[i+1][1]+(c+a*nodepos[i+1][2])/b < 0:
+            x=x*(-1)
+        elif:
+            x=x
+        d.append(x)
+    boom_area=[0]
+    boom_area.append(stiff_area+(tsk*spacing/6)*(4+(d[11]+d[2])/d[1]))
+    for i in range(2):
+        boom_area.append(stiff_area+(tsk*spacing/6)*(4+(d[i+1]+d[i+3])/d[i+2]))
+    boom_area.append(stiff_area+(tsk*spacing/6)*(2+d[3]/d[4])+(tsk*dist/6)*(2+d[12]/d[4]))
+    boom_area.append(stiff_area+(tsk*spacing/6)*(2+d[6]/d[5])+(tsk*arc/6)*(2+d[12]/d[5]))
+    boom_area.append(stiff_area+(tsk*spacing/6)*(4+(d[5]+d[7])/d[6]))
+    boom_area.append(stiff_area+(tsk*spacing/6)*(2+d[6]/d[7])+(tsk*arc/6)*(2+d[13]/d[7]))
+    boom_area.append(stiff_area+(tsk*spacing/6)*(2+d[9]/d[8])+(tsk*dist/6)*(2+d[13]/d[8]))
+    for i in range(2):
+        boom_area.append(stiff_area+(tsk*spacing/6)*(4+(d[i+8]+d[i+10])/d[i+9]))
+    boom_area.append(stiff_area+(tsk*spacing/6)*(4+(d[10]+d[1])/d[11]))
+    boom_area.append((tsk*dist/6)*(2+d[4]/d[12])+(tsk*arc/6)*(2+d[5]/d[12])+(tspar*ha/6)*(2+d[13]/d[12]))
+    boom_area.append((tsk*dist/6)*(2+d[8]/d[13])+(tsk*arc/6)*(2+d[7]/d[13])+(tspar*ha/6)*(2+d[12]/d[13]))
+    return boom_area
+            
+        
+    
+    
+
+
+
         
         
     
