@@ -107,15 +107,16 @@ def bending(q,n,r3a,r3b,l1,l2,l3,l4,E,I,d1,d2,d3):
 
 
 def centroid(nodepos, boom_area, list_length):  #TO BE CHECKED
+    ycg = 0
     frac1 = 0.
     frac2 = 0.
     for i in range (list_length):    
        frac1 = frac1 + nodepos[i][2]*boom_area[i]
        frac2 = frac2 + boom_area[i]
     
-    centroid = frac1/frac2
+    zcg = frac1/frac2
     
-    return centroid
+    return ycg, zcg
 
 def centroid_nonidealized(tskin, ha, Ca, Ct, tspar, nodepos, area_stiff):
     ycg = 0
@@ -420,7 +421,7 @@ def shear_flow_torsion(T,A1,A2,arc,l,ha,G,t):
     rate_twist=x.item(0)
     q1=x.item(1) # shear flow due to torsion in cell 1
     q2=x.item(2)
-    
+
     
     return rate_twist,q1,q2
     
