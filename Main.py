@@ -38,7 +38,7 @@ Mz = 0.1
 
 
 """Sybren calculate centroid of non idealized structure"""
-""""Sybren """
+""""Sybren calculate MOI 30 deg and 0 deg"""
 
 
 boom_area = Definitions.boom_area_updater(tskin, spacing, Mz, My, Izz, Iyy, area_stiff, zcg, nodepos, dist, arc, tspar, ha)
