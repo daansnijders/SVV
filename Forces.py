@@ -73,50 +73,78 @@ def ExactMOI(theta,Ca,ha,t_sk,t_sp,t_st,w_st,h_st,zcg,no_st,spacing)
     
     """ Stringer MOI """
     y_bar = (t_st*w*t_st/2. + (h_st-t_st)*t*((h_st-t_st)/2. + t_st)) / (w_st*t_st + (h_st-t_st)*t_st)
-    Iyy_st = 1./12. *w_st*t_st**3. + (w_st*t_st)*(y_bar - t_st/2.) + 1./12.*(h_st - t_st)**3.*t_st + (h_st-t_st)*t_st * ((h_st-t_st)/2. - y_bar)
-    Izz_st = 1./12 *(h_st-t_st)*t_st**3. + 1./12. * w_st**3. *t
+    A = (w_st*t_st + (h_st-t_st)*t_st)
+    Izz_st = 1./12. *w_st*t_st**3. + (w_st*t_st)*(y_bar - t_st/2.) + 1./12.*(h_st - t_st)**3.*t_st + (h_st-t_st)*t_st * ((h_st-t_st)/2. - y_bar)
+    Iyy_st = 1./12 *(h_st-t_st)*t_st**3. + 1./12. * w_st**3. *t
     
     """ Half arc MOI """
-    Iyy_arc = 1./2. * pi * ha**3. * t_sk
     Izz_arc = 1./2. * pi * ha**3. * t_sk
+    Iyy_arc = 1./2. * pi * ha**3. * t_sk
     
     """ Spar MOI """
-    Iyy_sp = 1./12. * ha**3. * t_sp
-    Izz_sp = 1./12. * t_sp**3. * ha
+    Izz_sp = 1./12. * ha**3. * t_sp
+    Iyy_sp = 1./12. * t_sp**3. * ha
     
     """ Beam MOI """
     a = sqrt((Ca - ha/2.)**2. + (ha/2.)**2.)
     angle = arctan(ha/(2.*(Ca - ha/2.)))
-    Iyy_beam = t_sk * a**3. *(sin(angle))**2. / 12.
-    Izz_beam = t_sk * a**3. *(cos(angle))**2. / 12.
+    Izz_beam = t_sk * a**3. *(sin(angle))**2. / 12.
+    Iyy_beam = t_sk * a**3. *(cos(angle))**2. / 12.
     
     """ Overall MOI """
-    Iyy = 0.
     Izz = 0.
+    Iyy = 0.
+    loc = []
+    #For loop for all stringers
     for i in range(len(no_st)):
         if i <= (no_st - 1.)/2. - 2):
             z_loc = Ca - ha/2. - zcg - (i+0.5)*spacing/cos(theta) 
             y_loc = (i+0.5)*spacing/sin(theta)
+            Izz_new = (Iyy_st + Izz_st)/2. + (Izz_st - Iyy_st)/2. * cos(2.*angle)
+            Iyy_new = (Iyy_st + Izz_st)/2. - (Izz_st - Iyy_st)/2. * cos(2.*angle)
         elif i == (no_st - 1.)/2. - 1):
             z_loc = Ca - ha/2. - zcg - (i+0.5)*spacing/cos(theta) 
             y_loc = (i-0.5)*spacing/sin(theta)
+            Izz_new = (Iyy_st + Izz_st)/2. + (Izz_st - Iyy_st)/2. * cos(-2.*angle)
+            Iyy_new = (Iyy_st + Izz_st)/2. - (Izz_st - Iyy_st)/2. * cos(-2.*angle)
         elif i == (no_st - 1.)/2. :
             z_loc = - zg - ha/2.
             y_loc = 0.
+            Izz_new = Ixx_st
+            Iyy_new = Izz_st
         elif i == (no_st - 1.)/2. + 1):
-    
+            z_loc = Ca - ha/2. - zcg - (no_st - 0.5 - i)*spacing/cos(theta) 
+            y_loc = (no_st - 1.5 - i)*spacing/sin(theta)
+            Izz_new = (Iyy_st + Izz_st)/2. + (Izz_st - Iyy_st)/2. * cos(2.*angle)
+            Iyy_new = (Iyy_st + Izz_st)/2. - (Izz_st - Iyy_st)/2. * cos(2.*angle)
         else:
-            z_loc = Ca - ha/2. - zcg - (no_st - 1 - i+0.5)*spacing/cos(theta) 
-            y_loc = (i+0.5)*spacing/sin(theta)
-    
-            
-            
+            z_loc = Ca - ha/2. - zcg - (no_st - 0.5 - i)*spacing/cos(theta) 
+            y_loc = (no_st - 0.5 - i)*spacing/sin(theta)
+            Izz_new = (Iyy_st + Izz_st)/2. + (Izz_st - Iyy_st)/2. * cos(-2.*angle)
+            Iyy_new = (Iyy_st + Izz_st)/2. - (Izz_st - Iyy_st)/2. * cos(-2.*angle)
         
-        
+        Izz += Izz_new + A * (z_loc)**2.
+        Iyy += Iyy_new + A * (y_loc)**2.
+        loc.append([z_loc, y_loc])
     
-    angle = arctan(ha/(2.*(Ca - ha/2.)))
-    Iyy_new = (Iyy + Izz)/2. + (Iyy - Izz)/2. * cos(2.*angle)
-    Izz_new = (Iyy + Izz)/2. - (Iyy - Izz)/2. * cos(2.*angle)
+    #Add half arc
+    Izz += Izz_arc
+    Iyy += Iyy_arc + (pi*((ha/2.)**2 - (ha/2. - t_sk)**2.)/2.)* (2.*ha/2./pi + zcg)**2.
+    
+    #Add spar
+    Izz += Izz_sp
+    Iyy += Iyy_sp + (t_sp * ha)*zcg**2.
+    
+    #Add beams
+    Izz += (Izz_beam + (Ca-ha/2.)*cos(angle)*t_sk * (((Ca-ha/2.)/2.)*tan(angle))**2.)*2.
+    Iyy += (Iyy_beam + (Ca-ha/2.)*cos(angle)*t_sk *(((Ca-ha/2.)/2.)-zcg)**2.)
+    
+    Izz_0 = Izz
+    Iyy_0 = Iyy        
+    
+    Iyy_theta = (Izz_0 + Iyy_0)/2. + (Izz_0 - Iyy_0)/2. * cos(2.*theta)
+    Izz_theta = (Izz_0 + Iyy_0)/2. - (Izz_0 - Iyy_0)/2. * cos(2.*theta)
+    Izy_theta = (Izz_0 - Iyy_0)/2. *sin(2.*theta)
     
 def Torsion(theta,P,q,Ca,ha,A1):
     move = 0.25*Ca - ha/2.
