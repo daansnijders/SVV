@@ -428,7 +428,7 @@ def find_shear_center(boom_area_excluding_skin,Izz,node_pos,ha):
 
     #value will equal z distance of shear center
     sc_position= [0,0,moments]
-    return sc_position
+    return sc_position, tring_booms, circ_booms
                            
 
 def shear_flow_shear(boom_area_incl_skin, node_pos, Vy, Vz,ha,Izz,Iyy):
