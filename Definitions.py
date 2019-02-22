@@ -384,9 +384,9 @@ def shear_flow_shear(boom_area_incl_skin, node_pos, Vy, Vz,ha,Izz,Iyy):
     tring_q = [0]
     circ_q = [0]
     for i in tring_booms:
-        tring_q.append(-(Vy/Izz)*baes[i-1]*bxyz[i-1][1]+tring_q[-1]-(Vz/Iyy)*baes[i-1]*bxyz[i-1][1]+tring_q[-1])
+        tring_q.append(-(Vy/Izz)*baes[i-1]*bxyz[i-1][1]-(Vz/Iyy)*baes[i-1]*bxyz[i-1][1]+tring_q[-1])
     for j in circ_booms:
-        circ_q.append(-(Vy/Izz)*baes[j-1]*bxyz[j-1][1]+circ_q[-1]-(Vz/Iyy)*baes[j-1]*bxyz[j-1][1]+circ_q[-1]) 
+        circ_q.append(-(Vy/Izz)*baes[j-1]*bxyz[j-1][1]-(Vz/Iyy)*baes[j-1]*bxyz[j-1][1]+circ_q[-1]) 
     
      #find redundant shear flow
     tring_qr = 0
@@ -436,15 +436,41 @@ def shear_flow_total(tring_qt,circ_qt,q1,q2):
     
     for i in tring_qt:
         
-        trinq_sum_element=i+q1
-        tring_qsum.append(trinq_sum_element)
+        tring_qsum_element=i+q1
+        tring_qsum.append(tring_qsum_element)
         
     for j in circ_qt:
         
-        cirq_sum_element=j+q2
-        circ_qsum.append(cirq_sum_element)
+        circ_qsum_element=j+q2
+        circ_qsum.append(circ_qsum_element)
         
         return tring_qsum, circ_qsum
+
+def shear_flow_rib(tring_qsum,circ_qsum):
+    
+    lst_circ=[] # list containing the wing skin shear flows excluding the shear flows along the spar
+    lst_tri=[]
+    
+    for i in range(len(tring_qsum)):
+        
+        lst_tri.append(tring_qsum(i))
+        
+        if i==4:
+            
+            lst_tri.revove(tring_qsum(i))
+    
+    for j in range(len(circ_qsum)):
+        
+        lst_circ.append(circ_qsum(i))
+        
+        
+        
+        
+    
+    
+
+
+
         
         
     
