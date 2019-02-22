@@ -69,8 +69,54 @@ def ReactionForces(theta,P,q,Ca,ha,E,Izz,x1,x2,x3,xa,span,d1,d3):
     return R2x, R1y, R2y, R3y, R1z, R2z, R3z
     
         
-def ExactMOI(theta,Ca,ha,tskin,Ct,tspar)
-
+def ExactMOI(theta,Ca,ha,t_sk,t_sp,t_st,w_st,h_st,zcg,no_st,spacing)
+    
+    """ Stringer MOI """
+    y_bar = (t_st*w*t_st/2. + (h_st-t_st)*t*((h_st-t_st)/2. + t_st)) / (w_st*t_st + (h_st-t_st)*t_st)
+    Iyy_st = 1./12. *w_st*t_st**3. + (w_st*t_st)*(y_bar - t_st/2.) + 1./12.*(h_st - t_st)**3.*t_st + (h_st-t_st)*t_st * ((h_st-t_st)/2. - y_bar)
+    Izz_st = 1./12 *(h_st-t_st)*t_st**3. + 1./12. * w_st**3. *t
+    
+    """ Half arc MOI """
+    Iyy_arc = 1./2. * pi * ha**3. * t_sk
+    Izz_arc = 1./2. * pi * ha**3. * t_sk
+    
+    """ Spar MOI """
+    Iyy_sp = 1./12. * ha**3. * t_sp
+    Izz_sp = 1./12. * t_sp**3. * ha
+    
+    """ Beam MOI """
+    a = sqrt((Ca - ha/2.)**2. + (ha/2.)**2.)
+    angle = arctan(ha/(2.*(Ca - ha/2.)))
+    Iyy_beam = t_sk * a**3. *(sin(angle))**2. / 12.
+    Izz_beam = t_sk * a**3. *(cos(angle))**2. / 12.
+    
+    """ Overall MOI """
+    Iyy = 0.
+    Izz = 0.
+    for i in range(len(no_st)):
+        if i <= (no_st - 1.)/2. - 2):
+            z_loc = Ca - ha/2. - zcg - (i+0.5)*spacing/cos(theta) 
+            y_loc = (i+0.5)*spacing/sin(theta)
+        elif i == (no_st - 1.)/2. - 1):
+            z_loc = Ca - ha/2. - zcg - (i+0.5)*spacing/cos(theta) 
+            y_loc = (i-0.5)*spacing/sin(theta)
+        elif i == (no_st - 1.)/2. :
+            z_loc = - zg - ha/2.
+            y_loc = 0.
+        elif i == (no_st - 1.)/2. + 1):
+    
+        else:
+            z_loc = Ca - ha/2. - zcg - (no_st - 1 - i+0.5)*spacing/cos(theta) 
+            y_loc = (i+0.5)*spacing/sin(theta)
+    
+            
+            
+        
+        
+    
+    angle = arctan(ha/(2.*(Ca - ha/2.)))
+    Iyy_new = (Iyy + Izz)/2. + (Iyy - Izz)/2. * cos(2.*angle)
+    Izz_new = (Iyy + Izz)/2. - (Iyy - Izz)/2. * cos(2.*angle)
     
 def Torsion(theta,P,q,Ca,ha,A1):
     move = 0.25*Ca - ha/2.

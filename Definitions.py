@@ -400,12 +400,46 @@ def shear_flow_shear(boom_area_incl_skin, node_pos, Vy, Vz,ha,Izz,Iyy):
     
     return tring_qt, circ_qt
 
-def shear_flow_torsion(T,A1,A2):
+def shear_flow_torsion(T,A1,A2,arc,l,ha,G,t):
     
-    return 
+    # T= resultant torque applied to the cross section
+    #A= area cell
+    #arc= lenght of the leading edge semicircle
+    #ha= diameter of the leading edge semi circle
+    #G=shear modulus
+    #t= skin thickness 
     
+
+    A=np.matrix([[0,2*A1,2*A2],[-1,(arc+ha)/(2*A1*G*t),-ha/(2*A1*G*t)],[-1,-ha/(2*A2*G*t),(2*l+ha)/(2*A2*G*t)]])
+    b=np.matrix([[T],[0],[0]])
+    x = np.linalg.solve(A,b)
+    rate_twist=x.item(0)
+    q1=x.item(1) # shear flow due to torsion in cell 1
+    q2=x.item(2)
+
     
+    return rate_twist,q1,q2
+
+def boom_area_updater(tsk, b, Mz, My, Izz, Iyy, stiff_area, zcg, node_pos):
+    a= -1
+    b= -(Mz*Iyy)/(My*Izz)
+    c= zcg
     
+    d=[0]
+    x=0
+    for i in range(11):
+        x=abs(a*node_pos[i+1][2]+b*node_pos[i+1][1]+c)/(sqrt(a**2+b**2))
+        if node_pos[i+1][1]+(c+a*node_pos[i+1][2])/b < 0:
+            x=x*(-1)
+        else:
+            x=x
+        d.append(x)
+    boom_area=[0]
+    boom_area.append(stiff_area+(tsk*b/6)*(4+(d[11]+d[2])/d[1]))
+    for i in range(9):
+        boom_area.append(stiff_area+(tsk*b/6)*(4+(d[i+1]+d[i+3])/d[i+2]))
+    boom_area.append(stiff_area+(tsk*b/6)*(4+(d[10]+d[1])/d[11]))
+    return boom_area
     
     
     
