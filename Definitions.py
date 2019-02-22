@@ -406,7 +406,7 @@ def shear_flow_shear(boom_area_incl_skin, node_pos, Vy, Vz,ha,Izz,Iyy):
 
 def shear_flow_torsion(T,A1,A2):
     
-    
+    return 
     
     
     
