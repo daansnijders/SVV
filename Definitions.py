@@ -404,10 +404,25 @@ def shear_flow_shear(boom_area_incl_skin, node_pos, Vy, Vz,ha,Izz,Iyy):
     
     return tring_qt, circ_qt
 
-def shear_flow_torsion(T,A1,A2):
+def shear_flow_torsion(T,A1,A2,arc,l,ha,G,t):
+    
+    # T= resultant torque applied to the cross section
+    #A= area cell
+    #arc= lenght of the leading edge semicircle
+    #ha= diameter of the leading edge semi circle
+    #G=shear modulus
+    #t= skin thickness 
+    
+
+    A=np.matrix([[0,2*A1,2*A2],[-1,(arc+ha)/(2*A1*G*t),-ha/(2*A1*G*t)],[-1,-ha/(2*A2*G*t),(2*l+ha)/(2*A2*G*t)]])
+    b=np.matrix([[T],[0],[0]])
+    x = np.linalg.solve(A,b)
+    rate_twist=x.item(0)
+    q1=x.item(1) # shear flow due to torsion in cell 1
+    q2=x.item(2)
     
     
-    
+    return rate_twist,q1,q2
     
     
     
