@@ -512,8 +512,9 @@ def shear_flow_total(tring_qt,circ_qt,q1,q2):
 
 def shear_flow_rib(tring_qsum,circ_qsum):
     
-    lst_circ=[] # list containing the wing skin shear flows excluding the shear flows along the spar
-    lst_tri=[]
+    lst_tri=[]  # list containing the wing skin shear flows for the triangular cell excluding the shear flows along the spar
+    lst_circ=[] # list containing the wing skin shear flows for the circular cell excluding the shear flows along the spar
+    
     
     for i in range(len(tring_qsum)):
         
@@ -527,7 +528,21 @@ def shear_flow_rib(tring_qsum,circ_qsum):
         
         lst_circ.append(circ_qsum(i))
         
+        if i==4:
+            lst_circ.remove(circ_qsum(i))
+    
+    # rib shear flow circular cell
+    
+    
         
+ 
+
+
+
+
+
+
+       
 def boom_area_updater(tsk, spacing, Mz, My, Izz, Iyy, stiff_area, zcg, nodepos, dist, arc, tspar):
     a= -1
     b= -(Mz*Iyy)/(My*Izz)
