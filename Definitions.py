@@ -424,8 +424,27 @@ def shear_flow_torsion(T,A1,A2,arc,l,ha,G,t):
 
     
     return rate_twist,q1,q2
+
+def boom_area_updater(tsk, b, Mz, My, Izz, Iyy, stiff_area, zcg, node_pos):
+    a= -1
+    b= -(Mz*Iyy)/(My*Izz)
+    c= zcg
     
-    
+    d=[0]
+    x=0
+    for i in range(11):
+        x=abs(a*node_pos[i+1][2]+b*node_pos[i+1][1]+c)/(sqrt(a**2+b**2))
+        if node_pos[i+1][1]+(c+a*node_pos[i+1][2])/b < 0:
+            x=x*(-1)
+        else:
+            x=x
+        d.append(x)
+    boom_area=[0]
+    boom_area.append(stiff_area+(tsk*b/6)*(4+(d[11]+d[2])/d[1]))
+    for i in range(9):
+        boom_area.append(stiff_area+(tsk*b/6)*(4+(d[i+1]+d[i+3])/d[i+2]))
+    boom_area.append(stiff_area+(tsk*b/6)*(4+(d[10]+d[1])/d[11]))
+    return boom_area
     
     
     
