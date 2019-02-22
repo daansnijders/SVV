@@ -4,8 +4,6 @@ import matplotlib.pyplot as plt
 plt.style.use('seaborn-whitegrid')
 import numpy as np
 
-"""EXAMPLE AREAS, TO BE DEFINED / PROGRAMED / FILLED IN"""
-B = [[0.0], [0.1], [0.2], [0.3], [0.4], [0.5], [0.6], [0.5], [0.4], [0.3], [0.2], [0.1], [0.12], [0.13]] #This is now a 2D list but could be transfered to 1D?
 
 def bending(q,n,r3a,r3b,l1,l2,l3,l4,E,I,d1,d2,d3):
     #r3a and r3b relate to the initial reaction forces used to iterate bisection method
@@ -103,8 +101,6 @@ def bending(q,n,r3a,r3b,l1,l2,l3,l4,E,I,d1,d2,d3):
             r3mid = (r3b+r3a)/2
     r3 = r3mid
     return v2, xt, r1, r2, r3
-
-
 
 def centroid(nodepos, boom_area, list_length):  #TO BE CHECKED
     ycg = 0
@@ -241,17 +237,16 @@ def boom_area_exclskin(area_stiff, nodepos, tspar, ha):
     return boom_area
     
 
-def boom_inertia(list_length, nodepos): #TO BE CHECKED
+def boom_inertia(list_length, nodepos, B): #TO BE CHECKED
     
     #nodepos = boom_location() #getting positions from previous function
-
     Ixx = [0 for _ in range(list_length)] #Defining lists of Ixx Iyy and Izz
     Iyy = [] #Etc.
     Izz = [] #Etc.
     
     for i in range(list_length):
-        Iyy.append( B[i][0] * (nodepos[i][2]) ** 2) # Iyy = Boom Area * Z distance squared
-        Izz.append( B[i][0] * (nodepos[i][1]) ** 2) # Izz = Boom Area * Y distance squared
+        Iyy.append( B[i] * (nodepos[i][2]) ** 2) # Iyy = Boom Area * Z distance squared
+        Izz.append( B[i] * (nodepos[i][1]) ** 2) # Izz = Boom Area * Y distance squared
         
     #print()
     #print("Ixx is: ",Ixx)
@@ -405,12 +400,46 @@ def shear_flow_shear(boom_area_incl_skin, node_pos, Vy, Vz,ha,Izz,Iyy):
     
     return tring_qt, circ_qt
 
-def shear_flow_torsion(T,A1,A2):
+def shear_flow_torsion(T,A1,A2,arc,l,ha,G,t):
     
-    return 
+    # T= resultant torque applied to the cross section
+    #A= area cell
+    #arc= lenght of the leading edge semicircle
+    #ha= diameter of the leading edge semi circle
+    #G=shear modulus
+    #t= skin thickness 
     
+
+    A=np.matrix([[0,2*A1,2*A2],[-1,(arc+ha)/(2*A1*G*t),-ha/(2*A1*G*t)],[-1,-ha/(2*A2*G*t),(2*l+ha)/(2*A2*G*t)]])
+    b=np.matrix([[T],[0],[0]])
+    x = np.linalg.solve(A,b)
+    rate_twist=x.item(0)
+    q1=x.item(1) # shear flow due to torsion in cell 1
+    q2=x.item(2)
+
     
+    return rate_twist,q1,q2
+
+def boom_area_updater(tsk, b, Mz, My, Izz, Iyy, stiff_area, zcg, nodepos):
+    a= -1
+    b= -(Mz*Iyy)/(My*Izz)
+    c= zcg
     
+    d=[0]
+    x=0
+    for i in range(11):
+        x=abs(a*nodepos[i+1][2]+b*nodepos[i+1][1]+c)/(math.sqrt(a**2+b**2))
+        if nodepos[i+1][1]+(c+a*nodepos[i+1][2])/b < 0:
+            x=x*(-1)
+        else:
+            x=x
+        d.append(x)
+    boom_area=[0]
+    boom_area.append(stiff_area+(tsk*b/6)*(4+(d[11]+d[2])/d[1]))
+    for i in range(9):
+        boom_area.append(stiff_area+(tsk*b/6)*(4+(d[i+1]+d[i+3])/d[i+2]))
+    boom_area.append(stiff_area+(tsk*b/6)*(4+(d[10]+d[1])/d[11]))
+    return boom_area
     
     
     
