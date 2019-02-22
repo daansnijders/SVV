@@ -426,7 +426,7 @@ def find_shear_center(boom_area_excluding_skin,Izz,node_pos,ha):
 
     #value will equal z distance of shear center
     sc_position= [0,0,moments]
-    return sc_position
+    return sc_position, tring_booms, circ_booms
                            
 
 def shear_flow_shear(boom_area_incl_skin, node_pos, Vy, Vz,ha,Izz,Iyy):
@@ -531,21 +531,25 @@ def shear_flow_rib(tring_qsum,circ_qsum):
     
     # rib shear flow circular cell
     
+    Sy1=0.
+    r=0.
+    for i in lst_circ:
+        
+        r=r+1
+        Sy1=Sy1+i*(nodepos[circ_booms(r)][1]-nodepos[circ_booms(r-1)][1]) # total vertical shear force acting due to the wing skin shear flow in the circular cell
+    
+    qrib_1 = Sy1/ha
+    
+    # rib shear flow triangular cell
+    
+    Sy2=0.
+    r=0.
+    
     
         
-<<<<<<< HEAD
- 
-
-
-
-
-
-
-       
-def boom_area_updater(tsk, spacing, Mz, My, Izz, Iyy, stiff_area, zcg, nodepos, dist, arc, tspar):
-=======
+    
+    
 def boom_area_updater(tsk, spacing, Mz, My, Izz, Iyy, stiff_area, zcg, nodepos, dist, arc, tspar, ha):
->>>>>>> 3ad000f5a9b95485014f9e489785fd13ec6e1894
     a= -1
     b= -(Mz*Iyy)/(My*Izz)
     c= zcg
