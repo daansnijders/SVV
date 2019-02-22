@@ -508,7 +508,7 @@ def shear_flow_total(tring_qt,circ_qt,q1,q2):
         
         return tring_qsum, circ_qsum
 
-def shear_flow_rib(tring_qsum,circ_qsum):
+def shear_flow_rib(tring_qsum,circ_qsum,nodepos,ha,circ_booms,tring_booms):
     
     lst_tri=[]  # list containing the wing skin shear flows for the triangular cell excluding the shear flows along the spar
     lst_circ=[] # list containing the wing skin shear flows for the circular cell excluding the shear flows along the spar
