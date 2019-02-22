@@ -528,7 +528,7 @@ def shear_flow_rib(tring_qsum,circ_qsum):
         lst_circ.append(circ_qsum(i))
         
         
-def boom_area_updater(tsk, spacing, Mz, My, Izz, Iyy, stiff_area, zcg, nodepos, dist, arc, tspar):
+def boom_area_updater(tsk, spacing, Mz, My, Izz, Iyy, stiff_area, zcg, nodepos, dist, arc, tspar, ha):
     a= -1
     b= -(Mz*Iyy)/(My*Izz)
     c= zcg
