@@ -542,6 +542,7 @@ def boom_area_updater(tsk, spacing, Mz, My, Izz, Iyy, stiff_area, zcg, nodepos, 
         else:
             x=x
         d.append(x)
+        print (d)
     boom_area=[0]
     boom_area.append(stiff_area+(tsk*spacing/6)*(4+(d[11]+d[2])/d[1]))
     for i in range(2):
