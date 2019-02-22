@@ -518,7 +518,7 @@ def shear_flow_rib(tring_qsum,circ_qsum,nodepos,ha,circ_booms,tring_booms):
         
         lst_tri.append(tring_qsum(i))
         
-        if i==4:
+        if i==5:
             
             lst_tri.revove(tring_qsum(i))
     
@@ -526,7 +526,7 @@ def shear_flow_rib(tring_qsum,circ_qsum,nodepos,ha,circ_booms,tring_booms):
         
         lst_circ.append(circ_qsum(i))
         
-        if i==4:
+        if i==5:
             lst_circ.remove(circ_qsum(i))
     
     # rib shear flow circular cell
