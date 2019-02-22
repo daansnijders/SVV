@@ -31,7 +31,6 @@ ycg, zcg = Definitions.centroid_nonidealized(tskin, ha, Ca, Ct, tspar, nodepos, 
 print (boom_area_incl_skin)
 
 
-
 boom_area = Definitions.boom_area_inclskin(tskin, tspar, spacing, nodepos, area_stiff, dist, arc, ha)
 Ixx, Iyy, Izz = Definitions.boom_inertia(list_length, nodepos, boom_area)
 
