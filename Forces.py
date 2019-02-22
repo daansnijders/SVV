@@ -5,7 +5,7 @@ Created on Mon Feb 18 14:35:45 2019
 @author: Sybren
 """
 import numpy as np
-from math import *
+import math
 import Definitions
 
 def ReactionForces(theta,P,q,Ca,ha,E,Izz,x1,x2,x3,xa,span,d1,d3): 
@@ -40,7 +40,7 @@ def ReactionForces(theta,P,q,Ca,ha,E,Izz,x1,x2,x3,xa,span,d1,d3):
     R3y = float(x[2])
     
     """ Reaction Forces in z direction """
-    A1 = -span*q/(tan(theta)) - P                #force in actuator 1 (sum of moments around hinge)
+    A1 = -span*q/(math.tan(theta)) - P                #force in actuator 1 (sum of moments around hinge)
     
     eq1 = [1.,1.,1.,0.,0.]                      #sum of forces in z
     eq2 = [-(x2 - x1),0.,(x3-x2),0.,0.]         #sum of moments round hinge 2
@@ -69,93 +69,103 @@ def ReactionForces(theta,P,q,Ca,ha,E,Izz,x1,x2,x3,xa,span,d1,d3):
     return R2x, R1y, R2y, R3y, R1z, R2z, R3z
     
         
-def ExactMOI(theta,Ca,ha,t_sk,t_sp,t_st,w_st,h_st,zcg,no_st,spacing)
+def ExactMOI(theta,Ca,ha,t_sk,t_sp,t_st,w_st,h_st,zcg,n,spacing,nodepos):
     
     """ Stringer MOI """
-    y_bar = (t_st*w*t_st/2. + (h_st-t_st)*t*((h_st-t_st)/2. + t_st)) / (w_st*t_st + (h_st-t_st)*t_st)
+    y_bar = (t_st*w_st*t_st/2. + (h_st-t_st)*t_st*((h_st-t_st)/2. + t_st)) / (w_st*t_st + (h_st-t_st)*t_st)
     A = (w_st*t_st + (h_st-t_st)*t_st)
     Izz_st = 1./12. *w_st*t_st**3. + (w_st*t_st)*(y_bar - t_st/2.) + 1./12.*(h_st - t_st)**3.*t_st + (h_st-t_st)*t_st * ((h_st-t_st)/2. - y_bar)
-    Iyy_st = 1./12 *(h_st-t_st)*t_st**3. + 1./12. * w_st**3. *t
+    Iyy_st = 1./12 *(h_st-t_st)*t_st**3. + 1./12. * w_st**3. *t_st
     
     """ Half arc MOI """
-    Izz_arc = 1./2. * pi * ha**3. * t_sk
-    Iyy_arc = 1./2. * pi * ha**3. * t_sk
+    Izz_arc = 1./2. * math.pi * ha**3. * t_sk
+    Iyy_arc = 1./2. * math.pi * ha**3. * t_sk
     
     """ Spar MOI """
     Izz_sp = 1./12. * ha**3. * t_sp
     Iyy_sp = 1./12. * t_sp**3. * ha
     
     """ Beam MOI """
-    a = sqrt((Ca - ha/2.)**2. + (ha/2.)**2.)
-    angle = arctan(ha/(2.*(Ca - ha/2.)))
-    Izz_beam = t_sk * a**3. *(sin(angle))**2. / 12.
-    Iyy_beam = t_sk * a**3. *(cos(angle))**2. / 12.
+    a = math.sqrt((Ca - ha/2.)**2. + (ha/2.)**2.)
+    angle = math.atan(ha/(2.*(Ca - ha/2.)))
+    Izz_beam = t_sk * a**3. *(math.sin(angle))**2. / 12.
+    Iyy_beam = t_sk * a**3. *(math.cos(angle))**2. / 12.
     
     """ Overall MOI """
     Izz = 0.
     Iyy = 0.
-    loc = []
+    loyc = []
+    loyz = []
     #For loop for all stringers
-    for i in range(len(no_st)):
-        if i <= (no_st - 1.)/2. - 2):
-            z_loc = Ca - ha/2. - zcg - (i+0.5)*spacing/cos(theta) 
-            y_loc = (i+0.5)*spacing/sin(theta)
-            Izz_new = (Iyy_st + Izz_st)/2. + (Izz_st - Iyy_st)/2. * cos(2.*angle)
-            Iyy_new = (Iyy_st + Izz_st)/2. - (Izz_st - Iyy_st)/2. * cos(2.*angle)
-        elif i == (no_st - 1.)/2. - 1):
-            z_loc = Ca - ha/2. - zcg - (i+0.5)*spacing/cos(theta) 
-            y_loc = (i-0.5)*spacing/sin(theta)
-            Izz_new = (Iyy_st + Izz_st)/2. + (Izz_st - Iyy_st)/2. * cos(-2.*angle)
-            Iyy_new = (Iyy_st + Izz_st)/2. - (Izz_st - Iyy_st)/2. * cos(-2.*angle)
-        elif i == (no_st - 1.)/2. :
-            z_loc = - zg - ha/2.
+    for i in range(n):
+        if i <= ((n - 1.)/2. - 2):
+            z_loc = Ca - ha/2. - zcg - (i+0.5)*spacing/math.cos(theta) 
+            y_loc = (i+0.5)*spacing/math.sin(theta)
+            Izz_new = (Iyy_st + Izz_st)/2. + (Izz_st - Iyy_st)/2. * math.cos(2.*angle)
+            Iyy_new = (Iyy_st + Izz_st)/2. - (Izz_st - Iyy_st)/2. * math.cos(2.*angle)
+        elif i == ((n - 1.)/2. - 1):
+            z_loc = nodepos[i][2] - zcg 
+            y_loc = nodepos[i][1]
+            Izz_new = (Iyy_st + Izz_st)/2. + (Izz_st - Iyy_st)/2. * math.cos(-2.*angle)
+            Iyy_new = (Iyy_st + Izz_st)/2. - (Izz_st - Iyy_st)/2. * math.cos(-2.*angle)
+        elif i == (n - 1.)/2. :
+            z_loc = - zcg - ha/2.
             y_loc = 0.
-            Izz_new = Ixx_st
+            Izz_new = Iyy_st
             Iyy_new = Izz_st
-        elif i == (no_st - 1.)/2. + 1):
-            z_loc = Ca - ha/2. - zcg - (no_st - 0.5 - i)*spacing/cos(theta) 
-            y_loc = (no_st - 1.5 - i)*spacing/sin(theta)
-            Izz_new = (Iyy_st + Izz_st)/2. + (Izz_st - Iyy_st)/2. * cos(2.*angle)
-            Iyy_new = (Iyy_st + Izz_st)/2. - (Izz_st - Iyy_st)/2. * cos(2.*angle)
+        elif i == ((n - 1.)/2. + 1):
+            z_loc = nodepos[i][2] - zcg 
+            y_loc = nodepos[i][1]
+            Izz_new = (Iyy_st + Izz_st)/2. + (Izz_st - Iyy_st)/2. * math.cos(2.*angle)
+            Iyy_new = (Iyy_st + Izz_st)/2. - (Izz_st - Iyy_st)/2. * math.cos(2.*angle)
         else:
-            z_loc = Ca - ha/2. - zcg - (no_st - 0.5 - i)*spacing/cos(theta) 
-            y_loc = (no_st - 0.5 - i)*spacing/sin(theta)
-            Izz_new = (Iyy_st + Izz_st)/2. + (Izz_st - Iyy_st)/2. * cos(-2.*angle)
-            Iyy_new = (Iyy_st + Izz_st)/2. - (Izz_st - Iyy_st)/2. * cos(-2.*angle)
+            z_loc = Ca - ha/2. - zcg - (n - 0.5 - i)*spacing/math.cos(theta) 
+            y_loc = (n - 0.5 - i)*spacing/math.sin(theta)
+            Izz_new = (Iyy_st + Izz_st)/2. + (Izz_st - Iyy_st)/2. * math.cos(-2.*angle)
+            Iyy_new = (Iyy_st + Izz_st)/2. - (Izz_st - Iyy_st)/2. * math.cos(-2.*angle)
         
         Izz += Izz_new + A * (z_loc)**2.
         Iyy += Iyy_new + A * (y_loc)**2.
-        loc.append([z_loc, y_loc])
+        locy.append(y_loc)
+        locz.append(z_loc)
+        
+    plt.plot(z_loc, y_loc, "bo")
+    plt.grid(True)
+    plt.show
+    
+    
     
     #Add half arc
     Izz += Izz_arc
-    Iyy += Iyy_arc + (pi*((ha/2.)**2 - (ha/2. - t_sk)**2.)/2.)* (2.*ha/2./pi + zcg)**2.
+    Iyy += Iyy_arc + (math.pi*((ha/2.)**2 - (ha/2. - t_sk)**2.)/2.)* (2.*ha/2./math.pi + zcg)**2.
     
     #Add spar
     Izz += Izz_sp
     Iyy += Iyy_sp + (t_sp * ha)*zcg**2.
     
     #Add beams
-    Izz += (Izz_beam + (Ca-ha/2.)*cos(angle)*t_sk * (((Ca-ha/2.)/2.)*tan(angle))**2.)*2.
-    Iyy += (Iyy_beam + (Ca-ha/2.)*cos(angle)*t_sk *(((Ca-ha/2.)/2.)-zcg)**2.)
+    Izz += (Izz_beam + (Ca-ha/2.)*math.cos(angle)*t_sk * (((Ca-ha/2.)/2.)*math.tan(angle))**2.)*2.
+    Iyy += (Iyy_beam + (Ca-ha/2.)*math.cos(angle)*t_sk *(((Ca-ha/2.)/2.)-zcg)**2.)
     
     Izz_0 = Izz
     Iyy_0 = Iyy        
     
-    Iyy_theta = (Izz_0 + Iyy_0)/2. + (Izz_0 - Iyy_0)/2. * cos(2.*theta)
-    Izz_theta = (Izz_0 + Iyy_0)/2. - (Izz_0 - Iyy_0)/2. * cos(2.*theta)
-    Izy_theta = (Izz_0 - Iyy_0)/2. *sin(2.*theta)
+    Iyy_theta = (Izz_0 + Iyy_0)/2. + (Izz_0 - Iyy_0)/2. * math.cos(2.*theta)
+    Izz_theta = (Izz_0 + Iyy_0)/2. - (Izz_0 - Iyy_0)/2. * math.cos(2.*theta)
+    Izy_theta = (Izz_0 - Iyy_0)/2. *math.sin(2.*theta)
     
-def Torsion(theta,P,q,Ca,ha,A1):
-    move = 0.25*Ca - ha/2.
-    movez = move*cos(theta)
-    movey = move*sin(theta)
+    return Iyy_0, Izz_0, Iyy_theta, Izz_theta, Izy_theta
     
-    M_add_P = P*movey
-    M_add_q = q*movex
+#def Torsion(theta,P,q,Ca,ha,A1):
+#    move = 0.25*Ca - ha/2.
+#    movez = move*math.cos(theta)
+#    movey = move*math.sin(theta)
+#    
+#    M_add_P = P*movey
+#    M_add_q = q*movex
 
 
-theta = (30./180.*pi)
+theta = (30./180.*math.pi)
 P = 49200.
 q = 3860.
 Ca = 0.505
@@ -168,5 +178,22 @@ span = 1.611
 d1 = 0.00389
 d3 = 0.01245
 E = 73084430000         #N/m2
-Izz = 0.0013            #m4
-test = ReactionForces(theta,P,q,Ca,ha,E,Izz,x1,x2,x3,xa,span,d1,d3)
+t_sk = 1.1 * 10**(-3)
+t_sp = 2.4 * 10**(-3)
+t_st = 1.2 * 10**(-3)
+w_st = 0.17
+h_st = 0.13
+A = (w_st*t_st + (h_st-t_st)*t_st)
+n = 11
+list_length = 14
+spacing, Cr, alpharad, Ct = Definitions.boom_spacing(ha, Ca, n)
+nodepos, arc, dist = Definitions.boom_location(spacing, Cr, alpharad, list_length, ha)
+ycg, zcg = Definitions.centroid_nonidealized(t_sk, ha, Ca, Ct, t_sp, nodepos, A)
+Iyy_0, Izz_0, Iyy_theta, Izz_theta, Izy_theta = ExactMOI(theta,Ca,ha,t_sk,t_sp,t_st,w_st,h_st,zcg,n,spacing,nodepos)
+test = ReactionForces(theta,P,q,Ca,ha,E,Izz_theta,x1,x2,x3,xa,span,d1,d3)
+
+
+
+
+
+

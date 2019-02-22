@@ -22,21 +22,24 @@ alphadeg = math.degrees(alpharad)
 nodepos, arc, dist = Definitions.boom_location(spacing, Cr, alpharad, list_length, ha)
 
 area_stiff = Definitions.area_stiff(t_stiff, h_stiff, w_stiff)
-boom_area_incl_skin = Definitions.boom_area_inclskin(tskin, tspar, spacing, nodepos, area_stiff, dist, arc, ha)
 
-boom_area_excl_skin = Definitions.boom_area_exclskin(area_stiff, nodepos, tspar, ha)
+
+
 
 ycg, zcg = Definitions.centroid_nonidealized(tskin, ha, Ca, Ct, tspar, nodepos, area_stiff)
 
-print (boom_area_incl_skin)
+#print (boom_area_incl_skin)
 
 
-boom_area = Definitions.boom_area_inclskin(tskin, tspar, spacing, nodepos, area_stiff, dist, arc, ha)
+
+
+My = 0.1
+Mz = 0.1
+
+
+"""Sybren calculate centroid of non idealized structure"""
+""""Sybren """
+
+
+boom_area = Definitions.boom_area_updater(tskin, spacing, Mz, My, Izz, Iyy, area_stiff, zcg, nodepos, dist, arc, tspar, ha)
 Ixx, Iyy, Izz = Definitions.boom_inertia(list_length, nodepos, boom_area)
-
-
-My = 0.
-Mz = 0.
-
-
-boom_area = Definitions.boom_area_updater(tskin, spacing, Mz, My, Izz, Iyy, area_stiff, zcg, nodepos)

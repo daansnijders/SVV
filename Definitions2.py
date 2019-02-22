@@ -4,6 +4,8 @@ import matplotlib.pyplot as plt
 plt.style.use('seaborn-whitegrid')
 import numpy as np
 
+"""EXAMPLE AREAS, TO BE DEFINED / PROGRAMED / FILLED IN"""
+B = [[0.0], [0.1], [0.2], [0.3], [0.4], [0.5], [0.6], [0.5], [0.4], [0.3], [0.2], [0.1], [0.12], [0.13]] #This is now a 2D list but could be transfered to 1D?
 
 def deflection(q,n,r3,l1,l2,l3,l4,E,I,d1,d2,d3,rz3,P2,xa,Ca,ha,theta2):
     #theta2 is the angle of section 2 where hinge 2 is
@@ -265,25 +267,25 @@ def boom_location(spacing, Cr, alpharad, list_length, ha):
 def area_stiff(t_stiff, h_stiff, w_stiff):
     area_stiff = t_stiff * h_stiff + w_stiff * t_stiff
     return area_stiff
-#
-#def boom_area_inclskin(tskin, tspar, spacing, nodepos, area_stiff, dist, arc, ha):
-#    boom_area = 14*[0]
-#    boom_area[1] = area_stiff + tskin*spacing/6*(2+nodepos[11][1]/nodepos[1][1]) + tskin*spacing/6*(2+nodepos[2][1]/nodepos[1][1])
-#    boom_area[2] = area_stiff + tskin*spacing/6*(2+nodepos[1][1]/nodepos[2][1]) + tskin*spacing/6*(2+nodepos[3][1]/nodepos[2][1])
-#    boom_area[3] = area_stiff + tskin*spacing/6*(2+nodepos[2][1]/nodepos[3][1]) + tskin*spacing/6*(2+nodepos[4][1]/nodepos[3][1])
-#    boom_area[4] = area_stiff + tskin*spacing/6*(2+nodepos[3][1]/nodepos[4][1]) + tskin*dist/6*(2+nodepos[12][1]/nodepos[4][1])
-#    boom_area[5] = area_stiff + tskin*arc/6*(2+nodepos[12][1]/nodepos[5][1]) + tskin*spacing/6*(2+nodepos[6][1]/nodepos[5][1])
-#    boom_area[6] = area_stiff 
-#    boom_area[7] = area_stiff + tskin*spacing/6*(2+nodepos[6][1]/nodepos[7][1]) + tskin*arc/6*(2+nodepos[13][1]/nodepos[7][1])
-#    boom_area[8] = area_stiff + tskin*dist/6*(2+nodepos[13][1]/nodepos[8][1]) + tskin*spacing/6*(2+nodepos[9][1]/nodepos[8][1])
-#    boom_area[9] = area_stiff + tskin*spacing/6*(2+nodepos[8][1]/nodepos[9][1]) + tskin*spacing/6*(2+nodepos[10][1]/nodepos[9][1])
-#    boom_area[10] = area_stiff + tskin*spacing/6*(2+nodepos[9][1]/nodepos[10][1]) + tskin*spacing/6*(2+nodepos[11][1]/nodepos[10][1])
-#    boom_area[11] = area_stiff + tskin*spacing/6*(2+nodepos[10][1]/nodepos[11][1]) + tskin*spacing/6*(2+nodepos[1][1]/nodepos[11][1])
-#    boom_area[12] = tskin*dist/6*(2+nodepos[4][1]/nodepos[12][1]) + tskin*arc/6*(2+nodepos[5][1]/nodepos[12][1]) + tspar*ha/6*(2+nodepos[13][1]/nodepos[12][1])
-#    boom_area[13] = tskin*spacing/6*(2+nodepos[11][1]/nodepos[13][1]) + tskin*spacing/6*(2+nodepos[2][1]/nodepos[13][1]) + tspar*ha/6*(2+nodepos[12][1]/nodepos[13][1])
-#
-#    return boom_area
-#    
+
+def boom_area_inclskin(tskin, tspar, spacing, nodepos, area_stiff, dist, arc, ha):
+    boom_area = 14*[0]
+    boom_area[1] = area_stiff + tskin*spacing/6*(2+nodepos[11][1]/nodepos[1][1]) + tskin*spacing/6*(2+nodepos[2][1]/nodepos[1][1])
+    boom_area[2] = area_stiff + tskin*spacing/6*(2+nodepos[1][1]/nodepos[2][1]) + tskin*spacing/6*(2+nodepos[3][1]/nodepos[2][1])
+    boom_area[3] = area_stiff + tskin*spacing/6*(2+nodepos[2][1]/nodepos[3][1]) + tskin*spacing/6*(2+nodepos[4][1]/nodepos[3][1])
+    boom_area[4] = area_stiff + tskin*spacing/6*(2+nodepos[3][1]/nodepos[4][1]) + tskin*dist/6*(2+nodepos[12][1]/nodepos[4][1])
+    boom_area[5] = area_stiff + tskin*arc/6*(2+nodepos[12][1]/nodepos[5][1]) + tskin*spacing/6*(2+nodepos[6][1]/nodepos[5][1])
+    boom_area[6] = area_stiff 
+    boom_area[7] = area_stiff + tskin*spacing/6*(2+nodepos[6][1]/nodepos[7][1]) + tskin*arc/6*(2+nodepos[13][1]/nodepos[7][1])
+    boom_area[8] = area_stiff + tskin*dist/6*(2+nodepos[13][1]/nodepos[8][1]) + tskin*spacing/6*(2+nodepos[9][1]/nodepos[8][1])
+    boom_area[9] = area_stiff + tskin*spacing/6*(2+nodepos[8][1]/nodepos[9][1]) + tskin*spacing/6*(2+nodepos[10][1]/nodepos[9][1])
+    boom_area[10] = area_stiff + tskin*spacing/6*(2+nodepos[9][1]/nodepos[10][1]) + tskin*spacing/6*(2+nodepos[11][1]/nodepos[10][1])
+    boom_area[11] = area_stiff + tskin*spacing/6*(2+nodepos[10][1]/nodepos[11][1]) + tskin*spacing/6*(2+nodepos[1][1]/nodepos[11][1])
+    boom_area[12] = tskin*dist/6*(2+nodepos[4][1]/nodepos[12][1]) + tskin*arc/6*(2+nodepos[5][1]/nodepos[12][1]) + tspar*ha/6*(2+nodepos[13][1]/nodepos[12][1])
+    boom_area[13] = tskin*spacing/6*(2+nodepos[11][1]/nodepos[13][1]) + tskin*spacing/6*(2+nodepos[2][1]/nodepos[13][1]) + tspar*ha/6*(2+nodepos[12][1]/nodepos[13][1])
+
+    return boom_area
+    
 def boom_area_exclskin(area_stiff, nodepos, tspar, ha):
     boom_area = 14*[0]
     boom_area[1] = area_stiff 
@@ -303,7 +305,7 @@ def boom_area_exclskin(area_stiff, nodepos, tspar, ha):
     return boom_area
     
 
-def boom_inertia(list_length, nodepos, B): #TO BE CHECKED
+def boom_inertia(list_length, nodepos): #TO BE CHECKED
     
     #nodepos = boom_location() #getting positions from previous function
 
@@ -312,8 +314,8 @@ def boom_inertia(list_length, nodepos, B): #TO BE CHECKED
     Izz = [] #Etc.
     
     for i in range(list_length):
-        Iyy.append( B[i] * (nodepos[i][2]) ** 2) # Iyy = Boom Area * Z distance squared
-        Izz.append( B[i] * (nodepos[i][1]) ** 2) # Izz = Boom Area * Y distance squared
+        Iyy.append( B[i][0] * (nodepos[i][2]) ** 2) # Iyy = Boom Area * Z distance squared
+        Izz.append( B[i][0] * (nodepos[i][1]) ** 2) # Izz = Boom Area * Y distance squared
         
     #print()
     #print("Ixx is: ",Ixx)
@@ -508,7 +510,7 @@ def shear_flow_total(tring_qt,circ_qt,q1,q2):
         
         return tring_qsum, circ_qsum
 
-def shear_flow_rib(tring_qsum,circ_qsum):
+def shear_flow_rib(tring_qsum,circ_qsum,nodepos,ha,circ_booms,tring_booms):
     
     lst_tri=[]  # list containing the wing skin shear flows for the triangular cell excluding the shear flows along the spar
     lst_circ=[] # list containing the wing skin shear flows for the circular cell excluding the shear flows along the spar
@@ -517,23 +519,34 @@ def shear_flow_rib(tring_qsum,circ_qsum):
     for i in range(len(tring_qsum)):
         
         lst_tri.append(tring_qsum(i))
-        
-        if i==4:
+        if i==5:
             
-            lst_tri.revove(tring_qsum(i))
+            lst_tri.remove(tring_qsum(i))
     
     for j in range(len(circ_qsum)):
         
-        lst_circ.append(circ_qsum(i))
-        
-        if i==4:
-            lst_circ.remove(circ_qsum(i))
+        lst_circ.append(circ_qsum(j))
+        if j==5:
+            lst_circ.remove(circ_qsum(j))
     
     # rib shear flow circular cell
     
+    Sy1=0.
+    r=0.
+    for i in lst_circ:
+        
+        r=r+1
+        Sy1=Sy1+i*(nodepos[circ_booms(r)][1]-nodepos[circ_booms(r-1)][1]) # total vertical shear force acting due to the wing skin shear flow in the circular cell
+    
+    qrib_1 = Sy1/ha
+    
+    # rib shear flow triangular cell
+    
+    Sy2=0.
+    r=0.
+    
     
         
-<<<<<<< HEAD
  
 
 
@@ -543,9 +556,6 @@ def shear_flow_rib(tring_qsum,circ_qsum):
 
        
 def boom_area_updater(tsk, spacing, Mz, My, Izz, Iyy, stiff_area, zcg, nodepos, dist, arc, tspar):
-=======
-def boom_area_updater(tsk, spacing, Mz, My, Izz, Iyy, stiff_area, zcg, nodepos, dist, arc, tspar, ha):
->>>>>>> 3ad000f5a9b95485014f9e489785fd13ec6e1894
     a= -1
     b= -(Mz*Iyy)/(My*Izz)
     c= zcg
@@ -556,10 +566,9 @@ def boom_area_updater(tsk, spacing, Mz, My, Izz, Iyy, stiff_area, zcg, nodepos, 
         x=abs(a*nodepos[i+1][2]+b*nodepos[i+1][1]+c)/(math.sqrt(a**2+b**2))
         if nodepos[i+1][1]+(c+a*nodepos[i+1][2])/b < 0:
             x=x*(-1)
-        else:
+        elif:
             x=x
         d.append(x)
-    
     boom_area=[0]
     boom_area.append(stiff_area+(tsk*spacing/6)*(4+(d[11]+d[2])/d[1]))
     for i in range(2):
