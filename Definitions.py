@@ -539,7 +539,7 @@ def boom_area_updater(tsk, spacing, Mz, My, Izz, Iyy, stiff_area, zcg, nodepos, 
         x=abs(a*nodepos[i+1][2]+b*nodepos[i+1][1]+c)/(math.sqrt(a**2+b**2))
         if nodepos[i+1][1]+(c+a*nodepos[i+1][2])/b < 0:
             x=x*(-1)
-        elif:
+        else:
             x=x
         d.append(x)
     boom_area=[0]
