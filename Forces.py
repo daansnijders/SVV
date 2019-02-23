@@ -7,6 +7,7 @@ Created on Mon Feb 18 14:35:45 2019
 import numpy as np
 import math
 import Definitions
+import matplotlib.pyplot as plt
 
 def ReactionForces(theta,P,q,Ca,ha,E,Izz,x1,x2,x3,xa,span,d1,d3): 
     """ Reaction Forces in x direction """
@@ -94,33 +95,33 @@ def ExactMOI(theta,Ca,ha,t_sk,t_sp,t_st,w_st,h_st,zcg,n,spacing,nodepos):
     """ Overall MOI """
     Izz = 0.
     Iyy = 0.
-    loyc = []
-    loyz = []
+    locy = []
+    locz = []
     #For loop for all stringers
     for i in range(n):
         if i <= ((n - 1.)/2. - 2):
-            z_loc = Ca - ha/2. - zcg - (i+0.5)*spacing/math.cos(theta) 
+            z_loc = Ca - ha/2. - abs(zcg) - (i+0.5)*spacing/math.cos(theta) 
             y_loc = (i+0.5)*spacing/math.sin(theta)
             Izz_new = (Iyy_st + Izz_st)/2. + (Izz_st - Iyy_st)/2. * math.cos(2.*angle)
             Iyy_new = (Iyy_st + Izz_st)/2. - (Izz_st - Iyy_st)/2. * math.cos(2.*angle)
         elif i == ((n - 1.)/2. - 1):
-            z_loc = nodepos[i][2] - zcg 
+            z_loc = nodepos[i][2] - abs(zcg) 
             y_loc = nodepos[i][1]
             Izz_new = (Iyy_st + Izz_st)/2. + (Izz_st - Iyy_st)/2. * math.cos(-2.*angle)
             Iyy_new = (Iyy_st + Izz_st)/2. - (Izz_st - Iyy_st)/2. * math.cos(-2.*angle)
         elif i == (n - 1.)/2. :
-            z_loc = - zcg - ha/2.
+            z_loc = - abs(zcg) - ha/2.
             y_loc = 0.
             Izz_new = Iyy_st
             Iyy_new = Izz_st
         elif i == ((n - 1.)/2. + 1):
-            z_loc = nodepos[i][2] - zcg 
+            z_loc = nodepos[i][2] - abs(zcg)
             y_loc = nodepos[i][1]
             Izz_new = (Iyy_st + Izz_st)/2. + (Izz_st - Iyy_st)/2. * math.cos(2.*angle)
             Iyy_new = (Iyy_st + Izz_st)/2. - (Izz_st - Iyy_st)/2. * math.cos(2.*angle)
         else:
-            z_loc = Ca - ha/2. - zcg - (n - 0.5 - i)*spacing/math.cos(theta) 
-            y_loc = (n - 0.5 - i)*spacing/math.sin(theta)
+            z_loc = Ca - ha/2. - abs(zcg) - (n - 0.5 - i)*spacing/math.cos(theta) 
+            y_loc = -(n - 0.5 - i)*spacing/math.sin(theta)
             Izz_new = (Iyy_st + Izz_st)/2. + (Izz_st - Iyy_st)/2. * math.cos(-2.*angle)
             Iyy_new = (Iyy_st + Izz_st)/2. - (Izz_st - Iyy_st)/2. * math.cos(-2.*angle)
         
@@ -129,7 +130,7 @@ def ExactMOI(theta,Ca,ha,t_sk,t_sp,t_st,w_st,h_st,zcg,n,spacing,nodepos):
         locy.append(y_loc)
         locz.append(z_loc)
         
-    plt.plot(z_loc, y_loc, "bo")
+    plt.plot(locz, locy, "bo")
     plt.grid(True)
     plt.show
     
