@@ -43,7 +43,6 @@ noderib_b = np.array([j for i in noderib_b for j in i]) - 1
 noderib_c = np.array([j for i in noderib_c for j in i]) - 1
 noderib_d = np.array([j for i in noderib_d for j in i]) - 1
 
-
 noderib_a_element = []
 noderib_b_element = []
 noderib_c_element = []
@@ -58,15 +57,11 @@ for q in noderib_c:
 for q in noderib_d:
     noderib_d_element.append(element_set[int(q)-1])
 
-   
 noderib_a_element = np.array(noderib_a_element)
 noderib_b_element = np.array(noderib_b_element)
 noderib_c_element = np.array(noderib_c_element)
 noderib_d_element = np.array(noderib_d_element)
 
-
-
-
-
-   
-
+von_misses_stress = []
+#with open ("./data/F100_SLC1.rpt") as g_in:
+    
