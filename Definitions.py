@@ -54,47 +54,96 @@ def deflection(q,n,r3,l1,l2,l3,l4,E,I,d1,d2,d3,rz3,P2,xa,Ca,ha,theta2,theta1):
         u = np.append(u, -(-(-q*(x**4)/24)*I[0][1][i]+0*I[1][1][i])/(E*(I[0][0][i]*I[1][1][i]-I[0][1][i]**2)))
 
         i = i+1
-    for x in np.linspace(l1,l2,n+1)[1:]:
+
+        
+    for x in np.linspace(l1,l2-xa/2,n+1)[1:]:
         xt = np.append(xt, x)
-        dx = (l2-l1)/(n)
+        dx = (l2-xa/2-l1)/(n)
         
         Mz = np.append(Mz, -q*(x**2)/2-r1*(x-l1))
-        My = np.append(My, rz1*(x-l1)+P1*(np.sign((x-l2+xa/2)) == 1)*(x-l2+xa/2))
+        My = np.append(My, rz1*(x-l1))
 
 
         vdouble = np.append(vdouble,-(Mz[i-1]*I[0][0][i-1]-My[i-1]*I[0][1][i-1])/(E*(I[0][0][i-1]*I[1][1][i-1]-I[0][1][i-1]**2)))
         vsingle = np.append(vsingle,(-1/(E*(I[0][0][i-1]*I[1][1][i-1]-I[0][1][i-1]**2)))*((-q*(x**3)/6-r1*(x-l1)**2/2)*I[0][0][i-1]-
-                                                    (rz1*(x-l1)**2/2+P1*(np.sign((x-l2+xa/2)) == 1)*(x-l2+xa/2)**2/2)*I[0][1][i-1]))
+                                                    (rz1*(x-l1)**2/2)*I[0][1][i-1]))
         v = np.append(v, (-1/(E*(I[0][0][i-1]*I[1][1][i-1]-I[0][1][i-1]**2)))*((-q*(x**4)/24-r1*(x-l1)**3/6)*I[0][0][i-1]-
-                                                    (rz1*(x-l1)**3/6+P1*(np.sign((x-l2+xa/2)) == 1)*(x-l2+xa/2)**3/6)*I[0][1][i-1]))
+                                                    (rz1*(x-l1)**3/6)*I[0][1][i-1]))
 
         udouble = np.append(udouble, -(-Mz[i-1]*I[0][1][i]+My[i-1]*I[1][1][i])/(E*(I[0][0][i]*I[1][1][i]-I[0][1][i]**2)))
-        usingle = np.append(usingle,-(-(-q*(x**3)/6-r1*(x-l1)**2/2)*I[0][1][i]+(rz1*(x-l1)**2/2+P1*(np.sign((x-l2+xa/2)) == 1)*(x-l2+xa/2)**2/2)*I[1][1][i])/(E*(I[0][0][i]*I[1][1][i]-I[0][1][i]**2)))
-        u = np.append(u, -(-(-q*(x**4)/24-r1*(x-l1)**3/6)*I[0][1][i]+(rz1*(x-l1)**3/6+P1*(np.sign((x-l2+xa/2)) == 1)*(x-l2+xa/2)**3/6)*I[1][1][i])/(E*(I[0][0][i]*I[1][1][i]-I[0][1][i]**2)))
+        usingle = np.append(usingle,-(-(-q*(x**3)/6-r1*(x-l1)**2/2)*I[0][1][i]+(rz1*(x-l1)**2/2)*I[1][1][i])/(E*(I[0][0][i]*I[1][1][i]-I[0][1][i]**2)))
+        u = np.append(u, -(-(-q*(x**4)/24-r1*(x-l1)**3/6)*I[0][1][i]+(rz1*(x-l1)**3/6)*I[1][1][i])/(E*(I[0][0][i]*I[1][1][i]-I[0][1][i]**2)))
 
         i = i+1
-    for x in np.linspace(l2,l3,n+1)[1:]:
+
+    for x in np.linspace(l2-xa/2,l2,n+1)[1:]:
         xt = np.append(xt, x)
-        dx = (l3-l2)/(n)
+        dx = (l2-l2+xa/2)/(n)
+        
+        Mz = np.append(Mz, -q*(x**2)/2-r1*(x-l1))
+        My = np.append(My, rz1*(x-l1)+P1*(x-l2+xa/2))
+
+
+        vdouble = np.append(vdouble,-(Mz[i-1]*I[0][0][i-1]-My[i-1]*I[0][1][i-1])/(E*(I[0][0][i-1]*I[1][1][i-1]-I[0][1][i-1]**2)))
+        vsingle = np.append(vsingle,(-1/(E*(I[0][0][i-1]*I[1][1][i-1]-I[0][1][i-1]**2)))*((-q*(x**3)/6-r1*(x-l1)**2/2)*I[0][0][i-1]-
+                                                    (rz1*(x-l1)**2/2+P1*(x-l2+xa/2)**2/2)*I[0][1][i-1]))
+        v = np.append(v, (-1/(E*(I[0][0][i-1]*I[1][1][i-1]-I[0][1][i-1]**2)))*((-q*(x**4)/24-r1*(x-l1)**3/6)*I[0][0][i-1]-
+                                                    (rz1*(x-l1)**3/6+P1*(x-l2+xa/2)**3/6)*I[0][1][i-1]))
+
+        udouble = np.append(udouble, -(-Mz[i-1]*I[0][1][i]+My[i-1]*I[1][1][i])/(E*(I[0][0][i]*I[1][1][i]-I[0][1][i]**2)))
+        usingle = np.append(usingle,-(-(-q*(x**3)/6-r1*(x-l1)**2/2)*I[0][1][i]+(rz1*(x-l1)**2/2+P1*(x-l2+xa/2)**2/2)*I[1][1][i])/(E*(I[0][0][i]*I[1][1][i]-I[0][1][i]**2)))
+        u = np.append(u, -(-(-q*(x**4)/24-r1*(x-l1)**3/6)*I[0][1][i]+(rz1*(x-l1)**3/6+P1*(x-l2+xa/2)**3/6)*I[1][1][i])/(E*(I[0][0][i]*I[1][1][i]-I[0][1][i]**2)))
+
+        i = i+1
+
+        
+    for x in np.linspace(l2,l2+xa/2,n+1)[1:]:
+        xt = np.append(xt, x)
+        dx = (l2+xa/2-l2)/(n)
         
         Mz = np.append(Mz, -q*(x**2)/2-r1*(x-l1)-r2*(x-l2))
-        My = np.append(My, rz1*(x-l1)+P1*(np.sign((x-l2+xa/2)) == 1)*(x-l2+xa/2)+rz2*(x-l2)-P2*(np.sign((x-l2-xa/2)) == 1)*(x-l2-xa/2))
+        My = np.append(My, rz1*(x-l1)+P1*(x-l2+xa/2)+rz2*(x-l2))
 
         vdouble = np.append(vdouble,-(Mz[i-1]*I[0][0][i-1]-My[i-1]*I[0][1][i-1])/(E*(I[0][0][i-1]*I[1][1][i-1]-I[0][1][i-1]**2)))
         vsingle = np.append(vsingle,(-1/(E*(I[0][0][i-1]*I[1][1][i-1]-I[0][1][i-1]**2)))*((-q*(x**3)/6-r1*(x-l1)**2/2-r2*(x-l2)**2/2)*I[0][0][i-1]-
-                                                    (rz1*(x-l1)**2/2+P1*(np.sign((x-l2+xa/2)) == 1)*(x-l2+xa/2)**2/2+
-                                                     rz2*(x-l2)**2/2-P2*(np.sign((x-l2-xa/2)) == 1)*(x-l2-xa/2)**2/2)*I[0][1][i-1]))
+                                                    (rz1*(x-l1)**2/2+P1*(x-l2+xa/2)**2/2+
+                                                     rz2*(x-l2)**2/2)*I[0][1][i-1]))
         v = np.append(v, (-1/(E*(I[0][0][i-1]*I[1][1][i-1]-I[0][1][i-1]**2)))*((-q*(x**4)/24-r1*(x-l1)**3/6-r2*(x-l2)**3/6)*I[0][0][i-1]-
-                                                    (rz1*(x-l1)**3/6+P1*(np.sign((x-l2+xa/2)) == 1)*(x-l2+xa/2)**3/6+
-                                                     rz2*(x-l2)**3/6-P2*(np.sign((x-l2-xa/2)) == 1)*(x-l2-xa/2)**3/6)*I[0][1][i-1]))
+                                                    (rz1*(x-l1)**3/6+P1*(x-l2+xa/2)**3/6+
+                                                     rz2*(x-l2)**3/6)*I[0][1][i-1]))
 
 
 
         udouble = np.append(udouble, -(-Mz[i-1]*I[0][1][i]+My[i-1]*I[1][1][i])/(E*(I[0][0][i]*I[1][1][i]-I[0][1][i]**2)))
-        usingle = np.append(usingle,-(-(-q*(x**3)/6-r1*(x-l1)**2/2-r2*(x-l2)**2/2)*I[0][1][i]+(rz1*(x-l1)**2/2+P1*(np.sign((x-l2+xa/2)) == 1)*(x-l2+xa/2)**2/2+
-                                                     rz2*(x-l2)**2/2-P2*(np.sign((x-l2-xa/2)) == 1)*(x-l2-xa/2)**2/2)*I[1][1][i])/(E*(I[0][0][i]*I[1][1][i]-I[0][1][i]**2)))
-        u = np.append(u, -(-(-q*(x**4)/24-r1*(x-l1)**3/6-r2*(x-l2)**3/6)*I[0][1][i]+(rz1*(x-l1)**3/6+P1*(np.sign((x-l2+xa/2)) == 1)*(x-l2+xa/2)**3/6+
-                                                     rz2*(x-l2)**3/6-P2*(np.sign((x-l2-xa/2)) == 1)*(x-l2-xa/2)**3/6)*I[1][1][i])/(E*(I[0][0][i]*I[1][1][i]-I[0][1][i]**2)))
+        usingle = np.append(usingle,-(-(-q*(x**3)/6-r1*(x-l1)**2/2-r2*(x-l2)**2/2)*I[0][1][i]+(rz1*(x-l1)**2/2+P1*(x-l2+xa/2)**2/2+
+                                                     rz2*(x-l2)**2/2)*I[1][1][i])/(E*(I[0][0][i]*I[1][1][i]-I[0][1][i]**2)))
+        u = np.append(u, -(-(-q*(x**4)/24-r1*(x-l1)**3/6-r2*(x-l2)**3/6)*I[0][1][i]+(rz1*(x-l1)**3/6+P1*(x-l2+xa/2)**3/6+
+                                                     rz2*(x-l2)**3/6)*I[1][1][i])/(E*(I[0][0][i]*I[1][1][i]-I[0][1][i]**2)))
+        
+        i = i+1
+
+    for x in np.linspace(l2+xa/2,l3,n+1)[1:]:
+        xt = np.append(xt, x)
+        dx = (l3-l2-xa/2)/(n)
+        
+        Mz = np.append(Mz, -q*(x**2)/2-r1*(x-l1)-r2*(x-l2))
+        My = np.append(My, rz1*(x-l1)+P1*(x-l2+xa/2)+rz2*(x-l2)-P2*(x-l2-xa/2))
+
+        vdouble = np.append(vdouble,-(Mz[i-1]*I[0][0][i-1]-My[i-1]*I[0][1][i-1])/(E*(I[0][0][i-1]*I[1][1][i-1]-I[0][1][i-1]**2)))
+        vsingle = np.append(vsingle,(-1/(E*(I[0][0][i-1]*I[1][1][i-1]-I[0][1][i-1]**2)))*((-q*(x**3)/6-r1*(x-l1)**2/2-r2*(x-l2)**2/2)*I[0][0][i-1]-
+                                                    (rz1*(x-l1)**2/2+P1*(x-l2+xa/2)**2/2+
+                                                     rz2*(x-l2)**2/2-P2*(x-l2-xa/2)**2/2)*I[0][1][i-1]))
+        v = np.append(v, (-1/(E*(I[0][0][i-1]*I[1][1][i-1]-I[0][1][i-1]**2)))*((-q*(x**4)/24-r1*(x-l1)**3/6-r2*(x-l2)**3/6)*I[0][0][i-1]-
+                                                    (rz1*(x-l1)**3/6+P1*(x-l2+xa/2)**3/6+
+                                                     rz2*(x-l2)**3/6-P2*(x-l2-xa/2)**3/6)*I[0][1][i-1]))
+
+
+
+        udouble = np.append(udouble, -(-Mz[i-1]*I[0][1][i]+My[i-1]*I[1][1][i])/(E*(I[0][0][i]*I[1][1][i]-I[0][1][i]**2)))
+        usingle = np.append(usingle,-(-(-q*(x**3)/6-r1*(x-l1)**2/2-r2*(x-l2)**2/2)*I[0][1][i]+(rz1*(x-l1)**2/2+P1*(x-l2+xa/2)**2/2+
+                                                     rz2*(x-l2)**2/2-P2*(x-l2-xa/2)**2/2)*I[1][1][i])/(E*(I[0][0][i]*I[1][1][i]-I[0][1][i]**2)))
+        u = np.append(u, -(-(-q*(x**4)/24-r1*(x-l1)**3/6-r2*(x-l2)**3/6)*I[0][1][i]+(rz1*(x-l1)**3/6+P1*(x-l2+xa/2)**3/6+
+                                                     rz2*(x-l2)**3/6-P2*(x-l2-xa/2)**3/6)*I[1][1][i])/(E*(I[0][0][i]*I[1][1][i]-I[0][1][i]**2)))
         
         i = i+1
     for x in np.linspace(l3,l4,n+1)[1:]:
@@ -122,12 +171,12 @@ def deflection(q,n,r3,l1,l2,l3,l4,E,I,d1,d2,d3,rz3,P2,xa,Ca,ha,theta2,theta1):
         i = i+1
 
     
-    deltav = ((v[2*n]-d2)*l1-(v[n]-d1)*l2)/(l1-l2)
+    deltav = ((v[3*n]-d2)*l1-(v[n]-d1)*l2)/(l1-l2)
     deltavsingle = ((v[n]-d1)-deltav)/l1
 
     v2 = -deltavsingle*xt-deltav+v
 
-    deltau = ((u[2*n]-0)*l1-(u[n]-0)*l2)/(l1-l2)
+    deltau = ((u[3*n]-0)*l1-(u[n]-0)*l2)/(l1-l2)
     deltausingle = ((u[n]-0)-deltau)/l1
     u2 = -deltausingle*xt-deltau+u
             
@@ -144,25 +193,25 @@ def bendingconvergence(q,n,l1,l2,l3,l4,E,I,d1,d2,d3,P2,xa,Ca,ha,theta2,theta1,sp
     
     def dfdx(q,n,r3,l1,l2,l3,l4,E,I,d1,d2,d3,rz3,P2,xa,Ca,ha,theta2,theta1,spread):
         
-        dvdr3 = (deflection(q,n,r3+spread/2,l1,l2,l3,l4,E,I,d1,d2,d3,rz3,P2,xa,Ca,ha,theta2,theta1)[0][3*n]-deflection(q,n,r3-spread/2,l1,l2,l3,l4,E,I,d1,d2,d3,rz3,P2,xa,Ca,ha,theta2,theta1)[0][3*n])/spread
-        dvdrz3 = (deflection(q,n,r3,l1,l2,l3,l4,E,I,d1,d2,d3,rz3+spread/2,P2,xa,Ca,ha,theta2,theta1)[0][3*n]-deflection(q,n,r3,l1,l2,l3,l4,E,I,d1,d2,d3,rz3-spread/2,P2,xa,Ca,ha,theta2,theta1)[0][3*n])/spread    
-        dudr3 = (deflection(q,n,r3+spread/2,l1,l2,l3,l4,E,I,d1,d2,d3,rz3,P2,xa,Ca,ha,theta2,theta1)[1][3*n]-deflection(q,n,r3-spread/2,l1,l2,l3,l4,E,I,d1,d2,d3,rz3,P2,xa,Ca,ha,theta2,theta1)[1][3*n])/spread
-        dudrz3 = (deflection(q,n,r3,l1,l2,l3,l4,E,I,d1,d2,d3,rz3+spread/2,P2,xa,Ca,ha,theta2,theta1)[1][3*n]-deflection(q,n,r3,l1,l2,l3,l4,E,I,d1,d2,d3,rz3-spread/2,P2,xa,Ca,ha,theta2,theta1)[1][3*n])/spread
+        dvdr3 = (deflection(q,n,r3+spread/2,l1,l2,l3,l4,E,I,d1,d2,d3,rz3,P2,xa,Ca,ha,theta2,theta1)[0][5*n]-deflection(q,n,r3-spread/2,l1,l2,l3,l4,E,I,d1,d2,d3,rz3,P2,xa,Ca,ha,theta2,theta1)[0][5*n])/spread
+        dvdrz3 = (deflection(q,n,r3,l1,l2,l3,l4,E,I,d1,d2,d3,rz3+spread/2,P2,xa,Ca,ha,theta2,theta1)[0][5*n]-deflection(q,n,r3,l1,l2,l3,l4,E,I,d1,d2,d3,rz3-spread/2,P2,xa,Ca,ha,theta2,theta1)[0][5*n])/spread    
+        dudr3 = (deflection(q,n,r3+spread/2,l1,l2,l3,l4,E,I,d1,d2,d3,rz3,P2,xa,Ca,ha,theta2,theta1)[1][5*n]-deflection(q,n,r3-spread/2,l1,l2,l3,l4,E,I,d1,d2,d3,rz3,P2,xa,Ca,ha,theta2,theta1)[1][5*n])/spread
+        dudrz3 = (deflection(q,n,r3,l1,l2,l3,l4,E,I,d1,d2,d3,rz3+spread/2,P2,xa,Ca,ha,theta2,theta1)[1][5*n]-deflection(q,n,r3,l1,l2,l3,l4,E,I,d1,d2,d3,rz3-spread/2,P2,xa,Ca,ha,theta2,theta1)[1][5*n])/spread
         
         return np.matrix([[dvdr3, dvdrz3],[dudr3,dudrz3]])
 
-    v,u = deflection(q,n,r3,l1,l2,l3,l4,E,I,d1,d2,d3,rz3,P2,xa,Ca,ha,theta2,theta1)[0][3*n], deflection(q,n,r3,l1,l2,l3,l4,E,I,d1,d2,d3,rz3,P2,xa,Ca,ha,theta2,theta1)[1][3*n]
+    v,u = deflection(q,n,r3,l1,l2,l3,l4,E,I,d1,d2,d3,rz3,P2,xa,Ca,ha,theta2,theta1)[0][5*n], deflection(q,n,r3,l1,l2,l3,l4,E,I,d1,d2,d3,rz3,P2,xa,Ca,ha,theta2,theta1)[1][5*n]
 
     while round(v, 12) != d3 or round(u, 12) != 0:
     
         invjacobian = np.linalg.inv(dfdx(q,n,r3,l1,l2,l3,l4,E,I,d1,d2,d3,rz3,P2,xa,Ca,ha,theta2,theta1,spread))
 
-        dx = invjacobian * np.matrix([[deflection(q,n,r3,l1,l2,l3,l4,E,I,d1,d2,d3,rz3,P2,xa,Ca,ha,theta2,theta1)[0][3*n]-d3],[deflection(q,n,r3,l1,l2,l3,l4,E,I,d1,d2,d3,rz3,P2,xa,Ca,ha,theta2,theta1)[1][3*n]]])
+        dx = invjacobian * np.matrix([[deflection(q,n,r3,l1,l2,l3,l4,E,I,d1,d2,d3,rz3,P2,xa,Ca,ha,theta2,theta1)[0][5*n]-d3],[deflection(q,n,r3,l1,l2,l3,l4,E,I,d1,d2,d3,rz3,P2,xa,Ca,ha,theta2,theta1)[1][5*n]]])
 
 
         r3,rz3 = r3-dx[0], rz3-dx[1]
 
-        v,u = deflection(q,n,r3,l1,l2,l3,l4,E,I,d1,d2,d3,rz3,P2,xa,Ca,ha,theta2,theta1)[0][3*n], deflection(q,n,r3,l1,l2,l3,l4,E,I,d1,d2,d3,rz3,P2,xa,Ca,ha,theta2,theta1)[1][3*n]
+        v,u = deflection(q,n,r3,l1,l2,l3,l4,E,I,d1,d2,d3,rz3,P2,xa,Ca,ha,theta2,theta1)[0][5*n], deflection(q,n,r3,l1,l2,l3,l4,E,I,d1,d2,d3,rz3,P2,xa,Ca,ha,theta2,theta1)[1][5*n]
 
         print('V-Error = ',abs(v-d3),' and U-Error = ', u)
 
@@ -172,7 +221,7 @@ def bendingconvergence(q,n,l1,l2,l3,l4,E,I,d1,d2,d3,P2,xa,Ca,ha,theta2,theta1,sp
     
     return v2, u2, xt, r1, r2, r3, My, Mz, rz1, rz2, rz3, P1
 
-def torque(q,n,r1,r2,r3,l1,l2,l3,l4,rz1,rz2,rz3,P1,P2,xa,Ca,ha,theta,zsc):
+def torque(q,n,l1,l2,l3,l4,P1,P2,xa,Ca,ha,theta,zsc):
     
     Mx = np.array([0])
 
@@ -189,20 +238,36 @@ def torque(q,n,r1,r2,r3,l1,l2,l3,l4,rz1,rz2,rz3,P1,P2,xa,Ca,ha,theta,zsc):
 
 
         i = i+1
-    for x in np.linspace(l1,l2,n+1)[1:]:
+    for x in np.linspace(l1,l2-xa/2,n+1)[1:]:
         xt = np.append(xt, x)
         dx = (l2-l1)/(n)
         
        
-        Mx = np.append(Mx, (q*x)*(-zsc+0.25*Ca-ha/2)*np.cos(theta[i-1])+(np.sign((x-l2+xa/2)) == 1)*P1*(-ha/2*np.sin(theta[i])+ha/2*np.cos(theta[i])))
+        Mx = np.append(Mx, (q*x)*(-zsc+0.25*Ca-ha/2)*np.cos(theta[i-1]))
 
         i = i+1
-    for x in np.linspace(l2,l3,n+1)[1:]:
+
+    for x in np.linspace(l2-xa/2,l2,n+1)[1:]:
+        xt = np.append(xt, x)
+        dx = (l2-l1)/(n)
+        
+       
+        Mx = np.append(Mx, (q*x)*(-zsc+0.25*Ca-ha/2)*np.cos(theta[i-1])+P1*(-ha/2*np.sin(theta[i])+ha/2*np.cos(theta[i])))
+
+        i = i+1
+    for x in np.linspace(l2,l2+xa/2,n+1)[1:]:
         xt = np.append(xt, x)
         dx = (l3-l2)/(n)
         
-        Mx = np.append(Mx, (q*x)*(-zsc+0.25*Ca-ha/2)*np.cos(theta[i-1])+(np.sign((x-l2+xa/2)) == 1)*P1*(-zsc*np.sin(theta[i])+(-ha/2*np.sin(theta[i])+ha/2*np.cos(theta[i])))
-                       - (np.sign((x-l2-xa/2)) == 1)*P2*(-zsc*np.sin(theta[i])+(-ha/2*np.sin(theta[i])+ha/2*np.cos(theta[i]))))
+        Mx = np.append(Mx, (q*x)*(-zsc+0.25*Ca-ha/2)*np.cos(theta[i-1])+P1*(-zsc*np.sin(theta[i])+(-ha/2*np.sin(theta[i])+ha/2*np.cos(theta[i]))))
+        
+        i = i+1
+    for x in np.linspace(l2+xa/2,l3,n+1)[1:]:
+        xt = np.append(xt, x)
+        dx = (l3-l2)/(n)
+        
+        Mx = np.append(Mx, (q*x)*(-zsc+0.25*Ca-ha/2)*np.cos(theta[i-1])+P1*(-zsc*np.sin(theta[i])+(-ha/2*np.sin(theta[i])+ha/2*np.cos(theta[i])))
+                       - P2*(-zsc*np.sin(theta[i])+(-ha/2*np.sin(theta[i])+ha/2*np.cos(theta[i]))))
         
         i = i+1
     for x in np.linspace(l3,l4,n+1)[1:]:
