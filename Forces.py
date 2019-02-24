@@ -134,8 +134,6 @@ def ExactMOI(theta,Ca,ha,t_sk,t_sp,t_st,w_st,h_st,zcg,n,spacing,nodepos):
     plt.grid(True)
     plt.show
     
-    
-    
     #Add half arc
     Izz += Izz_arc
     Iyy += Iyy_arc + (math.pi*((ha/2.)**2 - (ha/2. - t_sk)**2.)/2.)* (2.*ha/2./math.pi + zcg)**2.
