@@ -157,14 +157,30 @@ def ExactMOI(theta,Ca,ha,t_sk,t_sp,t_st,w_st,h_st,zcg,n,spacing,nodepos):
     
     return Iyy_0, Izz_0, Iyy_theta, Izz_theta, Izy_theta
     
-#def Torsion(theta,P,q,Ca,ha,A1):
-#    move = 0.25*Ca - ha/2.
-#    movez = move*math.cos(theta)
-#    movey = move*math.sin(theta)
-#    
-#    M_add_P = P*movey
-#    M_add_q = q*movex
-
+def InternalMoment(x,q,A1,P,x1,x2,x3,xa,R1y,R2y,R3y,R1z,R2z,R3z):
+    # X starts from the left most point on the aileron, before hinge 1
+    Mz = q/2. * x**2.
+    My = 0.
+    
+    if x > x1 :
+        Mz += -R1y * (x - x1)
+        My +=  R1z * (x - x1)
+        
+    if x > (x2 - xa/2.) : 
+        My +=  A1 * (x - (x2 - xa/2.))
+    
+    if x > x2:
+        Mz += -R2y * (x - x2)
+        My +=  R2z * (x - x2)
+        
+    if x > (x2 + xa/2.) : 
+        My +=  P * (x - (x2 + xa/2.))
+        
+    if x > x3:
+        Mz += -R3y * (x - x3)
+        My +=  R3z * (x - x3)
+    
+    return Mz, My
 
 theta = (30./180.*math.pi)
 P = 49200.
