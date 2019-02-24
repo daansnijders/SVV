@@ -5,7 +5,7 @@ plt.style.use('seaborn-whitegrid')
 import numpy as np
 
 
-def deflection(q,n,r3,l1,l2,l3,l4,E,I,d1,d2,d3,rz3,P2,xa,Ca,ha,theta2,theta):
+def deflection(q,n,r3,l1,l2,l3,l4,E,I,d1,d2,d3,rz3,P2,xa,Ca,ha,theta2,theta1):
     #theta2 is the angle of section 2 where hinge 2 is
     
     # calculation of reaction forces by static equalibrium
@@ -15,7 +15,7 @@ def deflection(q,n,r3,l1,l2,l3,l4,E,I,d1,d2,d3,rz3,P2,xa,Ca,ha,theta2,theta):
 
     #Theta2 is actuator 2 and theta is actuator 1
 
-    P1 = (P2*(-ha/2*np.sin(theta2)+ha/2*np.cos(theta2))-q*l4*(0.25*Ca-ha/2)*np.cos(theta2))/(-ha/2*np.sin(theta)+ha/2*np.cos(theta))
+    P1 = (P2*(-ha/2*np.sin(theta2)+ha/2*np.cos(theta2))-q*l4*(0.25*Ca-ha/2)*np.cos(theta2))/(-ha/2*np.sin(theta1)+ha/2*np.cos(theta1))
     rz2 = (-P1*(l2-l1-xa/2)+P2*(l2-l1+xa/2)-rz3*(l3-l1))/(l2-l1)
     rz1 = P2-P1-rz3-rz2
 
@@ -135,40 +135,40 @@ def deflection(q,n,r3,l1,l2,l3,l4,E,I,d1,d2,d3,rz3,P2,xa,Ca,ha,theta2,theta):
 
 
 
-def bendingconvergence(q,n,l1,l2,l3,l4,E,I,d1,d2,d3,P2,xa,Ca,ha,theta2,theta,spread):
+def bendingconvergence(q,n,l1,l2,l3,l4,E,I,d1,d2,d3,P2,xa,Ca,ha,theta2,theta1,spread):
 
     #spread refers to the dx term in the jacobian matrix
 
     r3 = 0
     rz3 = 0
     
-    def dfdx(q,n,r3,l1,l2,l3,l4,E,I,d1,d2,d3,rz3,P2,xa,Ca,ha,theta2,theta,spread):
+    def dfdx(q,n,r3,l1,l2,l3,l4,E,I,d1,d2,d3,rz3,P2,xa,Ca,ha,theta2,theta1,spread):
         
-        dvdr3 = (deflection(q,n,r3+spread/2,l1,l2,l3,l4,E,I,d1,d2,d3,rz3,P2,xa,Ca,ha,theta2,theta)[0][3*n]-deflection(q,n,r3-spread/2,l1,l2,l3,l4,E,I,d1,d2,d3,rz3,P2,xa,Ca,ha,theta2,theta)[0][3*n])/spread
-        dvdrz3 = (deflection(q,n,r3,l1,l2,l3,l4,E,I,d1,d2,d3,rz3+spread/2,P2,xa,Ca,ha,theta2,theta)[0][3*n]-deflection(q,n,r3,l1,l2,l3,l4,E,I,d1,d2,d3,rz3-spread/2,P2,xa,Ca,ha,theta2,theta)[0][3*n])/spread    
-        dudr3 = (deflection(q,n,r3+spread/2,l1,l2,l3,l4,E,I,d1,d2,d3,rz3,P2,xa,Ca,ha,theta2,theta)[1][3*n]-deflection(q,n,r3-spread/2,l1,l2,l3,l4,E,I,d1,d2,d3,rz3,P2,xa,Ca,ha,theta2,theta)[1][3*n])/spread
-        dudrz3 = (deflection(q,n,r3,l1,l2,l3,l4,E,I,d1,d2,d3,rz3+spread/2,P2,xa,Ca,ha,theta2,theta)[1][3*n]-deflection(q,n,r3,l1,l2,l3,l4,E,I,d1,d2,d3,rz3-spread/2,P2,xa,Ca,ha,theta2,theta)[1][3*n])/spread
+        dvdr3 = (deflection(q,n,r3+spread/2,l1,l2,l3,l4,E,I,d1,d2,d3,rz3,P2,xa,Ca,ha,theta2,theta1)[0][3*n]-deflection(q,n,r3-spread/2,l1,l2,l3,l4,E,I,d1,d2,d3,rz3,P2,xa,Ca,ha,theta2,theta1)[0][3*n])/spread
+        dvdrz3 = (deflection(q,n,r3,l1,l2,l3,l4,E,I,d1,d2,d3,rz3+spread/2,P2,xa,Ca,ha,theta2,theta1)[0][3*n]-deflection(q,n,r3,l1,l2,l3,l4,E,I,d1,d2,d3,rz3-spread/2,P2,xa,Ca,ha,theta2,theta1)[0][3*n])/spread    
+        dudr3 = (deflection(q,n,r3+spread/2,l1,l2,l3,l4,E,I,d1,d2,d3,rz3,P2,xa,Ca,ha,theta2,theta1)[1][3*n]-deflection(q,n,r3-spread/2,l1,l2,l3,l4,E,I,d1,d2,d3,rz3,P2,xa,Ca,ha,theta2,theta1)[1][3*n])/spread
+        dudrz3 = (deflection(q,n,r3,l1,l2,l3,l4,E,I,d1,d2,d3,rz3+spread/2,P2,xa,Ca,ha,theta2,theta1)[1][3*n]-deflection(q,n,r3,l1,l2,l3,l4,E,I,d1,d2,d3,rz3-spread/2,P2,xa,Ca,ha,theta2,theta1)[1][3*n])/spread
         
         return np.matrix([[dvdr3, dvdrz3],[dudr3,dudrz3]])
 
-    v,u = deflection(q,n,r3,l1,l2,l3,l4,E,I,d1,d2,d3,rz3,P2,xa,Ca,ha,theta2,theta)[0][3*n], deflection(q,n,r3,l1,l2,l3,l4,E,I,d1,d2,d3,rz3,P2,xa,Ca,ha,theta2,theta)[1][3*n]
+    v,u = deflection(q,n,r3,l1,l2,l3,l4,E,I,d1,d2,d3,rz3,P2,xa,Ca,ha,theta2,theta1)[0][3*n], deflection(q,n,r3,l1,l2,l3,l4,E,I,d1,d2,d3,rz3,P2,xa,Ca,ha,theta2,theta1)[1][3*n]
 
     while round(v, 12) != d3 or round(u, 12) != 0:
     
-        invjacobian = np.linalg.inv(dfdx(q,n,r3,l1,l2,l3,l4,E,I,d1,d2,d3,rz3,P2,xa,Ca,ha,theta2,theta,spread))
+        invjacobian = np.linalg.inv(dfdx(q,n,r3,l1,l2,l3,l4,E,I,d1,d2,d3,rz3,P2,xa,Ca,ha,theta2,theta1,spread))
 
-        dx = invjacobian * np.matrix([[deflection(q,n,r3,l1,l2,l3,l4,E,I,d1,d2,d3,rz3,P2,xa,Ca,ha,theta2,theta)[0][3*n]-d3],[deflection(q,n,r3,l1,l2,l3,l4,E,I,d1,d2,d3,rz3,P2,xa,Ca,ha,theta2,theta)[1][3*n]]])
+        dx = invjacobian * np.matrix([[deflection(q,n,r3,l1,l2,l3,l4,E,I,d1,d2,d3,rz3,P2,xa,Ca,ha,theta2,theta1)[0][3*n]-d3],[deflection(q,n,r3,l1,l2,l3,l4,E,I,d1,d2,d3,rz3,P2,xa,Ca,ha,theta2,theta1)[1][3*n]]])
 
 
         r3,rz3 = r3-dx[0], rz3-dx[1]
 
-        v,u = deflection(q,n,r3,l1,l2,l3,l4,E,I,d1,d2,d3,rz3,P2,xa,Ca,ha,theta2,theta)[0][3*n], deflection(q,n,r3,l1,l2,l3,l4,E,I,d1,d2,d3,rz3,P2,xa,Ca,ha,theta2,theta)[1][3*n]
+        v,u = deflection(q,n,r3,l1,l2,l3,l4,E,I,d1,d2,d3,rz3,P2,xa,Ca,ha,theta2,theta1)[0][3*n], deflection(q,n,r3,l1,l2,l3,l4,E,I,d1,d2,d3,rz3,P2,xa,Ca,ha,theta2,theta1)[1][3*n]
 
         print('V-Error = ',abs(v-d3),' and U-Error = ', u)
 
     
     
-    v2, u2, xt, r1, r2, My, Mz, rz1, rz2, P1 = deflection(q,n,r3,l1,l2,l3,l4,E,I,d1,d2,d3,rz3,P2,xa,Ca,ha,theta2,theta)
+    v2, u2, xt, r1, r2, My, Mz, rz1, rz2, P1 = deflection(q,n,r3,l1,l2,l3,l4,E,I,d1,d2,d3,rz3,P2,xa,Ca,ha,theta2,theta1)
     
     return v2, u2, xt, r1, r2, r3, My, Mz, rz1, rz2, rz3, P1
 
