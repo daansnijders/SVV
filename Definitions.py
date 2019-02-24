@@ -172,7 +172,50 @@ def bendingconvergence(q,n,l1,l2,l3,l4,E,I,d1,d2,d3,P2,xa,Ca,ha,theta2,theta1,sp
     
     return v2, u2, xt, r1, r2, r3, My, Mz, rz1, rz2, rz3, P1
 
+def torque(q,n,r1,r2,r3,l1,l2,l3,l4,rz1,rz2,rz3,P1,P2,xa,Ca,ha,theta,zsc):
+    
+    Mx = np.array([0])
 
+    xt = np.array([0])
+
+
+    i = 1
+
+    for x in np.linspace(0,l1,n+1)[1:]:
+        xt = np.append(xt, x)
+        dx = l1/(n)
+
+        Mx = np.append(Mx, (q*x)*(-zsc+0.25*Ca-ha/2)*np.cos(theta[i-1]))
+
+
+        i = i+1
+    for x in np.linspace(l1,l2,n+1)[1:]:
+        xt = np.append(xt, x)
+        dx = (l2-l1)/(n)
+        
+       
+        Mx = np.append(Mx, (q*x)*(-zsc+0.25*Ca-ha/2)*np.cos(theta[i-1])+(np.sign((x-l2+xa/2)) == 1)*P1*(-ha/2*np.sin(theta[i])+ha/2*np.cos(theta[i])))
+
+        i = i+1
+    for x in np.linspace(l2,l3,n+1)[1:]:
+        xt = np.append(xt, x)
+        dx = (l3-l2)/(n)
+        
+        Mx = np.append(Mx, (q*x)*(-zsc+0.25*Ca-ha/2)*np.cos(theta[i-1])+(np.sign((x-l2+xa/2)) == 1)*P1*(-zsc*np.sin(theta[i])+(-ha/2*np.sin(theta[i])+ha/2*np.cos(theta[i])))
+                       - (np.sign((x-l2-xa/2)) == 1)*P2*(-zsc*np.sin(theta[i])+(-ha/2*np.sin(theta[i])+ha/2*np.cos(theta[i]))))
+        
+        i = i+1
+    for x in np.linspace(l3,l4,n+1)[1:]:
+        xt = np.append(xt, x)
+        dx = (l4-l3)/(n)
+
+        Mx = np.append(Mx, (q*x)*(-zsc+0.25*Ca-ha/2)*np.cos(theta[i-1])+(np.sign((x-l2+xa/2)) == 1)*P1*(-zsc*np.sin(theta[i])+(-ha/2*np.sin(theta[i])+ha/2*np.cos(theta[i])))
+                       - (np.sign((x-l2-xa/2)) == 1)*P2*(-zsc*np.sin(theta[i])+(-ha/2*np.sin(theta[i])+ha/2*np.cos(theta[i]))))
+       
+
+        i = i+1
+
+    return Mx, xt
 
 def centroid(nodepos, boom_area, list_length):  #TO BE CHECKED
     ycg = 0
