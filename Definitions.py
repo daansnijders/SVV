@@ -455,11 +455,19 @@ def shear_flow_shear(boom_area_incl_skin, node_pos, Vy, Vz,ha,Izz,Iyy):
     circ_qr = 0
     for i in range(len(tring_dist)):
         tring_qr += tring_q[i+1]*tring_dist[i]
+
     tring_qr=-tring_qr/(sum(tring_dist))
 
     for j in range(len(circ_dist)):
         circ_qr += circ_q[j+1]*circ_dist[i]
     circ_qr=-circ_qr/(sum(circ_dist))
+
+    tring_qr= -tring_qr/(sum(tring_dist))
+
+    for j in range(len(circ_dist)):
+        circ_qr += circ_q[j+1]*circ_dist[i]
+    circ_qr= -circ_qr/(sum(circ_dist))
+
     #find total shear flow
     tring_qt = [x+tring_qr for x in tring_q]
     circ_qt = [x+circ_qr for x in circ_q]

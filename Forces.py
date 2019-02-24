@@ -7,6 +7,7 @@ Created on Mon Feb 18 14:35:45 2019
 import numpy as np
 import math
 import Definitions
+import matplotlib.pyplot as plt
 
 def ReactionForces(theta,P,q,Ca,ha,E,Izz,x1,x2,x3,xa,span,d1,d3): 
     """ Reaction Forces in x direction """
@@ -66,7 +67,7 @@ def ReactionForces(theta,P,q,Ca,ha,E,Izz,x1,x2,x3,xa,span,d1,d3):
     R2z = float(y[1])
     R3z = float(y[2])
     
-    return R2x, R1y, R2y, R3y, R1z, R2z, R3z
+    return R1y, R1z, R2x, R2y, R2z, R3y, R3z, A1
     
         
 def ExactMOI(theta,Ca,ha,t_sk,t_sp,t_st,w_st,h_st,zcg,n,spacing,nodepos):
@@ -94,33 +95,33 @@ def ExactMOI(theta,Ca,ha,t_sk,t_sp,t_st,w_st,h_st,zcg,n,spacing,nodepos):
     """ Overall MOI """
     Izz = 0.
     Iyy = 0.
-    loyc = []
-    loyz = []
+    locy = []
+    locz = []
     #For loop for all stringers
     for i in range(n):
         if i <= ((n - 1.)/2. - 2):
-            z_loc = Ca - ha/2. - zcg - (i+0.5)*spacing/math.cos(theta) 
-            y_loc = (i+0.5)*spacing/math.sin(theta)
+            z_loc = Ca - ha/2. - abs(zcg) - (i+0.5)*spacing*math.cos(angle) 
+            y_loc = (i+0.5)*spacing*math.sin(angle)
             Izz_new = (Iyy_st + Izz_st)/2. + (Izz_st - Iyy_st)/2. * math.cos(2.*angle)
             Iyy_new = (Iyy_st + Izz_st)/2. - (Izz_st - Iyy_st)/2. * math.cos(2.*angle)
         elif i == ((n - 1.)/2. - 1):
-            z_loc = nodepos[i][2] - zcg 
-            y_loc = nodepos[i][1]
+            z_loc = -abs(nodepos[i+1][2]) - abs(zcg) 
+            y_loc = abs(nodepos[i+1][1])
             Izz_new = (Iyy_st + Izz_st)/2. + (Izz_st - Iyy_st)/2. * math.cos(-2.*angle)
             Iyy_new = (Iyy_st + Izz_st)/2. - (Izz_st - Iyy_st)/2. * math.cos(-2.*angle)
         elif i == (n - 1.)/2. :
-            z_loc = - zcg - ha/2.
+            z_loc = - abs(zcg) - ha/2.
             y_loc = 0.
             Izz_new = Iyy_st
             Iyy_new = Izz_st
         elif i == ((n - 1.)/2. + 1):
-            z_loc = nodepos[i][2] - zcg 
-            y_loc = nodepos[i][1]
+            z_loc = -abs(nodepos[i+1][2]) - abs(zcg)
+            y_loc = nodepos[i+1][1]
             Izz_new = (Iyy_st + Izz_st)/2. + (Izz_st - Iyy_st)/2. * math.cos(2.*angle)
             Iyy_new = (Iyy_st + Izz_st)/2. - (Izz_st - Iyy_st)/2. * math.cos(2.*angle)
         else:
-            z_loc = Ca - ha/2. - zcg - (n - 0.5 - i)*spacing/math.cos(theta) 
-            y_loc = (n - 0.5 - i)*spacing/math.sin(theta)
+            z_loc = Ca - ha/2. - abs(zcg) - (n - 0.5 - i)*spacing*math.cos(angle) 
+            y_loc = -(n - 0.5 - i)*spacing*math.sin(angle)
             Izz_new = (Iyy_st + Izz_st)/2. + (Izz_st - Iyy_st)/2. * math.cos(-2.*angle)
             Iyy_new = (Iyy_st + Izz_st)/2. - (Izz_st - Iyy_st)/2. * math.cos(-2.*angle)
         
@@ -129,11 +130,9 @@ def ExactMOI(theta,Ca,ha,t_sk,t_sp,t_st,w_st,h_st,zcg,n,spacing,nodepos):
         locy.append(y_loc)
         locz.append(z_loc)
         
-    plt.plot(z_loc, y_loc, "bo")
+    plt.plot(locz, locy, "bo")
     plt.grid(True)
     plt.show
-    
-    
     
     #Add half arc
     Izz += Izz_arc
@@ -156,14 +155,30 @@ def ExactMOI(theta,Ca,ha,t_sk,t_sp,t_st,w_st,h_st,zcg,n,spacing,nodepos):
     
     return Iyy_0, Izz_0, Iyy_theta, Izz_theta, Izy_theta
     
-#def Torsion(theta,P,q,Ca,ha,A1):
-#    move = 0.25*Ca - ha/2.
-#    movez = move*math.cos(theta)
-#    movey = move*math.sin(theta)
-#    
-#    M_add_P = P*movey
-#    M_add_q = q*movex
-
+def InternalMoment(x,q,A1,P,x1,x2,x3,xa,R1y,R2y,R3y,R1z,R2z,R3z):
+    # X starts from the left most point on the aileron, before hinge 1
+    Mz = q/2. * x**2.
+    My = 0.
+    
+    if x > x1 :
+        Mz += -R1y * (x - x1)
+        My +=  R1z * (x - x1)
+        
+    if x > (x2 - xa/2.) : 
+        My +=  A1 * (x - (x2 - xa/2.))
+    
+    if x > x2:
+        Mz += -R2y * (x - x2)
+        My +=  R2z * (x - x2)
+        
+    if x > (x2 + xa/2.) : 
+        My +=  P * (x - (x2 + xa/2.))
+        
+    if x > x3:
+        Mz += -R3y * (x - x3)
+        My +=  R3z * (x - x3)
+    
+    return Mz, My
 
 theta = (30./180.*math.pi)
 P = 49200.
@@ -181,8 +196,8 @@ E = 73084430000         #N/m2
 t_sk = 1.1 * 10**(-3)
 t_sp = 2.4 * 10**(-3)
 t_st = 1.2 * 10**(-3)
-w_st = 0.17
-h_st = 0.13
+w_st = 0.017
+h_st = 0.013
 A = (w_st*t_st + (h_st-t_st)*t_st)
 n = 11
 list_length = 14
@@ -191,9 +206,5 @@ nodepos, arc, dist = Definitions.boom_location(spacing, Cr, alpharad, list_lengt
 ycg, zcg = Definitions.centroid_nonidealized(t_sk, ha, Ca, Ct, t_sp, nodepos, A)
 Iyy_0, Izz_0, Iyy_theta, Izz_theta, Izy_theta = ExactMOI(theta,Ca,ha,t_sk,t_sp,t_st,w_st,h_st,zcg,n,spacing,nodepos)
 test = ReactionForces(theta,P,q,Ca,ha,E,Izz_theta,x1,x2,x3,xa,span,d1,d3)
-
-
-
-
 
 
