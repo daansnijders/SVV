@@ -68,12 +68,16 @@ with open ("./data/F100_SLC1.rpt") as g_i:
     l = list(li for li in l if li)
     
     i = 0
-
     for li in l:
-        if li[i][0].isdigit() == True and i < 13045:
-            von_misses_stress.append(l[i])
+        if li[0].isdigit() == True and i < 13045:
+            von_misses_stress.append(li)
         i =+ 1
-    
+        
+    von_misses_stress = np.array(von_misses_stress)
+    von_misses_stress = von_misses_stress.astype(float)    
+    von_misses_stress = np.column_stack((von_misses_stress[:,0],((von_misses_stress[:,2]+von_misses_stress[:,3])/2)))
+    von_misses_stress = von_misses_stress[np.argsort(von_misses_stress[:,0])]
+
     
     
     
