@@ -63,5 +63,19 @@ noderib_c_element = np.array(noderib_c_element)
 noderib_d_element = np.array(noderib_d_element)
 
 von_misses_stress = []
-#with open ("./data/F100_SLC1.rpt") as g_in:
+with open ("./data/F100_SLC1.rpt") as g_i:
+    l = (li.rstrip().split() for li in g_i)
+    l = list(li for li in l if li)
+    
+    i = 0
+
+    for li in l:
+        if li[i][0].isdigit() == True and i < 13045:
+            von_misses_stress.append(l[i])
+        i =+ 1
+    
+    
+    
+    
+    
     
