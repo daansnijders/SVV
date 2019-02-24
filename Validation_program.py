@@ -26,7 +26,7 @@ with open("./data/F100-19.inp") as g:
                 line_cont = [float(y) for y in oneline.split(',')]
                 element_set.append(line_cont)
              
-            elif j > 7020 and j < (7033):
+            elif j > 7020 and j < (7038):
                 print (oneline)
                 #oneline = oneline.strip('\n')
                 line_cont = [float(y) for y in oneline.split(',')]
