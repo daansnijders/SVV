@@ -8,7 +8,7 @@ import numpy as np
 
 node = []
 element_set = []
-n_set = []
+node_set = []
 j = 0
 
 with open("./data/F100-19.inp") as g:
@@ -26,29 +26,47 @@ with open("./data/F100-19.inp") as g:
                 line_cont = [float(y) for y in oneline.split(',')]
                 element_set.append(line_cont)
              
-            elif j > 7020 and j < (7038):
-                print (oneline)
-                #oneline = oneline.strip('\n')
+            elif j > 7020 and j < (7041):
+                oneline = oneline.strip(',\n')
                 line_cont = [float(y) for y in oneline.split(',')]
-                n_set.append(line_cont)                
+                node_set.append(line_cont)                
         j = j + 1
+        
+noderib_a = node_set[:4]
+noderib_b = node_set[4:8]
+noderib_c = node_set[8:12]
+noderib_d = node_set[12:16]
+
+#index of elements for ribs
+noderib_a = np.array([j for i in noderib_a for j in i]) - 1
+noderib_b = np.array([j for i in noderib_b for j in i]) - 1
+noderib_c = np.array([j for i in noderib_c for j in i]) - 1
+noderib_d = np.array([j for i in noderib_d for j in i]) - 1
 
 
-#
-#with open("./data/F100-19.inp") as g:
-#    for oneline in g:
-#        for j in range(0, 3235):
-#            if oneline.startswith('*') == False:
-#                oneline = oneline.strip('\n')
-#                line_cont = [float(y) for y in oneline.split(',')]
-#                node.append(line_cont)
-#        for j in range(3236, 6485):
-#            if oneline.startswith('*') == False:
-#                oneline = oneline.strip('\n')
-#                line_cont = [float(y) for y in oneline.split(',')]
-#                element_set.append(line_cont)
-#        #for j in range(7009,7031):
-#           # if oneline.startswith('*') == False:
-#               # print("SOMEHTIN")
-#            
-            
+noderib_a_element = []
+noderib_b_element = []
+noderib_c_element = []
+noderib_d_element = []
+
+for q in noderib_a:
+    noderib_a_element.append(element_set[int(q)-1])
+for q in noderib_b:
+    noderib_b_element.append(element_set[int(q)-1])
+for q in noderib_c:
+    noderib_c_element.append(element_set[int(q)-1])
+for q in noderib_d:
+    noderib_d_element.append(element_set[int(q)-1])
+
+   
+noderib_a_element = np.array(noderib_a_element)
+noderib_b_element = np.array(noderib_b_element)
+noderib_c_element = np.array(noderib_c_element)
+noderib_d_element = np.array(noderib_d_element)
+
+
+
+
+
+   
+
