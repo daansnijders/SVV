@@ -5,18 +5,21 @@ plt.style.use('seaborn-whitegrid')
 import numpy as np
 
 
-def deflection(q,n,r3,l1,l2,l3,l4,E,I,d1,d2,d3,rz3,P2,xa,Ca,ha,theta2):
+def deflection(q,n,r3,l1,l2,l3,l4,E,I,d1,d2,d3,rz3,P2,xa,Ca,ha,theta2,theta):
     #theta2 is the angle of section 2 where hinge 2 is
     
     # calculation of reaction forces by static equalibrium
-    r2 = (q*(l4)*(1.611/2-l1)-r3*(l3-l1))/(l2-l1)
-    r1 = q*l4-r2-r3
+    
+    r2 = (-q*(l4)*(l4/2-l1)-r3*(l3-l1))/(l2-l1)
+    r1 = -q*l4-r2-r3
 
-    P1 = (r2*(0.25*Ca-ha/2)*np.cos(theta2))/(-ha/2*np.sin(theta2)-ha/2*np.cos(theta2))+P2
+    #Theta2 is actuator 2 and theta is actuator 1
+
+    P1 = (P2*(-ha/2*np.sin(theta2)+ha/2*np.cos(theta2))-q*l4*(0.25*Ca-ha/2)*np.cos(theta2))/(-ha/2*np.sin(theta)+ha/2*np.cos(theta))
     rz2 = (-P1*(l2-l1-xa/2)+P2*(l2-l1+xa/2)-rz3*(l3-l1))/(l2-l1)
     rz1 = P2-P1-rz3-rz2
 
-    #Moment, curvature, slope and deflection calculations
+    #Moment, curvature, slope and deflection array assignment
     
     Mz = np.array([0])
     My = np.array([0])
@@ -38,67 +41,86 @@ def deflection(q,n,r3,l1,l2,l3,l4,E,I,d1,d2,d3,rz3,P2,xa,Ca,ha,theta2):
         xt = np.append(xt, x)
         dx = l1/(n)
 
-        Mz = np.append(Mz, q*(x**2)/2)
+        Mz = np.append(Mz, -q*(x**2)/2)
         My = np.append(My, 0)
 
-        vdouble = np.append(vdouble,-(Mz[i]*I[0][0][i]-My[i]*I[0][1][i])/(E*(I[0][0][i]*I[1][1][i]-I[0][1][i]**2)))
-        vsingle = np.append(vsingle,vsingle[i-1]+vdouble[i]*dx)
-        v = np.append(v, v[i-1] + vsingle[i-1]*dx + vdouble[i]*(dx**2)/2)
+        
+        vdouble = np.append(vdouble,-(Mz[i-1]*I[0][0][i-1]-My[i-1]*I[0][1][i-1])/(E*(I[0][0][i-1]*I[1][1][i-1]-I[0][1][i-1]**2)))
+        vsingle = np.append(vsingle,(-1/(E*(I[0][0][i-1]*I[1][1][i-1]-I[0][1][i-1]**2)))*((-q*(x**3)/6)*I[0][0][i-1]-(0)*I[0][1][i-1]))
+        v = np.append(v, (-1/(E*(I[0][0][i-1]*I[1][1][i-1]-I[0][1][i-1]**2)))*((-q*(x**4)/24)*I[0][0][i-1]-(0)*I[0][1][i-1]))
 
-        udouble = np.append(udouble, -(-Mz[i]*I[0][1][i]-My[i]*I[1][1][i])/(E*(I[0][0][i]*I[1][1][i]-I[0][1][i]**2)))
-        usingle = np.append(usingle,usingle[i-1]+udouble[i]*dx)
-        u = np.append(u, u[i-1] + usingle[i-1]*dx + udouble[i]*(dx**2)/2)
+        udouble = np.append(udouble, -(-Mz[i-1]*I[0][1][i]+My[i-1]*I[1][1][i])/(E*(I[0][0][i]*I[1][1][i]-I[0][1][i]**2)))
+        usingle = np.append(usingle,-(-(-q*(x**3)/6)*I[0][1][i]+0*I[1][1][i])/(E*(I[0][0][i]*I[1][1][i]-I[0][1][i]**2)))
+        u = np.append(u, -(-(-q*(x**4)/24)*I[0][1][i]+0*I[1][1][i])/(E*(I[0][0][i]*I[1][1][i]-I[0][1][i]**2)))
 
         i = i+1
     for x in np.linspace(l1,l2,n+1)[1:]:
         xt = np.append(xt, x)
         dx = (l2-l1)/(n)
         
-        Mz = np.append(Mz, q*(x**2)/2-r1*(x-l1))
+        Mz = np.append(Mz, -q*(x**2)/2-r1*(x-l1))
         My = np.append(My, rz1*(x-l1)+P1*(np.sign((x-l2+xa/2)) == 1)*(x-l2+xa/2))
 
-        vdouble = np.append(vdouble,-(Mz[i]*I[0][0][i]-My[i]*I[0][1][i])/(E*(I[0][0][i]*I[1][1][i]-I[0][1][i]**2)))
-        vsingle = np.append(vsingle,vsingle[i-1]+vdouble[i]*dx)
-        v = np.append(v, v[i-1] + vsingle[i-1]*dx + vdouble[i]*(dx**2)/2)
 
-        udouble = np.append(udouble, -(-Mz[i]*I[0][1][i]-My[i]*I[1][1][i])/(E*(I[0][0][i]*I[1][1][i]-I[0][1][i]**2)))
-        usingle = np.append(usingle,usingle[i-1]+udouble[i]*dx)
-        u = np.append(u, u[i-1] + usingle[i-1]*dx + udouble[i]*(dx**2)/2)
+        vdouble = np.append(vdouble,-(Mz[i-1]*I[0][0][i-1]-My[i-1]*I[0][1][i-1])/(E*(I[0][0][i-1]*I[1][1][i-1]-I[0][1][i-1]**2)))
+        vsingle = np.append(vsingle,(-1/(E*(I[0][0][i-1]*I[1][1][i-1]-I[0][1][i-1]**2)))*((-q*(x**3)/6-r1*(x-l1)**2/2)*I[0][0][i-1]-
+                                                    (rz1*(x-l1)**2/2+P1*(np.sign((x-l2+xa/2)) == 1)*(x-l2+xa/2)**2/2)*I[0][1][i-1]))
+        v = np.append(v, (-1/(E*(I[0][0][i-1]*I[1][1][i-1]-I[0][1][i-1]**2)))*((-q*(x**4)/24-r1*(x-l1)**3/6)*I[0][0][i-1]-
+                                                    (rz1*(x-l1)**3/6+P1*(np.sign((x-l2+xa/2)) == 1)*(x-l2+xa/2)**3/6)*I[0][1][i-1]))
+
+        udouble = np.append(udouble, -(-Mz[i-1]*I[0][1][i]+My[i-1]*I[1][1][i])/(E*(I[0][0][i]*I[1][1][i]-I[0][1][i]**2)))
+        usingle = np.append(usingle,-(-(-q*(x**3)/6-r1*(x-l1)**2/2)*I[0][1][i]+(rz1*(x-l1)**2/2+P1*(np.sign((x-l2+xa/2)) == 1)*(x-l2+xa/2)**2/2)*I[1][1][i])/(E*(I[0][0][i]*I[1][1][i]-I[0][1][i]**2)))
+        u = np.append(u, -(-(-q*(x**4)/24-r1*(x-l1)**3/6)*I[0][1][i]+(rz1*(x-l1)**3/6+P1*(np.sign((x-l2+xa/2)) == 1)*(x-l2+xa/2)**3/6)*I[1][1][i])/(E*(I[0][0][i]*I[1][1][i]-I[0][1][i]**2)))
 
         i = i+1
     for x in np.linspace(l2,l3,n+1)[1:]:
         xt = np.append(xt, x)
         dx = (l3-l2)/(n)
         
-        Mz = np.append(Mz, q*(x**2)/2-r1*(x-l1)-r2*(x-l2))
+        Mz = np.append(Mz, -q*(x**2)/2-r1*(x-l1)-r2*(x-l2))
         My = np.append(My, rz1*(x-l1)+P1*(np.sign((x-l2+xa/2)) == 1)*(x-l2+xa/2)+rz2*(x-l2)-P2*(np.sign((x-l2-xa/2)) == 1)*(x-l2-xa/2))
 
-        
-        vdouble = np.append(vdouble,-(Mz[i]*I[0][0][i]-My[i]*I[0][1][i])/(E*(I[0][0][i]*I[1][1][i]-I[0][1][i]**2)))
-        vsingle = np.append(vsingle,vsingle[i-1]+vdouble[i]*dx)
-        v = np.append(v, v[i-1] + vsingle[i-1]*dx + vdouble[i]*(dx**2)/2)
+        vdouble = np.append(vdouble,-(Mz[i-1]*I[0][0][i-1]-My[i-1]*I[0][1][i-1])/(E*(I[0][0][i-1]*I[1][1][i-1]-I[0][1][i-1]**2)))
+        vsingle = np.append(vsingle,(-1/(E*(I[0][0][i-1]*I[1][1][i-1]-I[0][1][i-1]**2)))*((-q*(x**3)/6-r1*(x-l1)**2/2-r2*(x-l2)**2/2)*I[0][0][i-1]-
+                                                    (rz1*(x-l1)**2/2+P1*(np.sign((x-l2+xa/2)) == 1)*(x-l2+xa/2)**2/2+
+                                                     rz2*(x-l2)**2/2-P2*(np.sign((x-l2-xa/2)) == 1)*(x-l2-xa/2)**2/2)*I[0][1][i-1]))
+        v = np.append(v, (-1/(E*(I[0][0][i-1]*I[1][1][i-1]-I[0][1][i-1]**2)))*((-q*(x**4)/24-r1*(x-l1)**3/6-r2*(x-l2)**3/6)*I[0][0][i-1]-
+                                                    (rz1*(x-l1)**3/6+P1*(np.sign((x-l2+xa/2)) == 1)*(x-l2+xa/2)**3/6+
+                                                     rz2*(x-l2)**3/6-P2*(np.sign((x-l2-xa/2)) == 1)*(x-l2-xa/2)**3/6)*I[0][1][i-1]))
 
-        udouble = np.append(udouble, -(-Mz[i]*I[0][1][i]-My[i]*I[1][1][i])/(E*(I[0][0][i]*I[1][1][i]-I[0][1][i]**2)))
-        usingle = np.append(usingle,usingle[i-1]+udouble[i]*dx)
-        u = np.append(u, u[i-1] + usingle[i-1]*dx + udouble[i]*(dx**2)/2)
+
+
+        udouble = np.append(udouble, -(-Mz[i-1]*I[0][1][i]+My[i-1]*I[1][1][i])/(E*(I[0][0][i]*I[1][1][i]-I[0][1][i]**2)))
+        usingle = np.append(usingle,-(-(-q*(x**3)/6-r1*(x-l1)**2/2-r2*(x-l2)**2/2)*I[0][1][i]+(rz1*(x-l1)**2/2+P1*(np.sign((x-l2+xa/2)) == 1)*(x-l2+xa/2)**2/2+
+                                                     rz2*(x-l2)**2/2-P2*(np.sign((x-l2-xa/2)) == 1)*(x-l2-xa/2)**2/2)*I[1][1][i])/(E*(I[0][0][i]*I[1][1][i]-I[0][1][i]**2)))
+        u = np.append(u, -(-(-q*(x**4)/24-r1*(x-l1)**3/6-r2*(x-l2)**3/6)*I[0][1][i]+(rz1*(x-l1)**3/6+P1*(np.sign((x-l2+xa/2)) == 1)*(x-l2+xa/2)**3/6+
+                                                     rz2*(x-l2)**3/6-P2*(np.sign((x-l2-xa/2)) == 1)*(x-l2-xa/2)**3/6)*I[1][1][i])/(E*(I[0][0][i]*I[1][1][i]-I[0][1][i]**2)))
         
         i = i+1
     for x in np.linspace(l3,l4,n+1)[1:]:
         xt = np.append(xt, x)
         dx = (l4-l3)/(n)
         
-        Mz = np.append(Mz, q*(x**2)/2-r1*(x-l1)-r2*(x-l2)-r3*(x-l3))
-        My = np.append(My, 0)
+        Mz = np.append(Mz, -q*(x**2)/2-r1*(x-l1)-r2*(x-l2)-r3*(x-l3))
+        My = np.append(My, rz1*(x-l1)+P1*(np.sign((x-l2+xa/2)) == 1)*(x-l2+xa/2)+rz2*(x-l2)-P2*(np.sign((x-l2-xa/2)) == 1)*(x-l2-xa/2)+rz3*(x-l3))
+                                                
         
-        vdouble = np.append(vdouble,-(Mz[i]*I[0][0][i]-My[i]*I[0][1][i])/(E*(I[0][0][i]*I[1][1][i]-I[0][1][i]**2)))
-        vsingle = np.append(vsingle,vsingle[i-1]+vdouble[i]*dx)
-        v = np.append(v, v[i-1] + vsingle[i-1]*dx + vdouble[i]*(dx**2)/2)
+        vdouble = np.append(vdouble,-(Mz[i-1]*I[0][0][i-1]-My[i-1]*I[0][1][i-1])/(E*(I[0][0][i-1]*I[1][1][i-1]-I[0][1][i-1]**2)))
+        vsingle = np.append(vsingle,(-1/(E*(I[0][0][i-1]*I[1][1][i-1]-I[0][1][i-1]**2)))*((-q*(x**3)/6-r1*(x-l1)**2/2-r2*(x-l2)**2/2-r3*(x-l3)**2/2)*I[0][0][i-1]-
+                                                    (rz1*(x-l1)**2/2+P1*(np.sign((x-l2+xa/2)) == 1)*(x-l2+xa/2)**2/2+
+                                                     rz2*(x-l2)**2/2-P2*(np.sign((x-l2-xa/2)) == 1)*(x-l2-xa/2)**2/2+rz3*(x-l3)**2/2)*I[0][1][i-1]))
+        v = np.append(v, (-1/(E*(I[0][0][i-1]*I[1][1][i-1]-I[0][1][i-1]**2)))*((-q*(x**4)/24-r1*(x-l1)**3/6-r2*(x-l2)**3/6-r3*(x-l3)**3/6)*I[0][0][i-1]-
+                                                    (rz1*(x-l1)**3/6+P1*(np.sign((x-l2+xa/2)) == 1)*(x-l2+xa/2)**3/6+
+                                                     rz2*(x-l2)**3/6-P2*(np.sign((x-l2-xa/2)) == 1)*(x-l2-xa/2)**3/6+rz3*(x-l3)**3/6)*I[0][1][i-1]))
 
-        udouble = np.append(udouble, -(-Mz[i]*I[0][1][i]-My[i]*I[1][1][i])/(E*(I[0][0][i]*I[1][1][i]-I[0][1][i]**2)))
-        usingle = np.append(usingle,usingle[i-1]+udouble[i]*dx)
-        u = np.append(u, u[i-1] + usingle[i-1]*dx + udouble[i]*(dx**2)/2)
+        udouble = np.append(udouble, -(-Mz[i-1]*I[0][1][i]+My[i-1]*I[1][1][i])/(E*(I[0][0][i]*I[1][1][i]-I[0][1][i]**2)))
+        usingle = np.append(usingle,-(-(-q*(x**3)/6-r1*(x-l1)**2/2-r2*(x-l2)**2/2-r3*(x-l3)**2/2)*I[0][1][i]+(rz1*(x-l1)**2/2+P1*(np.sign((x-l2+xa/2)) == 1)*(x-l2+xa/2)**2/2+
+                                                     rz2*(x-l2)**2/2-P2*(np.sign((x-l2-xa/2)) == 1)*(x-l2-xa/2)**2/2+rz3*(x-l3)**2/2)*I[1][1][i])/(E*(I[0][0][i]*I[1][1][i]-I[0][1][i]**2)))
+        u = np.append(u, -(-(-q*(x**4)/24-r1*(x-l1)**3/6-r2*(x-l2)**3/6-r3*(x-l3)**3/6)*I[0][1][i]+(rz1*(x-l1)**3/6+P1*(np.sign((x-l2+xa/2)) == 1)*(x-l2+xa/2)**3/6+
+                                                     rz2*(x-l2)**3/6-P2*(np.sign((x-l2-xa/2)) == 1)*(x-l2-xa/2)**3/6+rz3*(x-l3)**3/6)*I[1][1][i])/(E*(I[0][0][i]*I[1][1][i]-I[0][1][i]**2)))
         
         i = i+1
+
     
     deltav = ((v[2*n]-d2)*l1-(v[n]-d1)*l2)/(l1-l2)
     deltavsingle = ((v[n]-d1)-deltav)/l1
@@ -109,62 +131,46 @@ def deflection(q,n,r3,l1,l2,l3,l4,E,I,d1,d2,d3,rz3,P2,xa,Ca,ha,theta2):
     deltausingle = ((u[n]-0)-deltau)/l1
     u2 = -deltausingle*xt-deltau+u
             
-    return [v2, u2, xt, r1, r2, My, Mz, rz1, rz2]
+    return [v2, u2, xt, r1, r2, My, Mz, rz1, rz2, P1]
 
-def bendingconvergence(q,n,r3a,r3b,l1,l2,l3,l4,E,I,d1,d2,d3,rz3a,rz3b,P2,xa,Ca,ha,theta2):
-    #r3a and r3b relate to the initial reaction forces used to iterate bisection method
-    #n is for the number of sections per section
-    #I is an array that must follow the discretisation of xt, v2, thus len(I)=n*4+1
 
-    #v2 is the array of vertical positions for a all points, where xt is the x position of the point
 
-    v2r3a = deflection(q,n,r3a,l1,l2,l3,l4,E,I,d1,d2,d3,rz3a,P2,xa,Ca,ha,theta2)[0]
+def bendingconvergence(q,n,l1,l2,l3,l4,E,I,d1,d2,d3,P2,xa,Ca,ha,theta2,theta,spread):
 
-    v2r3b = deflection(q,n,r3b,l1,l2,l3,l4,E,I,d1,d2,d3,rz3b,P2,xa,Ca,ha,theta2)[0]
+    #spread refers to the dx term in the jacobian matrix
 
-    u2rz3a = deflection(q,n,r3a,l1,l2,l3,l4,E,I,d1,d2,d3,rz3a,P2,xa,Ca,ha,theta2)[1]
-
-    u2rz3b = deflection(q,n,r3b,l1,l2,l3,l4,E,I,d1,d2,d3,rz3b,P2,xa,Ca,ha,theta2)[1]  
-
-    if v2r3a[3*n] > d3 or v2r3b[3*n] < d3:
-        print('Please select a more apropriate y reaction force')
-        
-    if u2rz3a[3*n] > 0 or u2rz3b[3*n] < 0:
-        print('Please select a more apropriate z reaction force')
-        
-    else:
-
-        r3mid = (r3b+r3a)/2
-
-        rz3mid = (rz3b+rz3a)/2
-
-        v2, u2 = deflection(q,n,r3mid,l1,l2,l3,l4,E,I,d1,d2,d3,rz3mid,P2,xa,Ca,ha,theta2)[0:2]
-
-        
-        while round(v2[3*n],12) != d3 or round(u2[3*n],12) != 0:
-            
-            v2, u2, xt, r1, r2, My, Mz, rz1, rz2 = deflection(q,n,r3mid,l1,l2,l3,l4,E,I,d1,d2,d3,rz3mid,P2,xa,Ca,ha,theta2)
-
-            if v2[3*n] < d3:
-                r3a = r3mid
-                r3b = r3b
-            elif v2[3*n] > d3:
-                r3a = r3a
-                r3b = r3mid
-            if u2[3*n] < 0:
-                rz3a = rz3mid
-                rz3b = rz3b
-            elif u2[3*n] > 0:
-                rz3a = rz3a
-                rz3b = rz3mid
-                
-            r3mid = (r3b+r3a)/2
-            rz3mid = (rz3b+rz3a)/2
-            
-    r3 = r3mid
-    rz3 = rz3mid
+    r3 = 0
+    rz3 = 0
     
-    return v2, u2, xt, r1, r2, r3, rz1, rz2, rz3
+    def dfdx(q,n,r3,l1,l2,l3,l4,E,I,d1,d2,d3,rz3,P2,xa,Ca,ha,theta2,theta,spread):
+        
+        dvdr3 = (deflection(q,n,r3+spread/2,l1,l2,l3,l4,E,I,d1,d2,d3,rz3,P2,xa,Ca,ha,theta2,theta)[0][3*n]-deflection(q,n,r3-spread/2,l1,l2,l3,l4,E,I,d1,d2,d3,rz3,P2,xa,Ca,ha,theta2,theta)[0][3*n])/spread
+        dvdrz3 = (deflection(q,n,r3,l1,l2,l3,l4,E,I,d1,d2,d3,rz3+spread/2,P2,xa,Ca,ha,theta2,theta)[0][3*n]-deflection(q,n,r3,l1,l2,l3,l4,E,I,d1,d2,d3,rz3-spread/2,P2,xa,Ca,ha,theta2,theta)[0][3*n])/spread    
+        dudr3 = (deflection(q,n,r3+spread/2,l1,l2,l3,l4,E,I,d1,d2,d3,rz3,P2,xa,Ca,ha,theta2,theta)[1][3*n]-deflection(q,n,r3-spread/2,l1,l2,l3,l4,E,I,d1,d2,d3,rz3,P2,xa,Ca,ha,theta2,theta)[1][3*n])/spread
+        dudrz3 = (deflection(q,n,r3,l1,l2,l3,l4,E,I,d1,d2,d3,rz3+spread/2,P2,xa,Ca,ha,theta2,theta)[1][3*n]-deflection(q,n,r3,l1,l2,l3,l4,E,I,d1,d2,d3,rz3-spread/2,P2,xa,Ca,ha,theta2,theta)[1][3*n])/spread
+        
+        return np.matrix([[dvdr3, dvdrz3],[dudr3,dudrz3]])
+
+    v,u = deflection(q,n,r3,l1,l2,l3,l4,E,I,d1,d2,d3,rz3,P2,xa,Ca,ha,theta2,theta)[0][3*n], deflection(q,n,r3,l1,l2,l3,l4,E,I,d1,d2,d3,rz3,P2,xa,Ca,ha,theta2,theta)[1][3*n]
+
+    while round(v, 12) != d3 or round(u, 12) != 0:
+    
+        invjacobian = np.linalg.inv(dfdx(q,n,r3,l1,l2,l3,l4,E,I,d1,d2,d3,rz3,P2,xa,Ca,ha,theta2,theta,spread))
+
+        dx = invjacobian * np.matrix([[deflection(q,n,r3,l1,l2,l3,l4,E,I,d1,d2,d3,rz3,P2,xa,Ca,ha,theta2,theta)[0][3*n]-d3],[deflection(q,n,r3,l1,l2,l3,l4,E,I,d1,d2,d3,rz3,P2,xa,Ca,ha,theta2,theta)[1][3*n]]])
+
+
+        r3,rz3 = r3-dx[0], rz3-dx[1]
+
+        v,u = deflection(q,n,r3,l1,l2,l3,l4,E,I,d1,d2,d3,rz3,P2,xa,Ca,ha,theta2,theta)[0][3*n], deflection(q,n,r3,l1,l2,l3,l4,E,I,d1,d2,d3,rz3,P2,xa,Ca,ha,theta2,theta)[1][3*n]
+
+        print('V-Error = ',abs(v-d3),' and U-Error = ', u)
+
+    
+    
+    v2, u2, xt, r1, r2, My, Mz, rz1, rz2, P1 = deflection(q,n,r3,l1,l2,l3,l4,E,I,d1,d2,d3,rz3,P2,xa,Ca,ha,theta2,theta)
+    
+    return v2, u2, xt, r1, r2, r3, My, Mz, rz1, rz2, rz3, P1
 
 
 
