@@ -20,6 +20,10 @@ def deflection(q,n,r3,l1,l2,l3,l4,E,I,d1,d2,d3,rz3,P2,xa,Ca,ha,theta2,theta1):
     rz1 = P2-P1-rz3-rz2
 
     #Moment, curvature, slope and deflection array assignment
+
+    Vy = np.array([0])
+    Vz = np.array([0])
+
     
     Mz = np.array([0])
     My = np.array([0])
@@ -41,6 +45,9 @@ def deflection(q,n,r3,l1,l2,l3,l4,E,I,d1,d2,d3,rz3,P2,xa,Ca,ha,theta2,theta1):
         xt = np.append(xt, x)
         dx = l1/(n)
 
+        Vy = np.append(Vy, q*x)
+        Vz = np.append(Vz, 0)
+        
         Mz = np.append(Mz, -q*(x**2)/2)
         My = np.append(My, 0)
 
@@ -59,6 +66,9 @@ def deflection(q,n,r3,l1,l2,l3,l4,E,I,d1,d2,d3,rz3,P2,xa,Ca,ha,theta2,theta1):
     for x in np.linspace(l1,l2-xa/2,n+1)[1:]:
         xt = np.append(xt, x)
         dx = (l2-xa/2-l1)/(n)
+
+        Vy = np.append(Vy, q*x+r1)
+        Vz = np.append(Vz, rz1)
         
         Mz = np.append(Mz, -q*(x**2)/2-r1*(x-l1))
         My = np.append(My, rz1*(x-l1))
@@ -79,6 +89,9 @@ def deflection(q,n,r3,l1,l2,l3,l4,E,I,d1,d2,d3,rz3,P2,xa,Ca,ha,theta2,theta1):
     for x in np.linspace(l2-xa/2,l2,n+1)[1:]:
         xt = np.append(xt, x)
         dx = (l2-l2+xa/2)/(n)
+
+        Vy = np.append(Vy, q*x+r1)
+        Vz = np.append(Vz, rz1+P1)
         
         Mz = np.append(Mz, -q*(x**2)/2-r1*(x-l1))
         My = np.append(My, rz1*(x-l1)+P1*(x-l2+xa/2))
@@ -100,6 +113,9 @@ def deflection(q,n,r3,l1,l2,l3,l4,E,I,d1,d2,d3,rz3,P2,xa,Ca,ha,theta2,theta1):
     for x in np.linspace(l2,l2+xa/2,n+1)[1:]:
         xt = np.append(xt, x)
         dx = (l2+xa/2-l2)/(n)
+
+        Vy = np.append(Vy, q*x+r1+r2)
+        Vz = np.append(Vz, rz1+P1+rz2)
         
         Mz = np.append(Mz, -q*(x**2)/2-r1*(x-l1)-r2*(x-l2))
         My = np.append(My, rz1*(x-l1)+P1*(x-l2+xa/2)+rz2*(x-l2))
@@ -125,6 +141,9 @@ def deflection(q,n,r3,l1,l2,l3,l4,E,I,d1,d2,d3,rz3,P2,xa,Ca,ha,theta2,theta1):
     for x in np.linspace(l2+xa/2,l3,n+1)[1:]:
         xt = np.append(xt, x)
         dx = (l3-l2-xa/2)/(n)
+
+        Vy = np.append(Vy, q*x+r1+r2)
+        Vz = np.append(Vz, rz1+P1+rz2-P2)
         
         Mz = np.append(Mz, -q*(x**2)/2-r1*(x-l1)-r2*(x-l2))
         My = np.append(My, rz1*(x-l1)+P1*(x-l2+xa/2)+rz2*(x-l2)-P2*(x-l2-xa/2))
@@ -149,6 +168,9 @@ def deflection(q,n,r3,l1,l2,l3,l4,E,I,d1,d2,d3,rz3,P2,xa,Ca,ha,theta2,theta1):
     for x in np.linspace(l3,l4,n+1)[1:]:
         xt = np.append(xt, x)
         dx = (l4-l3)/(n)
+
+        Vy = np.append(Vy, q*x+r1+r2+r3)
+        Vz = np.append(Vz, rz1+P1+rz2-P2+rz3)
         
         Mz = np.append(Mz, -q*(x**2)/2-r1*(x-l1)-r2*(x-l2)-r3*(x-l3))
         My = np.append(My, rz1*(x-l1)+P1*(np.sign((x-l2+xa/2)) == 1)*(x-l2+xa/2)+rz2*(x-l2)-P2*(np.sign((x-l2-xa/2)) == 1)*(x-l2-xa/2)+rz3*(x-l3))
@@ -180,7 +202,7 @@ def deflection(q,n,r3,l1,l2,l3,l4,E,I,d1,d2,d3,rz3,P2,xa,Ca,ha,theta2,theta1):
     deltausingle = ((u[n]-0)-deltau)/l1
     u2 = -deltausingle*xt-deltau+u
             
-    return [v2, u2, xt, r1, r2, My, Mz, rz1, rz2, P1]
+    return [v2, u2, xt, r1, r2, Vy, Vz, My, Mz, rz1, rz2, P1]
 
 
 
@@ -217,9 +239,10 @@ def bendingconvergence(q,n,l1,l2,l3,l4,E,I,d1,d2,d3,P2,xa,Ca,ha,theta2,theta1,sp
 
     
     
-    v2, u2, xt, r1, r2, My, Mz, rz1, rz2, P1 = deflection(q,n,r3,l1,l2,l3,l4,E,I,d1,d2,d3,rz3,P2,xa,Ca,ha,theta2,theta1)
+    v2, u2, xt, r1, r2, Vy, Vz, My, Mz, rz1, rz2, P1 = deflection(q,n,r3,l1,l2,l3,l4,E,I,d1,d2,d3,rz3,P2,xa,Ca,ha,theta2,theta1)
     
-    return v2, u2, xt, r1, r2, r3, My, Mz, rz1, rz2, rz3, P1
+    return v2, u2, xt, r1, r2, r3, Vy, Vz, My, Mz, rz1, rz2, rz3, P1
+
 
 def torque(q,n,l1,l2,l3,l4,P1,P2,xa,Ca,ha,theta,zsc):
     
