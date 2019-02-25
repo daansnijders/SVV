@@ -78,6 +78,37 @@ with open ("./data/F100_SLC1.rpt") as g_i:
     von_misses_stress = np.column_stack((von_misses_stress[:,0],((von_misses_stress[:,2]+von_misses_stress[:,3])/2)))
     von_misses_stress = von_misses_stress[np.argsort(von_misses_stress[:,0])]
 
+k = 0
+von_misses_stress_element = []
+for i in range (0, 13045):
+    if von_misses_stress[k][0] == von_misses_stress[k+3][0] and k < 13045:
+        von_misses_stress_element.append((von_misses_stress[k][1]+von_misses_stress[k+1][1]+von_misses_stress[k+2][1]+von_misses_stress[k+3][1])/4)
+        k =+ 4
+von_misses_stress_element = np.array(von_misses_stress_element)
+von_misses_stress_element = np.column_stack((np.arange(1, len(von_misses_stress_element)+1), von_misses_stress_element))
+
+
+z = []
+y = []
+x = []
+j = 0
+
+for j in range(len(node)):
+    z.append([node[j][0]]+[node[j][2]])
+    y.append([node[j][0]]+[node[j][2]])
+    x.append(node[j][:2])
+    j =+ 1
+
+node = np.array(node)
+x,y,z = node[:,1], node[:,2], node[:,3]
+
+display = plt.figure()
+axis = plt.axes(projection='3d')
+axis.scatter3D(x,-z,y, c=z, cmap='Greens');
+axis.set_xlim3d(-200,2000)
+axis.set_ylim3d(-500,500)
+axis.set_zlim3d(-200,200)
+plt.show()
     
     
     
