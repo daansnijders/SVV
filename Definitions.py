@@ -915,7 +915,7 @@ def shear_flow_finder(boom_area_inclskin, Izz, Iyy, theta, node_pos, Ca, ha, Mx,
     Vy = Vy*math.cos(theta)+Vz*math.sin(theta)
     Vz = Vz*math.cos(theta)-Vy*math.sin(theta)
     #counter-clockwise movement
-    baes = boom_area_excluding_skin
+    baes = boom_area_inclskin
     bxyz = node_pos
     #define the order of movement for the triangular and the circular section
     tring_booms = [12,13,8,9,10,11,1,2,3,4]
@@ -987,6 +987,8 @@ def shear_flow_finder(boom_area_inclskin, Izz, Iyy, theta, node_pos, Ca, ha, Mx,
         moments += circ_fy[i]*(-1)*bxyz[tring_booms[i]][2] 
     
     #find line integral of (qbi*ds)/(t*G)
+    tring_li=0
+    circ_li=0
     for i in range(len(tring_dist)):
         tring_li += (tring_q[i+1]*tring_dist[i])/(tring_thicc[i]*G)
 
