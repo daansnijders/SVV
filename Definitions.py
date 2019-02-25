@@ -950,7 +950,7 @@ def ExactMOIdiscretisation(q,ndis,l1,l2,l3,l4,t_sk,t_sp,t_st,w_st,h_st,zcg,n,spa
 
         i = i+1
     for x in np.linspace(l2,l2+xa/2,ndis+1)[1:]:
-        xt = np.append(xt, x)d
+        xt = np.append(xt, x)
         dx = (l3-l2)/(n)
         
         Iyy, Izz, Izy = ExactMOI(theta[i-1],Ca,ha,t_sk,t_sp,t_st,w_st,h_st,zcg,n,spacing,nodepos)[2:]
