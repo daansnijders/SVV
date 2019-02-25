@@ -828,14 +828,14 @@ def ReactionForces(theta,P,q,Ca,ha,E,Izz,x1,x2,x3,xa,span,d1,d3):
 def ExactMOI(theta,Ca,ha,t_sk,t_sp,t_st,w_st,h_st,zcg,n,spacing,nodepos):
     
     """ Stringer MOI """
-    y_bar = (t_st*w_st*t_st/2. + (h_st-t_st)*t_st*((h_st-t_st)/2. + t_st)) / (w_st*t_st + (h_st-t_st)*t_st)
+    y_bar = (h_st**2. * t_st + t_st**2. * (w_st - t_st)) / (2. * (w_st*t_st + (h_st - t_st)*t_st))
     A = (w_st*t_st + (h_st-t_st)*t_st)
-    Izz_st = 1./12. *w_st*t_st**3. + (w_st*t_st)*(y_bar - t_st/2.) + 1./12.*(h_st - t_st)**3.*t_st + (h_st-t_st)*t_st * ((h_st-t_st)/2. - y_bar)
+    Izz_st = 1./12. *w_st*t_st**3. + (w_st*t_st)*(y_bar - t_st/2.)**2. + 1./12.*(h_st - t_st)**3.*t_st + (h_st-t_st)*t_st * ((h_st-t_st)/2. - y_bar)**2.
     Iyy_st = 1./12 *(h_st-t_st)*t_st**3. + 1./12. * w_st**3. *t_st
     
     """ Half arc MOI """
-    Izz_arc = 1./2. * math.pi * ha**3. * t_sk
-    Iyy_arc = 1./2. * math.pi * ha**3. * t_sk
+    Izz_arc = 1./2. * math.pi * (ha/2.)**3. * t_sk
+    Iyy_arc = 1./2. * math.pi * (ha/2.)**3. * t_sk
     
     """ Spar MOI """
     Izz_sp = 1./12. * ha**3. * t_sp
@@ -880,26 +880,26 @@ def ExactMOI(theta,Ca,ha,t_sk,t_sp,t_st,w_st,h_st,zcg,n,spacing,nodepos):
             Izz_new = (Iyy_st + Izz_st)/2. + (Izz_st - Iyy_st)/2. * math.cos(-2.*angle)
             Iyy_new = (Iyy_st + Izz_st)/2. - (Izz_st - Iyy_st)/2. * math.cos(-2.*angle)
         
-        Izz += Izz_new + A * (z_loc)**2.
-        Iyy += Iyy_new + A * (y_loc)**2.
+        Izz += Izz_new + A * (y_loc)**2.
+        Iyy += Iyy_new + A * (z_loc)**2.
         locy.append(y_loc)
         locz.append(z_loc)
         
-    plt.plot(locz, locy, "bo")
-    plt.grid(True)
-    plt.show
+#    plt.plot(locz, locy, "bo")
+#    plt.grid(True)
+#    plt.show
     
     #Add half arc
     Izz += Izz_arc
-    Iyy += Iyy_arc + (math.pi*((ha/2.)**2 - (ha/2. - t_sk)**2.)/2.)* (2.*ha/2./math.pi + zcg)**2.
+    Iyy += Iyy_arc + (math.pi*((ha/2.)**2 - (ha/2. - t_sk)**2.)/2.)* (2.*ha/2./math.pi + abs(zcg))**2.
     
     #Add spar
     Izz += Izz_sp
-    Iyy += Iyy_sp + (t_sp * ha)*zcg**2.
+    Iyy += Iyy_sp + (t_sp * ha)*(abs(zcg))**2.
     
     #Add beams
-    Izz += (Izz_beam + (Ca-ha/2.)*math.cos(angle)*t_sk * (((Ca-ha/2.)/2.)*math.tan(angle))**2.)*2.
-    Iyy += (Iyy_beam + (Ca-ha/2.)*math.cos(angle)*t_sk *(((Ca-ha/2.)/2.)-zcg)**2.)
+    Izz += (Izz_beam + (Ca-ha/2.)/math.cos(angle)*t_sk * (((Ca-ha/2.)/2.)*math.tan(angle))**2.)*2.
+    Iyy += (Iyy_beam + (Ca-ha/2.)/math.cos(angle)*t_sk *(((Ca-ha/2.)/2.)-abs(zcg))**2.)*2.
     
     Izz_0 = Izz
     Iyy_0 = Iyy        
