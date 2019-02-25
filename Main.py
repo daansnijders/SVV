@@ -2,6 +2,9 @@
 import math
 import Definitions
 import numpy as np
+import matplotlib.pyplot as plt
+import sys
+import time
 
 ################################# Variable Definition ########################################################################
 
@@ -9,6 +12,7 @@ q = -3860 #load distribution, + upwards
 P2 = 49200 #Actuator II force in negative direction
 
 E = 73.1e+09 #E-modulus
+G = 28e+09
 
 ###Convergence Variables ###
 
@@ -53,6 +57,9 @@ t_stiff = 0.0012
 h_stiff = 0.013
 w_stiff = 0.017
 
+A1=0.0101791529 # Area of cell 1 
+A2=0.03417225 # Area of cell 2
+
 zsc = 0 #Shear Center Location (Required but left at 0)
 
 
@@ -77,17 +84,53 @@ I = Definitions.ExactMOIdiscretisation(q,ndis,l1,l2,l3,l4,tskin,tspar,t_stiff,w_
 
 
 
-r1, rz1, rx2, r2, rz2, r3, rz3, P1 = Definitions.ReactionForces(theta[4*n],P2,-q,Ca,ha,E,I[1][1][3*ndis],l1,l2,l3,l4,xa,d1,d3)
-P1 = -P1
+##r1, rz1, rx2, r2, rz2, r3, rz3, P1 = Definitions.ReactionForces(theta[4*n],P2,-q,Ca,ha,E,I[1][1][3*ndis],l1,l2,l3,l4,xa,d1,d3)
+##P1 = -P1
+
+v2, u2, xt, r1, r2, r3, Vy, Vz, My, Mz, rz1, rz2, rz3, P1 = Definitions.bendingconvergence(q,ndis,l1,l2,l3,l4,E,I,d1,d2,d3,P2,xa,Ca,ha,theta,spread)
 
 
-#Twist Calculation
 
 
 
-#Beam Deflection Convergence
+#Initial Twist Calculation
 
-#v2, u2, xt, r1, r2, r3, Vy, Vz, My, Mz, rz1, rz2, rz3, P1 = Definitions.bendingconvergence(q,ndis,l1,l2,l3,l4,E,I,d1,d2,d3,P2,xa,Ca,ha,theta,spread)
+Mx,xt = Definitions.torque(q,ndis,l1,l2,l3,l4,P1,P2,xa,Ca,ha,theta,zsc)
+
+theta, rate_twist_lst,xt = Definitions.overalltwist(Mx,A1,A2,arc,Cr,ha,xa,G,tskin,l1,l2,l3,l4,ndis,inittwist)
+
+
+##### Iteration ######
+
+
+
+iteration = 0
+
+while iteration < 5:
+
+    iteration += 1
+    print('Iteration no. ' + str(iteration)+'\n')
+
+    #Beam Deflection Convergence
+
+    v2, u2, xt, r1, r2, r3, Vy, Vz, My, Mz, rz1, rz2, rz3, P1 = Definitions.bendingconvergence(q,ndis,l1,l2,l3,l4,E,I,d1,d2,d3,P2,xa,Ca,ha,theta,spread)
+
+    #Initial Moment of Inertia - Working
+
+    I = Definitions.ExactMOIdiscretisation(q,ndis,l1,l2,l3,l4,tskin,tspar,t_stiff,w_stiff,h_stiff,zcg,n,spacing,nodepos,xa,Ca,ha,theta,zsc)
+
+    #Initial Twist Calculation
+
+    Mx,xt = Definitions.torque(q,ndis,l1,l2,l3,l4,P1,P2,xa,Ca,ha,theta,zsc)
+
+    theta, rate_twist_lst,xt = Definitions.overalltwist(Mx,A1,A2,arc,Cr,ha,xa,G,tskin,l1,l2,l3,l4,ndis,inittwist)
+
+   
+    print('\n'+'Ry1 = ' , float(r1[0]) ,' Ry2 = ', float(r2[0]) , ' Ry3 = ', float(r3[0]) , '\n'+' Rz1 = ', float(rz1[0]) , ' Rz2 = ', float(rz2[0]) ,' Rz3 = ',float(rz3[0]), '\n')
+
+    
+
+
 
 
 
