@@ -13,7 +13,7 @@ E = 73.1e+09 #E-modulus
 
 #Convergence Variables
 
-ndis = 100 #No. of Sections per section discretized
+ndis = 10 #No. of Sections per section discretized
 spread = 0.001 #dx for Jacobian Convergence
 
 
@@ -72,16 +72,20 @@ ycg, zcg = Definitions.centroid_nonidealized(tskin, ha, Ca, Ct, tspar, nodepos, 
 
 #Initial Moment of Inertia
 
-I = np.array([[np.ones(ndis*6+1)*9.434e-05, np.ones(ndis*6+1)*0],[np.ones(ndis*6+1)*0, np.ones(ndis*6+1)*1.252e-05]])
+I = Definitions.ExactMOIdiscretisation(q,ndis,l1,l2,l3,l4,tskin,tspar,t_stiff,w_stiff,h_stiff,zcg,n,spacing,nodepos,xa,Ca,ha,theta,zsc)
+
 Izz = I[1][1]
+
 
 
 
 
 #Initial reaction forces
 
-r1, rz1, rx2, r2, rz2, r3, rz3, P1 = Definitions.ReactionForces(theta[4*n],P2,-q,Ca,ha,E,Izz[3*n],l1,l2,l3,l4,xa,d1,d3)
-P1 = -P1
+v2, u2, xt, r1, r2, r3, Vy, Vz, My, Mz, rz1, rz2, rz3, P1 = Definitions.bendingconvergence(q,ndis,l1,l2,l3,l4,E,I,d1,d2,d3,P2,xa,Ca,ha,theta,spread)
+
+##r1, rz1, rx2, r2, rz2, r3, rz3, P1 = Definitions.ReactionForces(theta[4*n],P2,-q,Ca,ha,E,Izz[3*ndis],l1,l2,l3,l4,xa,d1,d3)
+##P1 = -P1
 
 
 
