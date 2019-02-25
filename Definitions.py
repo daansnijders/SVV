@@ -3,6 +3,7 @@ import math
 import matplotlib.pyplot as plt
 plt.style.use('seaborn-whitegrid')
 import numpy as np
+import sys
 
 
 def deflection(q,n,r3,l1,l2,l3,l4,E,I,d1,d2,d3,rz3,P2,xa,Ca,ha,theta):
@@ -213,7 +214,7 @@ def bendingconvergence(q,n,l1,l2,l3,l4,E,I,d1,d2,d3,P2,xa,Ca,ha,theta,spread):
 
         v,u = deflection(q,n,r3,l1,l2,l3,l4,E,I,d1,d2,d3,rz3,P2,xa,Ca,ha,theta)[0][5*n], deflection(q,n,r3,l1,l2,l3,l4,E,I,d1,d2,d3,rz3,P2,xa,Ca,ha,theta)[1][5*n]
 
-        print('V-Error = ',abs(v-d3),' and U-Error = ', u)
+        sys.stdout.write('\r\rV-Error = ' + str(abs(v-d3)) + ' and U-Error = ' + str(u))
 
     v2, u2, xt, r1, r2, Vy, Vz, My, Mz, rz1, rz2, P1 = deflection(q,n,r3,l1,l2,l3,l4,E,I,d1,d2,d3,rz3,P2,xa,Ca,ha,theta)
     
