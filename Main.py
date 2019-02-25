@@ -3,21 +3,20 @@ import math
 import Definitions
 import numpy as np
 
-
-##### Variable Definitions #####
+################################# Variable Definition ########################################################################
 
 q = -3860 #load distribution, + upwards
 P2 = 49200 #Actuator II force in negative direction
 
 E = 73.1e+09 #E-modulus
 
-#Convergence Variables
+###Convergence Variables ###
 
-ndis = 10 #No. of Sections per section discretized
+ndis = 100 #No. of Sections per section discretized
 spread = 0.001 #dx for Jacobian Convergence
 
 
-#Aileron Geometry
+###Aileron Geometry ###
 
 l1 = 0.125
 l2 = 0.498
@@ -29,22 +28,22 @@ Ca = 0.505
 ha = 0.161
 
 
-#Beam Deflection and Mx Distribution Variables
+###Beam Deflection and Mx Distribution Variables ###
 
 
-inittwist = 0 #Twist of rib C in degrees (counterclockwise upwards)
+inittwist = 30 #Twist of rib C in degrees (counterclockwise upwards)
 
 theta = np.ones(ndis*6+1)*inittwist/180*np.pi #theta[4*n] is actuator 2 and theta[2*n] is actuator 1
 
 
-#Y deflections of hinges
+###Y deflections of hinges ###
 
-d1 = 0.389
+d1 = 0.000389
 d2 = 0
-d3 = 1.245
+d3 = 0.001245
 
 
-#Boom Area Variables
+###Boom Area Variables ###
 
 n = 11 #No. of stringers
 list_length = n+3 #No. of idealised booms INCLUDING two added AND Ghost nodepos
@@ -57,9 +56,9 @@ w_stiff = 0.017
 zsc = 0 #Shear Center Location (Required but left at 0)
 
 
-#####General Code######
+##################################### General Code #############################################################################
 
-#Initial Centroid
+#Initial Centroid - Working
 
 spacing, Cr, alpharad, Ct = Definitions.boom_spacing(ha, Ca, n)
 
@@ -70,73 +69,25 @@ area_stiff = Definitions.area_stiff(t_stiff, h_stiff, w_stiff)
 ycg, zcg = Definitions.centroid_nonidealized(tskin, ha, Ca, Ct, tspar, nodepos, area_stiff)
 
 
-#Initial Moment of Inertia
+#Initial Moment of Inertia - Working
 
 I = Definitions.ExactMOIdiscretisation(q,ndis,l1,l2,l3,l4,tskin,tspar,t_stiff,w_stiff,h_stiff,zcg,n,spacing,nodepos,xa,Ca,ha,theta,zsc)
 
-Izz = I[1][1]
-
-
-
-
-
 #Initial reaction forces
 
-v2, u2, xt, r1, r2, r3, Vy, Vz, My, Mz, rz1, rz2, rz3, P1 = Definitions.bendingconvergence(q,ndis,l1,l2,l3,l4,E,I,d1,d2,d3,P2,xa,Ca,ha,theta,spread)
-
-##r1, rz1, rx2, r2, rz2, r3, rz3, P1 = Definitions.ReactionForces(theta[4*n],P2,-q,Ca,ha,E,Izz[3*ndis],l1,l2,l3,l4,xa,d1,d3)
-##P1 = -P1
 
 
+r1, rz1, rx2, r2, rz2, r3, rz3, P1 = Definitions.ReactionForces(theta[4*n],P2,-q,Ca,ha,E,I[1][1][3*ndis],l1,l2,l3,l4,xa,d1,d3)
+P1 = -P1
 
-##spacing, Cr, alpharad, Ct = Definitions.boom_spacing(ha, Ca, n)
-##
-##alphadeg = math.degrees(alpharad)
-##
-##nodepos, arc, dist = Definitions.boom_location(spacing, Cr, alpharad, list_length, ha)
-##
-##area_stiff = Definitions.area_stiff(t_stiff, h_stiff, w_stiff)
-##
-##
-##
-##
-##ycg, zcg = Definitions.centroid_nonidealized(tskin, ha, Ca, Ct, tspar, nodepos, area_stiff)
-##
-###print (boom_area_incl_skin)
-##
-##
-##
-##
-##My = 0.1
-##Mz = 0.1
-##
-##
-##"""Sybren calculate centroid of non idealized structure"""
-##""""Sybren calculate MOI 30 deg and 0 deg"""
-##
-##
-##boom_area = Definitions.boom_area_updater(tskin, spacing, Mz, My, Izz, Iyy, area_stiff, zcg, nodepos, dist, arc, tspar, ha)
-##Ixx, Iyy, Izz = Definitions.boom_inertia(list_length, nodepos, boom_area)
-##
-##
-###Moment of inertia assumed as matrix with [[Iyy, Izy];[Izy, Izz]] for beam bending
-##
-##
-##
-######## Beam Bending ###################################################################################33
-##
-##
-##
-##
-##
-##
-##
-###moment of inertia assumed as matrix with [[Iyy, Izy];[Izy, Izz]]
-##I = np.array([[np.ones(n*6+1)*8.26559e-05, np.ones(n*6+1)*-3.42075e-05],[np.ones(n*6+1)*-3.42075e-05, np.ones(n*6+1)*2.92041e-05]])
-##
-##
-##
-##v2, u2, xt, r1, r2, r3, My, Mz, rz1, rz2, rz3, P1 = Definitions.bendingconvergence(q,ndis,l1,l2,l3,l4,E,I,d1,d2,d3,P2,xa,Ca,ha,theta2,theta1,spread)
+
+#Twist Calculation
+
+
+
+#Beam Deflection Convergence
+
+#v2, u2, xt, r1, r2, r3, Vy, Vz, My, Mz, rz1, rz2, rz3, P1 = Definitions.bendingconvergence(q,ndis,l1,l2,l3,l4,E,I,d1,d2,d3,P2,xa,Ca,ha,theta,spread)
 
 
 
