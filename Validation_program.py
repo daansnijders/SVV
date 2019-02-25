@@ -102,16 +102,16 @@ for j in range(len(node)):
 node = np.array(node)
 x,y,z = node[:,1], node[:,2], node[:,3]
 
-#display = plt.figure()
-#axis = plt.axes(projection='3d')
-#axis.scatter3D(x,-z,y, c=z, cmap='Greens');
-#axis.set_xlim3d(-200,2000)
-#axis.set_ylim3d(-500,500)
-#axis.set_zlim3d(-200,200)
-#plt.show(
+display = plt.figure()
+axis = plt.axes(projection='3d')
+axis.scatter3D(x,-z,y, c=z, cmap='Greens');
+axis.set_xlim3d(-200,2000)
+axis.set_ylim3d(-500,500)
+axis.set_zlim3d(-200,200)
+plt.show()
 
 
-"""Open the F100_ULC1_rpt file """
+#"""Open the F100_ULC1_rpt file """
 deflection = []
 l = []
 
