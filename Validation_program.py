@@ -112,63 +112,63 @@ x,y,z = node[:,1], node[:,2], node[:,3]
 
 
 """Open the F100_ULC1_rpt file """
-defl = []
-lines = []
+deflection = []
+l = []
 
 with open("./data/F100_ULC1.rpt") as f_in:
-    lines = (line.rstrip().split() for line in f_in)
-    lines = list(line for line in lines if line)
+    l = (line.rstrip().split() for line in f_in)
+    l = list(line for line in l if line)
 
 i = 0
-for line in lines:
-    if lines[i][0].isdigit() == True:
-        defl.append(lines[i])
+for line in l:
+    if l[i][0].isdigit() == True:
+        deflection.append(l[i])
     i = i + 1
         
-defl = np.array(defl).astype(np.float)
-defl = defl[:,[0,5,6,7,8]]
-#making an array with the node numbers and the deflections which correspons to it.
-defl = defl[0:3254] #selecting the oldest dataset.
+deflection = np.array(deflection).astype(np.float)
+deflection = deflection[:,[0,5,6,7,8]]
+#making an array with the node numbers and the deflectionections which correspons to it.
+deflection = deflection[0:3254] #selecting the oldest dataset.
 
 
 #now we need to sort the nodes for which the z and y coordinates are the same , with a varying x - coordinate
-locy = []
+location_y = []
 with open("./data/F100_UR1.rpt") as f_in:
-    lines = (line.rstrip().split() for line in f_in)
-    lines = list(line for line in lines if line)
+    l = (li.rstrip().split() for li in f_in)
+    l = list(li for li in l if li)
 i = 0
-for line in lines:
-    if lines[i][0].isdigit() == True:
-        locy.append(lines[i])
+for li in l:
+    if l[i][0].isdigit() == True:
+        location_y.append(l[i])
     i = i + 1
     
-locy = np.array(locy).astype(np.float)
-locy = locy[:,[0,5,6,7,8]]
-locy = locy[0:3254]
+location_y = np.array(location_y).astype(np.float)
+location_y = location_y[:,[0,5,6,7,8]]
+location_y = location_y[0:3254]
 
 #we can do this by checking at which indices y,z are the max or min valua
 i = 0
 yn = np.argwhere(y == 0)
-zi_LE = np.argwhere(z == max(z))
-zi_TE = np.argwhere(z == min(z))
-zn_TE = np.take(node[:,0],zi_TE)
-zn_LE = np.take(node[:,0],zi_LE)
+LEzi = np.argwhere(z == max(z))
+TEzi = np.argwhere(z == min(z))
+TEzn = np.take(node[:,0],TEzi)
+LEzn = np.take(node[:,0],LEzi)
 #now that we know the indices where the trailing edge and leading edge are, we can extract the indices of x
 #we now know all the nodes of the trailing and the leading edge.
-#now for a 2d scatter plot we need to take the x values and the deflection in y values
-dy_TE = np.take(defl[:,3],zi_TE)
-dy_LE = np.take(defl[:,3],zi_LE)
+#now for a 2d scatter plot we need to take the x values and the deflectionection in y values
+dypos_trailingedge = np.take(deflection[:,3],TEzi)
+dypos_leadingedge = np.take(deflection[:,3],LEzi)
 
-y_TE = np.take(locy[:,3],zi_TE)
-y_LE = np.take(locy[:,3],zi_LE)
-x_TE = np.take(node[:,1],zi_TE)
-x_LE = np.take(node[:,1],zi_LE)
-y_TE = np.take(node[:,2],zi_TE)
-y_LE = np.take(node[:,2],zi_LE)
-y_TE = (dy_TE - y_TE)
-y_LE = (dy_LE - y_LE)
-d = np.column_stack((x_TE ,dy_TE))
-d = d[np.argsort(d[:,0])]
+ypos_trailingedge = np.take(location_y[:,3],TEzi)
+ypos_leadingedge = np.take(location_y[:,3],LEzi)
+xpos_trailingedge = np.take(node[:,1],TEzi)
+xpos_leadingedge = np.take(node[:,1],LEzi)
+ypos_trailingedge = np.take(node[:,2],TEzi)
+ypos_leadingedge = np.take(node[:,2],LEzi)
+ypos_trailingedge = (dypos_trailingedge - ypos_trailingedge)
+ypos_leadingedge = (dypos_leadingedge - ypos_leadingedge)
+dist = np.column_stack((xpos_trailingedge ,dypos_trailingedge))
+dist = dist[np.argsort(dist[:,0])]
 
 
 
