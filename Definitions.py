@@ -275,35 +275,36 @@ def torque(q,n,l1,l2,l3,l4,P1,P2,xa,Ca,ha,theta,zsc):
         dx = (l2-l1)/(n)
         
        
-        Mx = np.append(Mx, (q*x)*(-zsc+0.25*Ca-ha/2)*np.cos(theta[i-1])+P1*(-ha/2*np.sin(theta[i])+ha/2*np.cos(theta[i])))
+        Mx = np.append(Mx, (q*x)*(-zsc+0.25*Ca-ha/2)*np.cos(theta[i-1])+P1*(-ha/2*np.sin(theta[2*n])+ha/2*np.cos(theta[2*n])))
 
         i = i+1
     for x in np.linspace(l2,l2+xa/2,n+1)[1:]:
         xt = np.append(xt, x)
         dx = (l3-l2)/(n)
         
-        Mx = np.append(Mx, (q*x)*(-zsc+0.25*Ca-ha/2)*np.cos(theta[i-1])+P1*(-zsc*np.sin(theta[i])+(-ha/2*np.sin(theta[i])+ha/2*np.cos(theta[i]))))
+        Mx = np.append(Mx, (q*x)*(-zsc+0.25*Ca-ha/2)*np.cos(theta[i-1])+P1*(-zsc*np.sin(theta[2*n])+(-ha/2*np.sin(theta[2*n])+ha/2*np.cos(theta[2*n]))))
         
         i = i+1
     for x in np.linspace(l2+xa/2,l3,n+1)[1:]:
         xt = np.append(xt, x)
         dx = (l3-l2)/(n)
         
-        Mx = np.append(Mx, (q*x)*(-zsc+0.25*Ca-ha/2)*np.cos(theta[i-1])+P1*(-zsc*np.sin(theta[i])+(-ha/2*np.sin(theta[i])+ha/2*np.cos(theta[i])))
-                       - P2*(-zsc*np.sin(theta[i])+(-ha/2*np.sin(theta[i])+ha/2*np.cos(theta[i]))))
+        Mx = np.append(Mx, (q*x)*(-zsc+0.25*Ca-ha/2)*np.cos(theta[i-1])+P1*(-zsc*np.sin(theta[2*n])+(-ha/2*np.sin(theta[2*n])+ha/2*np.cos(theta[2*n])))
+                       - P2*(-zsc*np.sin(theta[4*n])+(-ha/2*np.sin(theta[4*n])+ha/2*np.cos(theta[4*n]))))
         
         i = i+1
     for x in np.linspace(l3,l4,n+1)[1:]:
         xt = np.append(xt, x)
         dx = (l4-l3)/(n)
 
-        Mx = np.append(Mx, (q*x)*(-zsc+0.25*Ca-ha/2)*np.cos(theta[i-1])+(np.sign((x-l2+xa/2)) == 1)*P1*(-zsc*np.sin(theta[i])+(-ha/2*np.sin(theta[i])+ha/2*np.cos(theta[i])))
-                       - (np.sign((x-l2-xa/2)) == 1)*P2*(-zsc*np.sin(theta[i])+(-ha/2*np.sin(theta[i])+ha/2*np.cos(theta[i]))))
+        Mx = np.append(Mx, (q*x)*(-zsc+0.25*Ca-ha/2)*np.cos(theta[i-1])+P1*(-zsc*np.sin(theta[2*n])+(-ha/2*np.sin(theta[2*n])+ha/2*np.cos(theta[2*n])))
+                       - P2*(-zsc*np.sin(theta[4*n])+(-ha/2*np.sin(theta[4*n])+ha/2*np.cos(theta[4*n]))))
        
 
         i = i+1
 
     return Mx, xt
+
 
 def centroid(nodepos, boom_area, list_length):  #TO BE CHECKED
     ycg = 0
@@ -795,7 +796,7 @@ def ReactionForces(theta,P,q,Ca,ha,E,Izz,x1,x2,x3,xa,span,d1,d3):
     R3y = float(x[2])
     
     """ Reaction Forces in z direction """
-    A1 = -span*q/(math.tan(theta)) - P                #force in actuator 1 (sum of moments around hinge)
+    A1 = -span*q*(0.25*Ca - ha/2.)/(ha/2. * (1. - math.sin(theta))) - P  #force in actuator 1 (sum of moments around hinge)
     
     eq1 = [1.,1.,1.,0.,0.]                      #sum of forces in z
     eq2 = [-(x2 - x1),0.,(x3-x2),0.,0.]         #sum of moments round hinge 2

@@ -41,7 +41,7 @@ def ReactionForces(theta,P,q,Ca,ha,E,Izz,x1,x2,x3,xa,span,d1,d3):
     R3y = float(x[2])
     
     """ Reaction Forces in z direction """
-    A1 = -span*q/(math.tan(theta)) - P                #force in actuator 1 (sum of moments around hinge)
+    A1 = A1 = -span*q*(0.25*Ca - ha/2.)/(ha/2. * (1. - math.sin(theta))) - P  #force in actuator 1 (sum of moments around hinge)
     
     eq1 = [1.,1.,1.,0.,0.]                      #sum of forces in z
     eq2 = [-(x2 - x1),0.,(x3-x2),0.,0.]         #sum of moments round hinge 2
