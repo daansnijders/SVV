@@ -102,14 +102,73 @@ for j in range(len(node)):
 node = np.array(node)
 x,y,z = node[:,1], node[:,2], node[:,3]
 
-display = plt.figure()
-axis = plt.axes(projection='3d')
-axis.scatter3D(x,-z,y, c=z, cmap='Greens');
-axis.set_xlim3d(-200,2000)
-axis.set_ylim3d(-500,500)
-axis.set_zlim3d(-200,200)
-plt.show()
+#display = plt.figure()
+#axis = plt.axes(projection='3d')
+#axis.scatter3D(x,-z,y, c=z, cmap='Greens');
+#axis.set_xlim3d(-200,2000)
+#axis.set_ylim3d(-500,500)
+#axis.set_zlim3d(-200,200)
+#plt.show(
+
+
+"""Open the F100_ULC1_rpt file """
+defl = []
+lines = []
+
+with open("./data/F100_ULC1.rpt") as f_in:
+    lines = (line.rstrip().split() for line in f_in)
+    lines = list(line for line in lines if line)
+
+i = 0
+for line in lines:
+    if lines[i][0].isdigit() == True:
+        defl.append(lines[i])
+    i = i + 1
+        
+defl = np.array(defl).astype(np.float)
+defl = defl[:,[0,5,6,7,8]]
+#making an array with the node numbers and the deflections which correspons to it.
+defl = defl[6570:13124] #selecting the oldest dataset.
+
+#now we need to sort the nodes for which the z and y coordinates are the same , with a varying x - coordinate
+locy = []
+with open("./data/F100_UR1.rpt") as f_in:
+    lines = (line.rstrip().split() for line in f_in)
+    lines = list(line for line in lines if line)
+i = 0
+for line in lines:
+    if lines[i][0].isdigit() == True:
+        locy.append(lines[i])
+    i = i + 1
     
+locy = np.array(locy).astype(np.float)
+locy = locy[:,[0,5,6,7,8]]
+locy = locy[6570:13124]
+#we can do this by checking at which indices y,z are the max or min valua
+i = 0
+yn = np.argwhere(y == 0)
+zi_LE = np.argwhere(z == max(z))
+zi_TE = np.argwhere(z == min(z))
+zn_TE = np.take(node[:,0],zi_TE)
+zn_LE = np.take(node[:,0],zi_LE)
+#now that we know the indices where the trailing edge and leading edge are, we can extract the indices of x
+#we now know all the nodes of the trailing and the leading edge.
+#now for a 2d scatter plot we need to take the x values and the deflection in y values
+dy_TE = np.take(defl[:,3],zi_TE)
+dy_LE = np.take(defl[:,3],zi_LE)
+y_TE = np.take(locy[:,3],zi_TE)
+y_LE = np.take(locy[:,3],zi_LE)
+x_TE = np.take(node[:,1],zi_TE)
+x_LE = np.take(node[:,1],zi_LE)
+#y_TE = np.take(node[:,2],zi_TE)
+#y_LE = np.take(node[:,2],zi_LE)
+#y_TE = (dy_TE - y_TE)
+#y_LE = (dy_LE - y_LE)
+d = np.column_stack((x_TE ,dy_TE))
+d = d[np.argsort(d[:,0])]
+
+
+
     
     
     
