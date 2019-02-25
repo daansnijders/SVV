@@ -1120,7 +1120,7 @@ def torque(q,n,l1,l2,l3,l4,P1,P2,xa,Ca,ha,theta,zsc):
 
     return Mx, xt
 
-T,xt=torque(q,n,l1,l2,l3,l4,P1,P2,xa,Ca,ha,theta,zsc) #torque vector!
+ #torque vector!
 
 
 def shear_flow_torsion(T,A1,A2,arc,l,ha,G,t):
@@ -1145,7 +1145,7 @@ def shear_flow_torsion(T,A1,A2,arc,l,ha,G,t):
     
     return rate_twist,q1,q2
 
-def overalltwist(l1,l2,l3,l4,n):
+def overalltwist(T,A1,A2,arc,l,ha,xa,G,t,l1,l2,l3,l4,n,inittwist):
 
     xt=np.array([0])
     theta = np.array([0])
@@ -1170,17 +1170,12 @@ def overalltwist(l1,l2,l3,l4,n):
         theta = np.append(theta,theta_elem)
         i = i+1
     
-   # print(len(theta))
-   # print(theta[-1])
-    #fuck=theta_elem
     a=0
     for r in theta:
         Theta=r-theta_elem
         theta[a]=Theta
         a+=1
-    #print(len(theta))
-    #print(theta[-1])
-       
+
     for x in np.linspace(l2-xa/2,l2,n+1)[1:]:
         xt=np.append(xt,x)
         dx = (l2-l1)/(n)
@@ -1190,8 +1185,6 @@ def overalltwist(l1,l2,l3,l4,n):
         theta = np.append(theta,theta_elem)
         i = i+1
     
-        
-        
     
     for x in np.linspace(l2,l2+xa/2,n+1)[1:]:
         xt=np.append(xt,x)
@@ -1222,8 +1215,8 @@ def overalltwist(l1,l2,l3,l4,n):
         theta = np.append(theta,theta_elem)
         i = i+1
         
-        #for i in range(len(theta)):
-            #theta[i]=theta[i]-fuck
+
+    theta = theta + (inittwist*np.pi/180-theta[2*n])
 
     return theta, rate_twist_lst,xt
         
