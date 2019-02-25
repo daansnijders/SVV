@@ -128,7 +128,8 @@ for line in lines:
 defl = np.array(defl).astype(np.float)
 defl = defl[:,[0,5,6,7,8]]
 #making an array with the node numbers and the deflections which correspons to it.
-defl = defl[6570:13124] #selecting the oldest dataset.
+defl = defl[0:3254] #selecting the oldest dataset.
+
 
 #now we need to sort the nodes for which the z and y coordinates are the same , with a varying x - coordinate
 locy = []
@@ -143,7 +144,8 @@ for line in lines:
     
 locy = np.array(locy).astype(np.float)
 locy = locy[:,[0,5,6,7,8]]
-locy = locy[6570:13124]
+locy = locy[0:3254]
+
 #we can do this by checking at which indices y,z are the max or min valua
 i = 0
 yn = np.argwhere(y == 0)
@@ -156,14 +158,15 @@ zn_LE = np.take(node[:,0],zi_LE)
 #now for a 2d scatter plot we need to take the x values and the deflection in y values
 dy_TE = np.take(defl[:,3],zi_TE)
 dy_LE = np.take(defl[:,3],zi_LE)
+
 y_TE = np.take(locy[:,3],zi_TE)
 y_LE = np.take(locy[:,3],zi_LE)
 x_TE = np.take(node[:,1],zi_TE)
 x_LE = np.take(node[:,1],zi_LE)
-#y_TE = np.take(node[:,2],zi_TE)
-#y_LE = np.take(node[:,2],zi_LE)
-#y_TE = (dy_TE - y_TE)
-#y_LE = (dy_LE - y_LE)
+y_TE = np.take(node[:,2],zi_TE)
+y_LE = np.take(node[:,2],zi_LE)
+y_TE = (dy_TE - y_TE)
+y_LE = (dy_LE - y_LE)
 d = np.column_stack((x_TE ,dy_TE))
 d = d[np.argsort(d[:,0])]
 
