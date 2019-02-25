@@ -275,35 +275,36 @@ def torque(q,n,l1,l2,l3,l4,P1,P2,xa,Ca,ha,theta,zsc):
         dx = (l2-l1)/(n)
         
        
-        Mx = np.append(Mx, (q*x)*(-zsc+0.25*Ca-ha/2)*np.cos(theta[i-1])+P1*(-ha/2*np.sin(theta[i])+ha/2*np.cos(theta[i])))
+        Mx = np.append(Mx, (q*x)*(-zsc+0.25*Ca-ha/2)*np.cos(theta[i-1])+P1*(-ha/2*np.sin(theta[2*n])+ha/2*np.cos(theta[2*n])))
 
         i = i+1
     for x in np.linspace(l2,l2+xa/2,n+1)[1:]:
         xt = np.append(xt, x)
         dx = (l3-l2)/(n)
         
-        Mx = np.append(Mx, (q*x)*(-zsc+0.25*Ca-ha/2)*np.cos(theta[i-1])+P1*(-zsc*np.sin(theta[i])+(-ha/2*np.sin(theta[i])+ha/2*np.cos(theta[i]))))
+        Mx = np.append(Mx, (q*x)*(-zsc+0.25*Ca-ha/2)*np.cos(theta[i-1])+P1*(-zsc*np.sin(theta[2*n])+(-ha/2*np.sin(theta[2*n])+ha/2*np.cos(theta[2*n]))))
         
         i = i+1
     for x in np.linspace(l2+xa/2,l3,n+1)[1:]:
         xt = np.append(xt, x)
         dx = (l3-l2)/(n)
         
-        Mx = np.append(Mx, (q*x)*(-zsc+0.25*Ca-ha/2)*np.cos(theta[i-1])+P1*(-zsc*np.sin(theta[i])+(-ha/2*np.sin(theta[i])+ha/2*np.cos(theta[i])))
-                       - P2*(-zsc*np.sin(theta[i])+(-ha/2*np.sin(theta[i])+ha/2*np.cos(theta[i]))))
+        Mx = np.append(Mx, (q*x)*(-zsc+0.25*Ca-ha/2)*np.cos(theta[i-1])+P1*(-zsc*np.sin(theta[2*n])+(-ha/2*np.sin(theta[2*n])+ha/2*np.cos(theta[2*n])))
+                       - P2*(-zsc*np.sin(theta[4*n])+(-ha/2*np.sin(theta[4*n])+ha/2*np.cos(theta[4*n]))))
         
         i = i+1
     for x in np.linspace(l3,l4,n+1)[1:]:
         xt = np.append(xt, x)
         dx = (l4-l3)/(n)
 
-        Mx = np.append(Mx, (q*x)*(-zsc+0.25*Ca-ha/2)*np.cos(theta[i-1])+(np.sign((x-l2+xa/2)) == 1)*P1*(-zsc*np.sin(theta[i])+(-ha/2*np.sin(theta[i])+ha/2*np.cos(theta[i])))
-                       - (np.sign((x-l2-xa/2)) == 1)*P2*(-zsc*np.sin(theta[i])+(-ha/2*np.sin(theta[i])+ha/2*np.cos(theta[i]))))
+        Mx = np.append(Mx, (q*x)*(-zsc+0.25*Ca-ha/2)*np.cos(theta[i-1])+P1*(-zsc*np.sin(theta[2*n])+(-ha/2*np.sin(theta[2*n])+ha/2*np.cos(theta[2*n])))
+                       - P2*(-zsc*np.sin(theta[4*n])+(-ha/2*np.sin(theta[4*n])+ha/2*np.cos(theta[4*n]))))
        
 
         i = i+1
 
     return Mx, xt
+
 
 def centroid(nodepos, boom_area, list_length):  #TO BE CHECKED
     ycg = 0
