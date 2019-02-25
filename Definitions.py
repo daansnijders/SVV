@@ -910,6 +910,73 @@ def ExactMOI(theta,Ca,ha,t_sk,t_sp,t_st,w_st,h_st,zcg,n,spacing,nodepos):
     
     return Iyy_0, Izz_0, Iyy_theta, Izz_theta, Izy_theta
 
+def ExactMOIdiscretisation(q,n,l1,l2,l3,l4,t_sk,t_sp,t_st,w_st,h_st,zcg,n,spacing,nodepos,xa,Ca,ha,theta,zsc):
+
+
+    I = np.array([[],[]],[[],[]])
+
+    xt = np.array([0])
+
+
+    i = 1
+
+    for x in np.linspace(0,l1,n+1)[1:]:
+        xt = np.append(xt, x)
+        dx = l1/(n)
+
+
+        Iyy, Izz, Izy = ExactMOI(theta[i-1],Ca,ha,t_sk,t_sp,t_st,w_st,h_st,zcg,n,spacing,nodepos)[2:]
+        I = np.append(I, [[Iyy,Izy],[Izy, Izz]])
+        
+
+
+        i = i+1
+    for x in np.linspace(l1,l2-xa/2,n+1)[1:]:
+        xt = np.append(xt, x)
+        dx = (l2-l1)/(n)
+        
+        Iyy, Izz, Izy = ExactMOI(theta[i-1],Ca,ha,t_sk,t_sp,t_st,w_st,h_st,zcg,n,spacing,nodepos)[2:]
+        I = np.append(I, [[Iyy,Izy],[Izy, Izz]])
+
+        i = i+1
+
+    for x in np.linspace(l2-xa/2,l2,n+1)[1:]:
+        xt = np.append(xt, x)
+        dx = (l2-l1)/(n)
+        
+       
+        Iyy, Izz, Izy = ExactMOI(theta[i-1],Ca,ha,t_sk,t_sp,t_st,w_st,h_st,zcg,n,spacing,nodepos)[2:]
+        I = np.append(I, [[Iyy,Izy],[Izy, Izz]])
+
+        i = i+1
+    for x in np.linspace(l2,l2+xa/2,n+1)[1:]:
+        xt = np.append(xt, x)
+        dx = (l3-l2)/(n)
+        
+        Iyy, Izz, Izy = ExactMOI(theta[i-1],Ca,ha,t_sk,t_sp,t_st,w_st,h_st,zcg,n,spacing,nodepos)[2:]
+        I = np.append(I, [[Iyy,Izy],[Izy, Izz]])
+        
+        i = i+1
+    for x in np.linspace(l2+xa/2,l3,n+1)[1:]:
+        xt = np.append(xt, x)
+        dx = (l3-l2)/(n)
+        
+        Iyy, Izz, Izy = ExactMOI(theta[i-1],Ca,ha,t_sk,t_sp,t_st,w_st,h_st,zcg,n,spacing,nodepos)[2:]
+        I = np.append(I, [[Iyy,Izy],[Izy, Izz]])
+        
+        i = i+1
+    for x in np.linspace(l3,l4,n+1)[1:]:
+        xt = np.append(xt, x)
+        dx = (l4-l3)/(n)
+
+        Iyy, Izz, Izy = ExactMOI(theta[i-1],Ca,ha,t_sk,t_sp,t_st,w_st,h_st,zcg,n,spacing,nodepos)[2:]
+        I = np.append(I, [[Iyy,Izy],[Izy, Izz]])
+       
+
+        i = i+1
+
+        return I
+
 def shear_flow_finder(boom_area_inclskin, Izz, Iyy, theta, node_pos, Ca, ha, Mx, Vy, Vz, G, tsk, tspar):
     #decompose forces to be local
     Vy = Vy*math.cos(theta)+Vz*math.sin(theta)
