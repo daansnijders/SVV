@@ -6,8 +6,8 @@ import numpy as np
 
 ##### Variable Definitions #####
 
-q = -4530 #load distribution, + upwards
-P2 = 91700 #Actuator II force in negative direction
+q = -3860 #load distribution, + upwards
+P2 = 49200 #Actuator II force in negative direction
 
 E = 73.1e+09 #E-modulus
 
@@ -19,14 +19,15 @@ spread = 0.001 #dx for Jacobian Convergence
 
 #Aileron Geometry
 
-l1 = 0.153
-l2 = 1.281
-l3 = 2.681
-l4 = 2.771
-xa = 0.28
+l1 = 0.125
+l2 = 0.498
+l3 = 1.494
+l4 = 1.611
+xa = 0.245
 
-Ca = 0.547
-ha = 0.225
+Ca = 0.505
+ha = 0.161
+
 
 #Beam Deflection and Mx Distribution Variables
 
@@ -38,9 +39,9 @@ theta = np.ones(ndis*6+1)*inittwist/180*np.pi #theta[4*n] is actuator 2 and thet
 
 #Y deflections of hinges
 
-d1 = 0.01103
+d1 = 0.389
 d2 = 0
-d3 = 0.01642
+d3 = 1.245
 
 
 #Boom Area Variables
@@ -51,17 +52,33 @@ tskin = 0.0011
 tspar = 0.0024
 t_stiff = 0.0012
 h_stiff = 0.013
-w_stiff = 0.017 
+w_stiff = 0.017
 
 zsc = 0 #Shear Center Location (Required but left at 0)
 
 
 #####General Code######
 
+#Initial Centroid
+
+spacing, Cr, alpharad, Ct = Definitions.boom_spacing(ha, Ca, n)
+
+nodepos, arc, dist = Definitions.boom_location(spacing, Cr, alpharad, list_length, ha)
+
+area_stiff = Definitions.area_stiff(t_stiff, h_stiff, w_stiff)
+
+ycg, zcg = Definitions.centroid_nonidealized(tskin, ha, Ca, Ct, tspar, nodepos, area_stiff)
+
+
+#Initial Moment of Inertia
 
 I = np.array([[np.ones(ndis*6+1)*9.434e-05, np.ones(ndis*6+1)*0],[np.ones(ndis*6+1)*0, np.ones(ndis*6+1)*1.252e-05]])
 Izz = I[1][1]
 
+
+
+
+#Initial reaction forces
 
 r1, rz1, rx2, r2, rz2, r3, rz3, P1 = Definitions.ReactionForces(theta[4*n],P2,-q,Ca,ha,E,Izz[3*n],l1,l2,l3,l4,xa,d1,d3)
 P1 = -P1
