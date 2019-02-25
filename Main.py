@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import math
 import Definitions
+import numpy as np
 
 
 ha = 0.161 #height of thickest part of airfoil
@@ -51,33 +52,39 @@ I = np.array([[np.ones(n*4+1)*4.38537e-04, np.ones(n*4+1)*6.475e-04],[np.ones(n*
 
 ###### Beam Bending ###################################################################################33
 
-q = 3860
-n = 200
+q = -4530
+ndis = 100
 
-l1 = 0.125
-l2 = 0.498
-l3 = 1.494
-l4 = 1.611
-xa = 0.245
+l1 = 0.153
+l2 = 1.281
+l3 = 2.681
+l4 = 2.771
+xa = 0.28
 
-Ca = 0.245
-theta2 = 30*np.pi/180
-ha = 0.161
+Ca = 0.547
+ha = 0.225
 
-d1 = 0.389
+#Theta2 is actuator 2 and theta is actuator 1
+theta = np.ones(n*6+1)*26/180*np.pi
+theta1 = theta[2*n]
+theta2 = theta[4*n]
+zsc = 0
+
+
+d1 = 0.01103
 d2 = 0
-d3 = 1.245
-
-E = 72000000
+d3 = 0.01642
 
 
-rz3 = 50000
-P2 = 49200
-r3 = 150000
+E = 73.1e+09
+#moment of inertia assumed as matrix with [[Iyy, Izy];[Izy, Izz]]
+I = np.array([[np.ones(n*6+1)*8.26559e-05, np.ones(n*6+1)*-3.42075e-05],[np.ones(n*6+1)*-3.42075e-05, np.ones(n*6+1)*2.92041e-05]])
 
-spread = 0.0001
+P2 = 91700
 
-v2, u2, xt, r1, r2, r3, My, Mz, rz1, rz2, rz3, P1 = bendingconvergence(q,n,r3,l1,l2,l3,l4,E,I,d1,d2,d3,rz3,P2,xa,Ca,ha,theta2,spread)
+spread = 0.001
+
+v2, u2, xt, r1, r2, r3, My, Mz, rz1, rz2, rz3, P1 = Definitions.bendingconvergence(q,ndis,l1,l2,l3,l4,E,I,d1,d2,d3,P2,xa,Ca,ha,theta2,theta1,spread)
 
 
 
