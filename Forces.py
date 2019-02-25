@@ -73,14 +73,14 @@ def ReactionForces(theta,P,q,Ca,ha,E,Izz,x1,x2,x3,xa,span,d1,d3):
 def ExactMOI(theta,Ca,ha,t_sk,t_sp,t_st,w_st,h_st,zcg,n,spacing,nodepos):
     
     """ Stringer MOI """
-    y_bar = (t_st*w_st*t_st/2. + (h_st-t_st)*t_st*((h_st-t_st)/2. + t_st)) / (w_st*t_st + (h_st-t_st)*t_st)
+    y_bar = (h_st**2. * t_st + t_st**2. * (w_st - t_st)) / (2. * (w_st*t_st + (h_st - t_st)*t_st))
     A = (w_st*t_st + (h_st-t_st)*t_st)
-    Izz_st = 1./12. *w_st*t_st**3. + (w_st*t_st)*(y_bar - t_st/2.) + 1./12.*(h_st - t_st)**3.*t_st + (h_st-t_st)*t_st * ((h_st-t_st)/2. - y_bar)
+    Izz_st = 1./12. *w_st*t_st**3. + (w_st*t_st)*(y_bar - t_st/2.)**2. + 1./12.*(h_st - t_st)**3.*t_st + (h_st-t_st)*t_st * ((h_st-t_st)/2. - y_bar)**2.
     Iyy_st = 1./12 *(h_st-t_st)*t_st**3. + 1./12. * w_st**3. *t_st
     
     """ Half arc MOI """
-    Izz_arc = 1./2. * math.pi * ha**3. * t_sk
-    Iyy_arc = 1./2. * math.pi * ha**3. * t_sk
+    Izz_arc = 1./2. * math.pi * (ha/2.)**3. * t_sk
+    Iyy_arc = 1./2. * math.pi * (ha/2.)**3. * t_sk
     
     """ Spar MOI """
     Izz_sp = 1./12. * ha**3. * t_sp
@@ -125,8 +125,9 @@ def ExactMOI(theta,Ca,ha,t_sk,t_sp,t_st,w_st,h_st,zcg,n,spacing,nodepos):
             Izz_new = (Iyy_st + Izz_st)/2. + (Izz_st - Iyy_st)/2. * math.cos(-2.*angle)
             Iyy_new = (Iyy_st + Izz_st)/2. - (Izz_st - Iyy_st)/2. * math.cos(-2.*angle)
         
-        Izz += Izz_new + A * (z_loc)**2.
-        Iyy += Iyy_new + A * (y_loc)**2.
+        print (Izz_new*1000.**4., Iyy_new*1000.**4.)
+        Izz += Izz_new + A * (y_loc)**2.
+        Iyy += Iyy_new + A * (z_loc)**2.
         locy.append(y_loc)
         locz.append(z_loc)
         
@@ -136,15 +137,17 @@ def ExactMOI(theta,Ca,ha,t_sk,t_sp,t_st,w_st,h_st,zcg,n,spacing,nodepos):
     
     #Add half arc
     Izz += Izz_arc
-    Iyy += Iyy_arc + (math.pi*((ha/2.)**2 - (ha/2. - t_sk)**2.)/2.)* (2.*ha/2./math.pi + zcg)**2.
+    Iyy += Iyy_arc + (math.pi*((ha/2.)**2 - (ha/2. - t_sk)**2.)/2.)* (2.*ha/2./math.pi + abs(zcg))**2.
     
     #Add spar
     Izz += Izz_sp
-    Iyy += Iyy_sp + (t_sp * ha)*zcg**2.
+    Iyy += Iyy_sp + (t_sp * ha)*(abs(zcg))**2.
     
     #Add beams
-    Izz += (Izz_beam + (Ca-ha/2.)*math.cos(angle)*t_sk * (((Ca-ha/2.)/2.)*math.tan(angle))**2.)*2.
-    Iyy += (Iyy_beam + (Ca-ha/2.)*math.cos(angle)*t_sk *(((Ca-ha/2.)/2.)-zcg)**2.)
+    Izz += (Izz_beam + (Ca-ha/2.)/math.cos(angle)*t_sk * (((Ca-ha/2.)/2.)*math.tan(angle))**2.)*2.
+    Iyy += (Iyy_beam + (Ca-ha/2.)/math.cos(angle)*t_sk *(((Ca-ha/2.)/2.)-abs(zcg))**2.)*2.
+    
+    print (((Ca-ha/2.)/2.)*math.tan(angle) * 1000.)
     
     Izz_0 = Izz
     Iyy_0 = Iyy        
@@ -208,3 +211,50 @@ Iyy_0, Izz_0, Iyy_theta, Izz_theta, Izy_theta = ExactMOI(theta,Ca,ha,t_sk,t_sp,t
 test = ReactionForces(theta,P,q,Ca,ha,E,Izz_theta,x1,x2,x3,xa,span,d1,d3)
 
 
+q = -4530 #load distribution, + upwards
+P2 = 91700 #Actuator II force in negative direction
+E = 73.1e+09 #E-modulus
+#Convergence Variables
+
+ndis = 100 #No. of Sections per section discretized
+spread = 0.001 #dx for Jacobian Convergence
+
+
+#Aileron Geometry
+l1 = 0.153
+l2 = 1.281
+l3 = 2.681
+l4 = 2.771
+xa = 0.28
+Ca = 0.547
+ha = 0.225
+
+#Beam Deflection and Mx Distribution Variables
+inittwist = 0 #Twist of rib C in degrees (counterclockwise upwards)
+theta = np.ones(ndis*6+1)*inittwist/180*np.pi #theta[4*n] is actuator 2 and theta[2*n] is actuator 1
+
+#Y deflections of hinges
+d1 = 0.01103
+d2 = 0
+d3 = 0.01642
+
+#Boom Area Variables
+n = 11 #No. of stringers
+list_length = n+3 #No. of idealised booms INCLUDING two added AND Ghost nodepos
+tskin = 0.0011
+tspar = 0.0024
+t_stiff = 0.0012
+h_stiff = 0.013
+w_stiff = 0.017 
+zsc = 0 #Shear Center Location (Required but left at 0)
+
+
+#####General Code######
+
+
+I = np.array([[np.ones(ndis*6+1)*9.434e-05, np.ones(ndis*6+1)*0],[np.ones(ndis*6+1)*0, np.ones(ndis*6+1)*1.252e-05]])
+Izz = I[1][1]
+
+
+r1, rz1, rx2, r2, rz2, r3, rz3, P1 = Definitions.ReactionForces(theta[4*n],P2,-q,Ca,ha,E,Izz[3*n],l1,l2,l3,l4,xa,d1,d3)
+P1 = -P1

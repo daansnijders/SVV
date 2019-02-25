@@ -828,14 +828,14 @@ def ReactionForces(theta,P,q,Ca,ha,E,Izz,x1,x2,x3,xa,span,d1,d3):
 def ExactMOI(theta,Ca,ha,t_sk,t_sp,t_st,w_st,h_st,zcg,n,spacing,nodepos):
     
     """ Stringer MOI """
-    y_bar = (t_st*w_st*t_st/2. + (h_st-t_st)*t_st*((h_st-t_st)/2. + t_st)) / (w_st*t_st + (h_st-t_st)*t_st)
+    y_bar = (h_st**2. * t_st + t_st**2. * (w_st - t_st)) / (2. * (w_st*t_st + (h_st - t_st)*t_st))
     A = (w_st*t_st + (h_st-t_st)*t_st)
-    Izz_st = 1./12. *w_st*t_st**3. + (w_st*t_st)*(y_bar - t_st/2.) + 1./12.*(h_st - t_st)**3.*t_st + (h_st-t_st)*t_st * ((h_st-t_st)/2. - y_bar)
+    Izz_st = 1./12. *w_st*t_st**3. + (w_st*t_st)*(y_bar - t_st/2.)**2. + 1./12.*(h_st - t_st)**3.*t_st + (h_st-t_st)*t_st * ((h_st-t_st)/2. - y_bar)**2.
     Iyy_st = 1./12 *(h_st-t_st)*t_st**3. + 1./12. * w_st**3. *t_st
     
     """ Half arc MOI """
-    Izz_arc = 1./2. * math.pi * ha**3. * t_sk
-    Iyy_arc = 1./2. * math.pi * ha**3. * t_sk
+    Izz_arc = 1./2. * math.pi * (ha/2.)**3. * t_sk
+    Iyy_arc = 1./2. * math.pi * (ha/2.)**3. * t_sk
     
     """ Spar MOI """
     Izz_sp = 1./12. * ha**3. * t_sp
@@ -880,26 +880,26 @@ def ExactMOI(theta,Ca,ha,t_sk,t_sp,t_st,w_st,h_st,zcg,n,spacing,nodepos):
             Izz_new = (Iyy_st + Izz_st)/2. + (Izz_st - Iyy_st)/2. * math.cos(-2.*angle)
             Iyy_new = (Iyy_st + Izz_st)/2. - (Izz_st - Iyy_st)/2. * math.cos(-2.*angle)
         
-        Izz += Izz_new + A * (z_loc)**2.
-        Iyy += Iyy_new + A * (y_loc)**2.
+        Izz += Izz_new + A * (y_loc)**2.
+        Iyy += Iyy_new + A * (z_loc)**2.
         locy.append(y_loc)
         locz.append(z_loc)
         
-    plt.plot(locz, locy, "bo")
-    plt.grid(True)
-    plt.show
+#    plt.plot(locz, locy, "bo")
+#    plt.grid(True)
+#    plt.show
     
     #Add half arc
     Izz += Izz_arc
-    Iyy += Iyy_arc + (math.pi*((ha/2.)**2 - (ha/2. - t_sk)**2.)/2.)* (2.*ha/2./math.pi + zcg)**2.
+    Iyy += Iyy_arc + (math.pi*((ha/2.)**2 - (ha/2. - t_sk)**2.)/2.)* (2.*ha/2./math.pi + abs(zcg))**2.
     
     #Add spar
     Izz += Izz_sp
-    Iyy += Iyy_sp + (t_sp * ha)*zcg**2.
+    Iyy += Iyy_sp + (t_sp * ha)*(abs(zcg))**2.
     
     #Add beams
-    Izz += (Izz_beam + (Ca-ha/2.)*math.cos(angle)*t_sk * (((Ca-ha/2.)/2.)*math.tan(angle))**2.)*2.
-    Iyy += (Iyy_beam + (Ca-ha/2.)*math.cos(angle)*t_sk *(((Ca-ha/2.)/2.)-zcg)**2.)
+    Izz += (Izz_beam + (Ca-ha/2.)/math.cos(angle)*t_sk * (((Ca-ha/2.)/2.)*math.tan(angle))**2.)*2.
+    Iyy += (Iyy_beam + (Ca-ha/2.)/math.cos(angle)*t_sk *(((Ca-ha/2.)/2.)-abs(zcg))**2.)*2.
     
     Izz_0 = Izz
     Iyy_0 = Iyy        
@@ -910,6 +910,110 @@ def ExactMOI(theta,Ca,ha,t_sk,t_sp,t_st,w_st,h_st,zcg,n,spacing,nodepos):
     
     return Iyy_0, Izz_0, Iyy_theta, Izz_theta, Izy_theta
 
+def shear_flow_finder(boom_area_inclskin, Izz, Iyy, theta, node_pos, Ca, ha, Mx, Vy, Vz, G, tsk, tspar):
+    #decompose forces to be local
+    Vy = Vy*math.cos(theta)+Vz*math.sin(theta)
+    Vz = Vz*math.cos(theta)-Vy*math.sin(theta)
+    #counter-clockwise movement
+    baes = boom_area_inclskin
+    bxyz = node_pos
+    #define the order of movement for the triangular and the circular section
+    tring_booms = [12,13,8,9,10,11,1,2,3,4]
+    circ_booms = [13,12,5,6,7]
+    #circle section is I and triangular section is II
+    #find areas of sections if not found
+    s=math.sqrt((ha/2)**2+(Ca-ha/2)**2)
+    peri=(ha/2)*math.pi
+    AI=0.5*math.pi*(ha/2)**2
+    AII=0.5*(Ca-ha/2)*(ha/2)
+    #define distances between boom and next one and associated thicknesses
+    spac = 0.1015545
+    edge = 0.0766246
+    tring_dist = [ha, edge, spac, spac, spac, spac, spac, spac, spac, edge]
+    circ_dist = [ha,spac-edge, spac, spac, spac-edge]
+    tring_thicc = [tspar, tsk, tsk, tsk, tsk, tsk, tsk, tsk, tsk, tsk]
+    circ_thicc = [tspar, tsk, tsk, tsk, tsk]
+    #find base shear flow for each cell
+    tring_q = [0]
+    circ_q = [0]
+    for i in tring_booms:
+        tring_q.append((-Vy/Izz)*baes[i]*bxyz[i][1]+(-Vz/Iyy)*baes[i]*bxyz[i][2]+tring_q[-1])
+    for j in circ_booms:
+        circ_q.append((-Vy/Izz)*baes[j]*bxyz[j][1]+(-Vz/Iyy)*baes[i]*bxyz[i][2]+circ_q[-1])
+    
+    #find force produced by each boom due to shear flows
+    tring_fz=[]
+    tring_fy=[]
+    circ_fz= []
+    circ_fy= []
+    for i in range (len(tring_booms)):
+        if i == len(tring_booms)-1:
+            tring_fz.append(tring_q[i+1]*(bxyz[tring_booms[0]][2]-bxyz[tring_booms[i]][2]))
+        else:
+            tring_fz.append(tring_q[i+1]*(bxyz[tring_booms[i+1]][2]-bxyz[tring_booms[i]][2]))
+
+    for i in range (len(tring_booms)):
+        if i == len(tring_booms)-1:
+            tring_fy.append(tring_q[i+1]*(bxyz[tring_booms[0]][1]-bxyz[tring_booms[i]][1]))
+        else:
+            tring_fy.append(tring_q[i+1]*(bxyz[tring_booms[i+1]][1]-bxyz[tring_booms[i]][1]))
+
+    for i in range (len(circ_booms)):
+        if i == len(circ_booms)-1:
+            circ_fz.append(circ_q[i+1]*(bxyz[circ_booms[0]][2]-bxyz[circ_booms[i]][2]))
+        else:
+            circ_fz.append(circ_q[i+1]*(bxyz[circ_booms[i+1]][2]-bxyz[circ_booms[i]][2]))
+
+    for i in range (len(circ_booms)):
+        if i == len(circ_booms)-1:
+            circ_fy.append(circ_q[i+1]*(bxyz[circ_booms[0]][1]-bxyz[circ_booms[i]][1]))
+        else:
+            circ_fy.append(circ_q[i+1]*(bxyz[circ_booms[i+1]][1]-bxyz[circ_booms[i]][1]))
+
+    
+    #find moment due to force
+    #counter-clockwise positive
+    moments=0
+    for i in range(len(tring_fz)):
+        moments += tring_fz[i]*bxyz[tring_booms[i]][1]
+
+    for i in range(len(tring_fy)):
+        moments += tring_fy[i]*(-1)*bxyz[tring_booms[i]][2]
+
+    for i in range(len(circ_fz)):
+        moments += circ_fz[i]*bxyz[tring_booms[i]][1]          
+
+    for i in range(len(circ_fy)):
+        moments += circ_fy[i]*(-1)*bxyz[tring_booms[i]][2] 
+    
+    #find line integral of (qbi*ds)/(t*G)
+    tring_li=0
+    circ_li=0
+    for i in range(len(tring_dist)):
+        tring_li += (tring_q[i+1]*tring_dist[i])/(tring_thicc[i]*G)
+
+    for j in range(len(circ_dist)):
+        circ_li += (circ_q[j+1]*circ_dist[i])/(circ_thicc[i]*G)
+    #set up matrix
+    A=np.matrix([[1/(2*AI)*(peri/(tsk*G)+ha/(tspar*G)), -ha/(2*AI*tspar*G), -1], [-ha/(2*AII*tspar*G), 1/(2*AII)*(2*s/(tsk*G)+ha/(tspar*G)), -1], [2*AI, 2*AII, 0]])
+    b=np.matrix([[1/(-2*AI)*circ_li], [1/(-2*AII)*tring_li], [Mx-moments]])
+    #solve matrix for redundant shear flows and rate of twist
+    x = np.linalg.solve(A,b)
+    qs0I = x.item(0)
+    qs0II = x.item(1)
+    twist_rate = x.item(2)
+    #define order of output shear flows
+    circoo=[2,3,4,5,1]
+    tringoo=[7,8, 9,10,1,2,3,4,5,6]
+    #find total shear flows
+    circ_qt=[]
+    tring_qt=[]    
+    for i in circoo:
+        circ_qt.append(circ_q[i]+qs0I)
+    for i in tringoo:
+        tring_qt.append(tring_q[i]+qs0II)
+    
+    return twist_rate, circ_qt, tring_qt
 
 
         
