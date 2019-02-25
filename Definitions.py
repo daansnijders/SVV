@@ -913,7 +913,7 @@ def ExactMOI(theta,Ca,ha,t_sk,t_sp,t_st,w_st,h_st,zcg,n,spacing,nodepos):
 def ExactMOIdiscretisation(q,ndis,l1,l2,l3,l4,t_sk,t_sp,t_st,w_st,h_st,zcg,n,spacing,nodepos,xa,Ca,ha,theta,zsc):
 
 
-    I = np.array([[],[],[],[]])
+    I = np.array([[[],[]],[[],[]]])
 
     xt = np.array([0])
 
