@@ -5,7 +5,7 @@ plt.style.use('seaborn-whitegrid')
 import numpy as np
 
 
-def deflection(q,n,r3,l1,l2,l3,l4,E,I,d1,d2,d3,rz3,P2,xa,Ca,ha,theta2,theta1):
+def deflection(q,n,r3,l1,l2,l3,l4,E,I,d1,d2,d3,rz3,P2,xa,Ca,ha,theta):
     #theta2 is the angle of section 2 where hinge 2 is
     
     # calculation of reaction forces by static equalibrium
@@ -15,7 +15,7 @@ def deflection(q,n,r3,l1,l2,l3,l4,E,I,d1,d2,d3,rz3,P2,xa,Ca,ha,theta2,theta1):
 
     #Theta2 is actuator 2 and theta is actuator 1
 
-    P1 = (P2*(-ha/2*np.sin(theta2)+ha/2*np.cos(theta2))-q*l4*(0.25*Ca-ha/2)*np.cos(theta2))/(-ha/2*np.sin(theta1)+ha/2*np.cos(theta1))
+    P1 = (P2*(-ha/2*np.sin(theta[4*n])+ha/2*np.cos(theta[4*n]))-q*l4*(0.25*Ca-ha/2)*np.cos(np.mean(theta)))/(-ha/2*np.sin(theta[2*n])+ha/2*np.cos(theta[2*n]))
     rz2 = (-P1*(l2-l1-xa/2)+P2*(l2-l1+xa/2)-rz3*(l3-l1))/(l2-l1)
     rz1 = P2-P1-rz3-rz2
 
@@ -53,12 +53,12 @@ def deflection(q,n,r3,l1,l2,l3,l4,E,I,d1,d2,d3,rz3,P2,xa,Ca,ha,theta2,theta1):
 
         
         vdouble = np.append(vdouble,-(Mz[i-1]*I[0][0][i-1]-My[i-1]*I[0][1][i-1])/(E*(I[0][0][i-1]*I[1][1][i-1]-I[0][1][i-1]**2)))
-        vsingle = np.append(vsingle,(-1/(E*(I[0][0][i-1]*I[1][1][i-1]-I[0][1][i-1]**2)))*((-q*(x**3)/6)*I[0][0][i-1]-(0)*I[0][1][i-1]))
-        v = np.append(v, (-1/(E*(I[0][0][i-1]*I[1][1][i-1]-I[0][1][i-1]**2)))*((-q*(x**4)/24)*I[0][0][i-1]-(0)*I[0][1][i-1]))
+        vsingle = np.append(vsingle,vsingle[i-1] + (vdouble[i])*dx)
+        v = np.append(v, v[i-1]+((vsingle[i-1]+vsingle[i])/2)*dx+(vdouble[i])*(dx)**2/2)
 
-        udouble = np.append(udouble, -(-Mz[i-1]*I[0][1][i]+My[i-1]*I[1][1][i])/(E*(I[0][0][i]*I[1][1][i]-I[0][1][i]**2)))
-        usingle = np.append(usingle,-(-(-q*(x**3)/6)*I[0][1][i]+0*I[1][1][i])/(E*(I[0][0][i]*I[1][1][i]-I[0][1][i]**2)))
-        u = np.append(u, -(-(-q*(x**4)/24)*I[0][1][i]+0*I[1][1][i])/(E*(I[0][0][i]*I[1][1][i]-I[0][1][i]**2)))
+        udouble = np.append(udouble, -(-Mz[i-1]*I[0][1][i-1]+My[i-1]*I[1][1][i-1])/(E*(I[0][0][i-1]*I[1][1][i-1]-I[0][1][i-1]**2)))
+        usingle = np.append(usingle, usingle[i-1] + (udouble[i])*dx)
+        u = np.append(u, u[i-1]+((usingle[i-1]+usingle[i])/2)*dx+(udouble[i])*(dx)**2/2)
 
         i = i+1
 
@@ -75,14 +75,12 @@ def deflection(q,n,r3,l1,l2,l3,l4,E,I,d1,d2,d3,rz3,P2,xa,Ca,ha,theta2,theta1):
 
 
         vdouble = np.append(vdouble,-(Mz[i-1]*I[0][0][i-1]-My[i-1]*I[0][1][i-1])/(E*(I[0][0][i-1]*I[1][1][i-1]-I[0][1][i-1]**2)))
-        vsingle = np.append(vsingle,(-1/(E*(I[0][0][i-1]*I[1][1][i-1]-I[0][1][i-1]**2)))*((-q*(x**3)/6-r1*(x-l1)**2/2)*I[0][0][i-1]-
-                                                    (rz1*(x-l1)**2/2)*I[0][1][i-1]))
-        v = np.append(v, (-1/(E*(I[0][0][i-1]*I[1][1][i-1]-I[0][1][i-1]**2)))*((-q*(x**4)/24-r1*(x-l1)**3/6)*I[0][0][i-1]-
-                                                    (rz1*(x-l1)**3/6)*I[0][1][i-1]))
+        vsingle = np.append(vsingle,vsingle[i-1] + (vdouble[i])*dx)
+        v = np.append(v, v[i-1]+((vsingle[i-1]+vsingle[i])/2)*dx+(vdouble[i])*(dx)**2/2)
 
-        udouble = np.append(udouble, -(-Mz[i-1]*I[0][1][i]+My[i-1]*I[1][1][i])/(E*(I[0][0][i]*I[1][1][i]-I[0][1][i]**2)))
-        usingle = np.append(usingle,-(-(-q*(x**3)/6-r1*(x-l1)**2/2)*I[0][1][i]+(rz1*(x-l1)**2/2)*I[1][1][i])/(E*(I[0][0][i]*I[1][1][i]-I[0][1][i]**2)))
-        u = np.append(u, -(-(-q*(x**4)/24-r1*(x-l1)**3/6)*I[0][1][i]+(rz1*(x-l1)**3/6)*I[1][1][i])/(E*(I[0][0][i]*I[1][1][i]-I[0][1][i]**2)))
+        udouble = np.append(udouble, -(-Mz[i-1]*I[0][1][i-1]+My[i-1]*I[1][1][i-1])/(E*(I[0][0][i-1]*I[1][1][i-1]-I[0][1][i-1]**2)))
+        usingle = np.append(usingle, usingle[i-1] + (udouble[i])*dx)
+        u = np.append(u, u[i-1]+((usingle[i-1]+usingle[i])/2)*dx+(udouble[i])*(dx)**2/2)
 
         i = i+1
 
@@ -98,14 +96,12 @@ def deflection(q,n,r3,l1,l2,l3,l4,E,I,d1,d2,d3,rz3,P2,xa,Ca,ha,theta2,theta1):
 
 
         vdouble = np.append(vdouble,-(Mz[i-1]*I[0][0][i-1]-My[i-1]*I[0][1][i-1])/(E*(I[0][0][i-1]*I[1][1][i-1]-I[0][1][i-1]**2)))
-        vsingle = np.append(vsingle,(-1/(E*(I[0][0][i-1]*I[1][1][i-1]-I[0][1][i-1]**2)))*((-q*(x**3)/6-r1*(x-l1)**2/2)*I[0][0][i-1]-
-                                                    (rz1*(x-l1)**2/2+P1*(x-l2+xa/2)**2/2)*I[0][1][i-1]))
-        v = np.append(v, (-1/(E*(I[0][0][i-1]*I[1][1][i-1]-I[0][1][i-1]**2)))*((-q*(x**4)/24-r1*(x-l1)**3/6)*I[0][0][i-1]-
-                                                    (rz1*(x-l1)**3/6+P1*(x-l2+xa/2)**3/6)*I[0][1][i-1]))
+        vsingle = np.append(vsingle,vsingle[i-1] + (vdouble[i])*dx)
+        v = np.append(v, v[i-1]+((vsingle[i-1]+vsingle[i])/2)*dx+(vdouble[i])*(dx)**2/2)
 
-        udouble = np.append(udouble, -(-Mz[i-1]*I[0][1][i]+My[i-1]*I[1][1][i])/(E*(I[0][0][i]*I[1][1][i]-I[0][1][i]**2)))
-        usingle = np.append(usingle,-(-(-q*(x**3)/6-r1*(x-l1)**2/2)*I[0][1][i]+(rz1*(x-l1)**2/2+P1*(x-l2+xa/2)**2/2)*I[1][1][i])/(E*(I[0][0][i]*I[1][1][i]-I[0][1][i]**2)))
-        u = np.append(u, -(-(-q*(x**4)/24-r1*(x-l1)**3/6)*I[0][1][i]+(rz1*(x-l1)**3/6+P1*(x-l2+xa/2)**3/6)*I[1][1][i])/(E*(I[0][0][i]*I[1][1][i]-I[0][1][i]**2)))
+        udouble = np.append(udouble, -(-Mz[i-1]*I[0][1][i-1]+My[i-1]*I[1][1][i-1])/(E*(I[0][0][i-1]*I[1][1][i-1]-I[0][1][i-1]**2)))
+        usingle = np.append(usingle, usingle[i-1] + (udouble[i])*dx)
+        u = np.append(u, u[i-1]+((usingle[i-1]+usingle[i])/2)*dx+(udouble[i])*(dx)**2/2)
 
         i = i+1
 
@@ -121,20 +117,14 @@ def deflection(q,n,r3,l1,l2,l3,l4,E,I,d1,d2,d3,rz3,P2,xa,Ca,ha,theta2,theta1):
         My = np.append(My, rz1*(x-l1)+P1*(x-l2+xa/2)+rz2*(x-l2))
 
         vdouble = np.append(vdouble,-(Mz[i-1]*I[0][0][i-1]-My[i-1]*I[0][1][i-1])/(E*(I[0][0][i-1]*I[1][1][i-1]-I[0][1][i-1]**2)))
-        vsingle = np.append(vsingle,(-1/(E*(I[0][0][i-1]*I[1][1][i-1]-I[0][1][i-1]**2)))*((-q*(x**3)/6-r1*(x-l1)**2/2-r2*(x-l2)**2/2)*I[0][0][i-1]-
-                                                    (rz1*(x-l1)**2/2+P1*(x-l2+xa/2)**2/2+
-                                                     rz2*(x-l2)**2/2)*I[0][1][i-1]))
-        v = np.append(v, (-1/(E*(I[0][0][i-1]*I[1][1][i-1]-I[0][1][i-1]**2)))*((-q*(x**4)/24-r1*(x-l1)**3/6-r2*(x-l2)**3/6)*I[0][0][i-1]-
-                                                    (rz1*(x-l1)**3/6+P1*(x-l2+xa/2)**3/6+
-                                                     rz2*(x-l2)**3/6)*I[0][1][i-1]))
+        vsingle = np.append(vsingle,vsingle[i-1] + (vdouble[i])*dx)
+        v = np.append(v, v[i-1]+((vsingle[i-1]+vsingle[i])/2)*dx+(vdouble[i])*(dx)**2/2)
 
 
 
-        udouble = np.append(udouble, -(-Mz[i-1]*I[0][1][i]+My[i-1]*I[1][1][i])/(E*(I[0][0][i]*I[1][1][i]-I[0][1][i]**2)))
-        usingle = np.append(usingle,-(-(-q*(x**3)/6-r1*(x-l1)**2/2-r2*(x-l2)**2/2)*I[0][1][i]+(rz1*(x-l1)**2/2+P1*(x-l2+xa/2)**2/2+
-                                                     rz2*(x-l2)**2/2)*I[1][1][i])/(E*(I[0][0][i]*I[1][1][i]-I[0][1][i]**2)))
-        u = np.append(u, -(-(-q*(x**4)/24-r1*(x-l1)**3/6-r2*(x-l2)**3/6)*I[0][1][i]+(rz1*(x-l1)**3/6+P1*(x-l2+xa/2)**3/6+
-                                                     rz2*(x-l2)**3/6)*I[1][1][i])/(E*(I[0][0][i]*I[1][1][i]-I[0][1][i]**2)))
+        udouble = np.append(udouble, -(-Mz[i-1]*I[0][1][i-1]+My[i-1]*I[1][1][i-1])/(E*(I[0][0][i-1]*I[1][1][i-1]-I[0][1][i-1]**2)))
+        usingle = np.append(usingle, usingle[i-1] + (udouble[i])*dx)
+        u = np.append(u, u[i-1]+((usingle[i-1]+usingle[i])/2)*dx+(udouble[i])*(dx)**2/2)
         
         i = i+1
 
@@ -149,22 +139,17 @@ def deflection(q,n,r3,l1,l2,l3,l4,E,I,d1,d2,d3,rz3,P2,xa,Ca,ha,theta2,theta1):
         My = np.append(My, rz1*(x-l1)+P1*(x-l2+xa/2)+rz2*(x-l2)-P2*(x-l2-xa/2))
 
         vdouble = np.append(vdouble,-(Mz[i-1]*I[0][0][i-1]-My[i-1]*I[0][1][i-1])/(E*(I[0][0][i-1]*I[1][1][i-1]-I[0][1][i-1]**2)))
-        vsingle = np.append(vsingle,(-1/(E*(I[0][0][i-1]*I[1][1][i-1]-I[0][1][i-1]**2)))*((-q*(x**3)/6-r1*(x-l1)**2/2-r2*(x-l2)**2/2)*I[0][0][i-1]-
-                                                    (rz1*(x-l1)**2/2+P1*(x-l2+xa/2)**2/2+
-                                                     rz2*(x-l2)**2/2-P2*(x-l2-xa/2)**2/2)*I[0][1][i-1]))
-        v = np.append(v, (-1/(E*(I[0][0][i-1]*I[1][1][i-1]-I[0][1][i-1]**2)))*((-q*(x**4)/24-r1*(x-l1)**3/6-r2*(x-l2)**3/6)*I[0][0][i-1]-
-                                                    (rz1*(x-l1)**3/6+P1*(x-l2+xa/2)**3/6+
-                                                     rz2*(x-l2)**3/6-P2*(x-l2-xa/2)**3/6)*I[0][1][i-1]))
+        vsingle = np.append(vsingle,vsingle[i-1] + (vdouble[i])*dx)
+        v = np.append(v, v[i-1]+((vsingle[i-1]+vsingle[i])/2)*dx+(vdouble[i])*(dx)**2/2)
 
 
 
-        udouble = np.append(udouble, -(-Mz[i-1]*I[0][1][i]+My[i-1]*I[1][1][i])/(E*(I[0][0][i]*I[1][1][i]-I[0][1][i]**2)))
-        usingle = np.append(usingle,-(-(-q*(x**3)/6-r1*(x-l1)**2/2-r2*(x-l2)**2/2)*I[0][1][i]+(rz1*(x-l1)**2/2+P1*(x-l2+xa/2)**2/2+
-                                                     rz2*(x-l2)**2/2-P2*(x-l2-xa/2)**2/2)*I[1][1][i])/(E*(I[0][0][i]*I[1][1][i]-I[0][1][i]**2)))
-        u = np.append(u, -(-(-q*(x**4)/24-r1*(x-l1)**3/6-r2*(x-l2)**3/6)*I[0][1][i]+(rz1*(x-l1)**3/6+P1*(x-l2+xa/2)**3/6+
-                                                     rz2*(x-l2)**3/6-P2*(x-l2-xa/2)**3/6)*I[1][1][i])/(E*(I[0][0][i]*I[1][1][i]-I[0][1][i]**2)))
+        udouble = np.append(udouble, -(-Mz[i-1]*I[0][1][i-1]+My[i-1]*I[1][1][i-1])/(E*(I[0][0][i-1]*I[1][1][i-1]-I[0][1][i-1]**2)))
+        usingle = np.append(usingle, usingle[i-1] + (udouble[i])*dx)
+        u = np.append(u, u[i-1]+((usingle[i-1]+usingle[i])/2)*dx+(udouble[i])*(dx)**2/2)
         
         i = i+1
+        
     for x in np.linspace(l3,l4,n+1)[1:]:
         xt = np.append(xt, x)
         dx = (l4-l3)/(n)
@@ -177,18 +162,12 @@ def deflection(q,n,r3,l1,l2,l3,l4,E,I,d1,d2,d3,rz3,P2,xa,Ca,ha,theta2,theta1):
                                                 
         
         vdouble = np.append(vdouble,-(Mz[i-1]*I[0][0][i-1]-My[i-1]*I[0][1][i-1])/(E*(I[0][0][i-1]*I[1][1][i-1]-I[0][1][i-1]**2)))
-        vsingle = np.append(vsingle,(-1/(E*(I[0][0][i-1]*I[1][1][i-1]-I[0][1][i-1]**2)))*((-q*(x**3)/6-r1*(x-l1)**2/2-r2*(x-l2)**2/2-r3*(x-l3)**2/2)*I[0][0][i-1]-
-                                                    (rz1*(x-l1)**2/2+P1*(np.sign((x-l2+xa/2)) == 1)*(x-l2+xa/2)**2/2+
-                                                     rz2*(x-l2)**2/2-P2*(np.sign((x-l2-xa/2)) == 1)*(x-l2-xa/2)**2/2+rz3*(x-l3)**2/2)*I[0][1][i-1]))
-        v = np.append(v, (-1/(E*(I[0][0][i-1]*I[1][1][i-1]-I[0][1][i-1]**2)))*((-q*(x**4)/24-r1*(x-l1)**3/6-r2*(x-l2)**3/6-r3*(x-l3)**3/6)*I[0][0][i-1]-
-                                                    (rz1*(x-l1)**3/6+P1*(np.sign((x-l2+xa/2)) == 1)*(x-l2+xa/2)**3/6+
-                                                     rz2*(x-l2)**3/6-P2*(np.sign((x-l2-xa/2)) == 1)*(x-l2-xa/2)**3/6+rz3*(x-l3)**3/6)*I[0][1][i-1]))
+        vsingle = np.append(vsingle,vsingle[i-1] + (vdouble[i])*dx)
+        v = np.append(v, v[i-1]+((vsingle[i-1]+vsingle[i])/2)*dx+(vdouble[i])*(dx)**2/2)
 
-        udouble = np.append(udouble, -(-Mz[i-1]*I[0][1][i]+My[i-1]*I[1][1][i])/(E*(I[0][0][i]*I[1][1][i]-I[0][1][i]**2)))
-        usingle = np.append(usingle,-(-(-q*(x**3)/6-r1*(x-l1)**2/2-r2*(x-l2)**2/2-r3*(x-l3)**2/2)*I[0][1][i]+(rz1*(x-l1)**2/2+P1*(np.sign((x-l2+xa/2)) == 1)*(x-l2+xa/2)**2/2+
-                                                     rz2*(x-l2)**2/2-P2*(np.sign((x-l2-xa/2)) == 1)*(x-l2-xa/2)**2/2+rz3*(x-l3)**2/2)*I[1][1][i])/(E*(I[0][0][i]*I[1][1][i]-I[0][1][i]**2)))
-        u = np.append(u, -(-(-q*(x**4)/24-r1*(x-l1)**3/6-r2*(x-l2)**3/6-r3*(x-l3)**3/6)*I[0][1][i]+(rz1*(x-l1)**3/6+P1*(np.sign((x-l2+xa/2)) == 1)*(x-l2+xa/2)**3/6+
-                                                     rz2*(x-l2)**3/6-P2*(np.sign((x-l2-xa/2)) == 1)*(x-l2-xa/2)**3/6+rz3*(x-l3)**3/6)*I[1][1][i])/(E*(I[0][0][i]*I[1][1][i]-I[0][1][i]**2)))
+        udouble = np.append(udouble, -(-Mz[i-1]*I[0][1][i-1]+My[i-1]*I[1][1][i-1])/(E*(I[0][0][i-1]*I[1][1][i-1]-I[0][1][i-1]**2)))
+        usingle = np.append(usingle, usingle[i-1] + (udouble[i])*dx)
+        u = np.append(u, u[i-1]+((usingle[i-1]+usingle[i])/2)*dx+(udouble[i])*(dx)**2/2)
         
         i = i+1
 
@@ -206,40 +185,37 @@ def deflection(q,n,r3,l1,l2,l3,l4,E,I,d1,d2,d3,rz3,P2,xa,Ca,ha,theta2,theta1):
 
 
 
-def bendingconvergence(q,n,l1,l2,l3,l4,E,I,d1,d2,d3,P2,xa,Ca,ha,theta2,theta1,spread):
+def bendingconvergence(q,n,l1,l2,l3,l4,E,I,d1,d2,d3,P2,xa,Ca,ha,theta,spread):
 
     #spread refers to the dx term in the jacobian matrix
 
     r3 = 0
     rz3 = 0
     
-    def dfdx(q,n,r3,l1,l2,l3,l4,E,I,d1,d2,d3,rz3,P2,xa,Ca,ha,theta2,theta1,spread):
+    def dfdx(q,n,r3,l1,l2,l3,l4,E,I,d1,d2,d3,rz3,P2,xa,Ca,ha,theta,spread):
         
-        dvdr3 = (deflection(q,n,r3+spread/2,l1,l2,l3,l4,E,I,d1,d2,d3,rz3,P2,xa,Ca,ha,theta2,theta1)[0][5*n]-deflection(q,n,r3-spread/2,l1,l2,l3,l4,E,I,d1,d2,d3,rz3,P2,xa,Ca,ha,theta2,theta1)[0][5*n])/spread
-        dvdrz3 = (deflection(q,n,r3,l1,l2,l3,l4,E,I,d1,d2,d3,rz3+spread/2,P2,xa,Ca,ha,theta2,theta1)[0][5*n]-deflection(q,n,r3,l1,l2,l3,l4,E,I,d1,d2,d3,rz3-spread/2,P2,xa,Ca,ha,theta2,theta1)[0][5*n])/spread    
-        dudr3 = (deflection(q,n,r3+spread/2,l1,l2,l3,l4,E,I,d1,d2,d3,rz3,P2,xa,Ca,ha,theta2,theta1)[1][5*n]-deflection(q,n,r3-spread/2,l1,l2,l3,l4,E,I,d1,d2,d3,rz3,P2,xa,Ca,ha,theta2,theta1)[1][5*n])/spread
-        dudrz3 = (deflection(q,n,r3,l1,l2,l3,l4,E,I,d1,d2,d3,rz3+spread/2,P2,xa,Ca,ha,theta2,theta1)[1][5*n]-deflection(q,n,r3,l1,l2,l3,l4,E,I,d1,d2,d3,rz3-spread/2,P2,xa,Ca,ha,theta2,theta1)[1][5*n])/spread
+        dvdr3 = (deflection(q,n,r3+spread/2,l1,l2,l3,l4,E,I,d1,d2,d3,rz3,P2,xa,Ca,ha,theta)[0][5*n]-deflection(q,n,r3-spread/2,l1,l2,l3,l4,E,I,d1,d2,d3,rz3,P2,xa,Ca,ha,theta)[0][5*n])/spread
+        dvdrz3 = (deflection(q,n,r3,l1,l2,l3,l4,E,I,d1,d2,d3,rz3+spread/2,P2,xa,Ca,ha,theta)[0][5*n]-deflection(q,n,r3,l1,l2,l3,l4,E,I,d1,d2,d3,rz3-spread/2,P2,xa,Ca,ha,theta)[0][5*n])/spread    
+        dudr3 = (deflection(q,n,r3+spread/2,l1,l2,l3,l4,E,I,d1,d2,d3,rz3,P2,xa,Ca,ha,theta)[1][5*n]-deflection(q,n,r3-spread/2,l1,l2,l3,l4,E,I,d1,d2,d3,rz3,P2,xa,Ca,ha,theta)[1][5*n])/spread
+        dudrz3 = (deflection(q,n,r3,l1,l2,l3,l4,E,I,d1,d2,d3,rz3+spread/2,P2,xa,Ca,ha,theta)[1][5*n]-deflection(q,n,r3,l1,l2,l3,l4,E,I,d1,d2,d3,rz3-spread/2,P2,xa,Ca,ha,theta)[1][5*n])/spread
         
         return np.matrix([[dvdr3, dvdrz3],[dudr3,dudrz3]])
 
-    v,u = deflection(q,n,r3,l1,l2,l3,l4,E,I,d1,d2,d3,rz3,P2,xa,Ca,ha,theta2,theta1)[0][5*n], deflection(q,n,r3,l1,l2,l3,l4,E,I,d1,d2,d3,rz3,P2,xa,Ca,ha,theta2,theta1)[1][5*n]
+    v,u = deflection(q,n,r3,l1,l2,l3,l4,E,I,d1,d2,d3,rz3,P2,xa,Ca,ha,theta)[0][5*n], deflection(q,n,r3,l1,l2,l3,l4,E,I,d1,d2,d3,rz3,P2,xa,Ca,ha,theta)[1][5*n]
 
     while round(v, 12) != d3 or round(u, 12) != 0:
     
-        invjacobian = np.linalg.inv(dfdx(q,n,r3,l1,l2,l3,l4,E,I,d1,d2,d3,rz3,P2,xa,Ca,ha,theta2,theta1,spread))
+        invjacobian = np.linalg.inv(dfdx(q,n,r3,l1,l2,l3,l4,E,I,d1,d2,d3,rz3,P2,xa,Ca,ha,theta,spread))
 
-        dx = invjacobian * np.matrix([[deflection(q,n,r3,l1,l2,l3,l4,E,I,d1,d2,d3,rz3,P2,xa,Ca,ha,theta2,theta1)[0][5*n]-d3],[deflection(q,n,r3,l1,l2,l3,l4,E,I,d1,d2,d3,rz3,P2,xa,Ca,ha,theta2,theta1)[1][5*n]]])
-
+        dx = invjacobian * np.matrix([[deflection(q,n,r3,l1,l2,l3,l4,E,I,d1,d2,d3,rz3,P2,xa,Ca,ha,theta)[0][5*n]-d3],[deflection(q,n,r3,l1,l2,l3,l4,E,I,d1,d2,d3,rz3,P2,xa,Ca,ha,theta)[1][5*n]]])
 
         r3,rz3 = r3-dx[0], rz3-dx[1]
 
-        v,u = deflection(q,n,r3,l1,l2,l3,l4,E,I,d1,d2,d3,rz3,P2,xa,Ca,ha,theta2,theta1)[0][5*n], deflection(q,n,r3,l1,l2,l3,l4,E,I,d1,d2,d3,rz3,P2,xa,Ca,ha,theta2,theta1)[1][5*n]
+        v,u = deflection(q,n,r3,l1,l2,l3,l4,E,I,d1,d2,d3,rz3,P2,xa,Ca,ha,theta)[0][5*n], deflection(q,n,r3,l1,l2,l3,l4,E,I,d1,d2,d3,rz3,P2,xa,Ca,ha,theta)[1][5*n]
 
         print('V-Error = ',abs(v-d3),' and U-Error = ', u)
 
-    
-    
-    v2, u2, xt, r1, r2, Vy, Vz, My, Mz, rz1, rz2, P1 = deflection(q,n,r3,l1,l2,l3,l4,E,I,d1,d2,d3,rz3,P2,xa,Ca,ha,theta2,theta1)
+    v2, u2, xt, r1, r2, Vy, Vz, My, Mz, rz1, rz2, P1 = deflection(q,n,r3,l1,l2,l3,l4,E,I,d1,d2,d3,rz3,P2,xa,Ca,ha,theta)
     
     return v2, u2, xt, r1, r2, r3, Vy, Vz, My, Mz, rz1, rz2, rz3, P1
 
@@ -913,7 +889,7 @@ def ExactMOI(theta,Ca,ha,t_sk,t_sp,t_st,w_st,h_st,zcg,n,spacing,nodepos):
 def ExactMOIdiscretisation(q,ndis,l1,l2,l3,l4,t_sk,t_sp,t_st,w_st,h_st,zcg,n,spacing,nodepos,xa,Ca,ha,theta,zsc):
 
 
-    I = np.array([[[],[]],[[],[]]])
+    I = np.array([])
 
     xt = np.array([0])
 
@@ -926,7 +902,7 @@ def ExactMOIdiscretisation(q,ndis,l1,l2,l3,l4,t_sk,t_sp,t_st,w_st,h_st,zcg,n,spa
 
 
         Iyy, Izz, Izy = ExactMOI(theta[i-1],Ca,ha,t_sk,t_sp,t_st,w_st,h_st,zcg,n,spacing,nodepos)[2:]
-        I = np.append(I, [[Iyy,Izy],[Izy, Izz]])
+        I = np.reshape(np.append(np.ravel(I,'F'), [Iyy,Izy,Izy,Izz]),[2,2,i], 'F')
         
 
 
@@ -936,7 +912,7 @@ def ExactMOIdiscretisation(q,ndis,l1,l2,l3,l4,t_sk,t_sp,t_st,w_st,h_st,zcg,n,spa
         dx = (l2-l1)/(n)
         
         Iyy, Izz, Izy = ExactMOI(theta[i-1],Ca,ha,t_sk,t_sp,t_st,w_st,h_st,zcg,n,spacing,nodepos)[2:]
-        I = np.append(I, [[Iyy,Izy],[Izy, Izz]])
+        I = np.reshape(np.append(np.ravel(I,'F'), [Iyy,Izy,Izy,Izz]),[2,2,i], 'F')
 
         i = i+1
 
@@ -946,7 +922,7 @@ def ExactMOIdiscretisation(q,ndis,l1,l2,l3,l4,t_sk,t_sp,t_st,w_st,h_st,zcg,n,spa
         
        
         Iyy, Izz, Izy = ExactMOI(theta[i-1],Ca,ha,t_sk,t_sp,t_st,w_st,h_st,zcg,n,spacing,nodepos)[2:]
-        I = np.append(I, [[Iyy,Izy],[Izy, Izz]])
+        I = np.reshape(np.append(np.ravel(I,'F'), [Iyy,Izy,Izy,Izz]),[2,2,i], 'F')
 
         i = i+1
     for x in np.linspace(l2,l2+xa/2,ndis+1)[1:]:
@@ -954,7 +930,7 @@ def ExactMOIdiscretisation(q,ndis,l1,l2,l3,l4,t_sk,t_sp,t_st,w_st,h_st,zcg,n,spa
         dx = (l3-l2)/(n)
         
         Iyy, Izz, Izy = ExactMOI(theta[i-1],Ca,ha,t_sk,t_sp,t_st,w_st,h_st,zcg,n,spacing,nodepos)[2:]
-        I = np.append(I, [[Iyy,Izy],[Izy, Izz]])
+        I = np.reshape(np.append(np.ravel(I,'F'), [Iyy,Izy,Izy,Izz]),[2,2,i], 'F')
         
         i = i+1
     for x in np.linspace(l2+xa/2,l3,ndis+1)[1:]:
@@ -962,7 +938,7 @@ def ExactMOIdiscretisation(q,ndis,l1,l2,l3,l4,t_sk,t_sp,t_st,w_st,h_st,zcg,n,spa
         dx = (l3-l2)/(n)
         
         Iyy, Izz, Izy = ExactMOI(theta[i-1],Ca,ha,t_sk,t_sp,t_st,w_st,h_st,zcg,n,spacing,nodepos)[2:]
-        I = np.append(I, [[Iyy,Izy],[Izy, Izz]])
+        I = np.reshape(np.append(np.ravel(I,'F'), [Iyy,Izy,Izy,Izz]),[2,2,i], 'F')
         
         i = i+1
     for x in np.linspace(l3,l4,ndis+1)[1:]:
@@ -970,12 +946,12 @@ def ExactMOIdiscretisation(q,ndis,l1,l2,l3,l4,t_sk,t_sp,t_st,w_st,h_st,zcg,n,spa
         dx = (l4-l3)/(n)
 
         Iyy, Izz, Izy = ExactMOI(theta[i-1],Ca,ha,t_sk,t_sp,t_st,w_st,h_st,zcg,n,spacing,nodepos)[2:]
-        I = np.append(I, [[Iyy,Izy],[Izy, Izz]])
+        I = np.reshape(np.append(np.ravel(I,'F'), [Iyy,Izy,Izy,Izz]),[2,2,i], 'F')
        
 
         i = i+1
 
-        return I
+    return I
 
 def shear_flow_finder(boom_area_inclskin, Izz, Iyy, theta, node_pos, Ca, ha, Mx, Vy, Vz, G, tsk, tspar):
     #decompose forces to be local
