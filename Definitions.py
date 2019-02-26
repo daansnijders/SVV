@@ -6,6 +6,7 @@ import numpy as np
 import sys
 
 
+
 def deflection(q,n,r3,l1,l2,l3,l4,E,I,d1,d2,d3,rz3,P2,xa,Ca,ha,theta):
     #theta2 is the angle of section 2 where hinge 2 is
     
@@ -1393,14 +1394,14 @@ def offset(zcg, theta, nodepos, v2, u2, xt):
     zoffset = v2 - zcg*np.sin(theta)
     yoffset = u2 + zcg*np.cos(theta)
 
-    nodepos = np.array([])
+    nodepos2 = ([])
+    for i in range(0,(len(nodepos))):
+        y = np.cos(theta)*nodepos[i][1]-np.sin(theta)*nodepos[i][2]+yoffset
+        z = np.cos(theta)*nodepos[i][2]+np.sin(theta)*nodepos[i][1]+zoffset
+        nodepos2 += [np.reshape(np.ravel([xt,y,z],'F'),(len(xt),3),'C')]
 
-    for i in len(nodepos)-1:
-        y = np.cos(theta)*nodepos[i][1]-np.sin(theta)*nodepos[i][2]
-        z = np.cos(theta)*nodepos[i][2]+np.sin(theta)*nodepos[i][1]
-        print(y,z)
 
-    return zoffset, yoffset
+    return nodepos2
         
         
     
