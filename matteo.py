@@ -109,7 +109,7 @@ def shear_flow_torsion(T,A1,A2,arc,l,ha,G,t):
     
     return rate_twist,q1,q2
 
-def overalltwist(l1,l2,l3,l4,n):
+def overalltwist(T,A1,A2,arc,l,ha,G,t,l1,l2,l3,l4,n):
 
     xt=np.array([0])
     theta = np.array([0])
