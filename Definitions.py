@@ -1179,8 +1179,8 @@ def ratetwistandshearflowdiscretisation(t_skin, t_spar, spacing, l1,l2,l3,l4,xa,
     xt=np.array([0])
 
     twist_rate= np.array([])
-    qrib1 = np.array([])
-    qrib2 = np.array([])
+    qrib_1 = np.array([])
+    qrib_2 = np.array([])
    
     i = 1
     for x in np.linspace(0,l1,n+1)[1:]:
