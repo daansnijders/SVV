@@ -358,35 +358,35 @@ def area_stiff(t_stiff, h_stiff, w_stiff):
 ##    return boom_area
     
 
-##def boom_inertia(list_length, nodepos, B): #TO BE CHECKED
-##    
-##    #nodepos = boom_location() #getting positions from previous function
-##
-##    Ixx = [0 for _ in range(list_length)] #Defining lists of Ixx Iyy and Izz
-##    Iyy = [] #Etc.
-##    Izz = [] #Etc.
-##    
-##    for i in range(list_length):
-##        Iyy.append( B[i] * (nodepos[i][2]) ** 2) # Iyy = Boom Area * Z distance squared
-##        Izz.append( B[i] * (nodepos[i][1]) ** 2) # Izz = Boom Area * Y distance squared
-##        
-##    #print()
-##    #print("Ixx is: ",Ixx)
-##    #print()
-##    #print("Iyy is: ",Iyy)
-##    #print("Izz is: ",Izz)
-##    #print()    
-##    #print()
-##    
-##    Ixx_final = 0.
-##    Iyy_final = 0.
-##    Izz_final = 0.
-##    for i in range (14):
-##        Ixx_final = Ixx_final + Ixx[i]
-##        Iyy_final = Iyy_final + Iyy[i]
-##        Izz_final = Izz_final + Izz[i]
-##    
-##    return Ixx_final, Iyy_final, Izz_final
+def boom_inertia(list_length, nodepos, B): #TO BE CHECKED
+    
+    #nodepos = boom_location() #getting positions from previous function
+
+    Ixx = [0 for _ in range(list_length)] #Defining lists of Ixx Iyy and Izz
+    Iyy = [] #Etc.
+    Izz = [] #Etc.
+    
+    for i in range(list_length):
+        Iyy.append( B[i] * (nodepos[i][2]) ** 2) # Iyy = Boom Area * Z distance squared
+        Izz.append( B[i] * (nodepos[i][1]) ** 2) # Izz = Boom Area * Y distance squared
+        
+    #print()
+    #print("Ixx is: ",Ixx)
+    #print()
+    #print("Iyy is: ",Iyy)
+    #print("Izz is: ",Izz)
+    #print()    
+    #print()
+    
+    Ixx_final = 0.
+    Iyy_final = 0.
+    Izz_final = 0.
+    for i in range (14):
+        Ixx_final = Ixx_final + Ixx[i]
+        Iyy_final = Iyy_final + Iyy[i]
+        Izz_final = Izz_final + Izz[i]
+    
+    return Ixx_final, Iyy_final, Izz_final
 
 def scatter(nodepos):
     y = []
