@@ -1,7 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-n=10000
+n=400
 #T = np.ones(6*n+1)*3.76 # list containing the torque values at each spanwise location of the aileron 
 A1=0.0101791529 # Area of cell 1 
 A2=0.03417225 # Area of cell 2
@@ -20,7 +20,8 @@ q=3860
 P1=53585
 P2=49200
 Ca=0.505
-theta=np.ones(6*n+1)*30*(np.pi/180)
+inittwist = 30
+theta=np.ones(6*n+1)*inittwist*(np.pi/180)
 zsc=0.
 
 def torque(q,n,l1,l2,l3,l4,P1,P2,xa,Ca,ha,theta,zsc):
@@ -109,7 +110,7 @@ def shear_flow_torsion(T,A1,A2,arc,l,ha,G,t):
     
     return rate_twist,q1,q2
 
-def overalltwist(T,A1,A2,arc,l,ha,G,t,l1,l2,l3,l4,n):
+def overalltwist(T,A1,A2,arc,l,ha,xa,G,t,l1,l2,l3,l4,n,inittwist):
 
     xt=np.array([0])
     theta = np.array([0])
@@ -125,7 +126,6 @@ def overalltwist(T,A1,A2,arc,l,ha,G,t,l1,l2,l3,l4,n):
         theta = np.append(theta,theta_elem)
         i = i+1
     
-           
     for x in np.linspace(l1,l2-xa/2,n+1)[1:]:
         xt=np.append(xt,x)
         dx = (l2-l1)/(n)
@@ -134,18 +134,11 @@ def overalltwist(T,A1,A2,arc,l,ha,G,t,l1,l2,l3,l4,n):
         theta_elem=theta[-1]+rate_twist_lst[i-1]*dx
         theta = np.append(theta,theta_elem)
         i = i+1
-    
-   # print(len(theta))
-   # print(theta[-1])
-    #fuck=theta_elem
     a=0
     for r in theta:
         Theta=r-theta_elem
         theta[a]=Theta
         a+=1
-    #print(len(theta))
-    #print(theta[-1])
-       
     for x in np.linspace(l2-xa/2,l2,n+1)[1:]:
         xt=np.append(xt,x)
         dx = (l2-l1)/(n)
@@ -155,8 +148,6 @@ def overalltwist(T,A1,A2,arc,l,ha,G,t,l1,l2,l3,l4,n):
         theta = np.append(theta,theta_elem)
         i = i+1
     
-        
-        
     
     for x in np.linspace(l2,l2+xa/2,n+1)[1:]:
         xt=np.append(xt,x)
@@ -187,12 +178,14 @@ def overalltwist(T,A1,A2,arc,l,ha,G,t,l1,l2,l3,l4,n):
         theta = np.append(theta,theta_elem)
         i = i+1
         
-        #for i in range(len(theta)):
-            #theta[i]=theta[i]-fuck
+
+    #theta = theta + (inittwist*np.pi/180-theta[2*n])
 
     return theta, rate_twist_lst,xt
-xt=overalltwist(l1,l2,l3,l4,n)[2]
-theta= overalltwist(l1,l2,l3,l4,n)[0]
+
+
+xt=overalltwist(T,A1,A2,arc,l,ha,xa,G,t,l1,l2,l3,l4,n,inittwist)[2]
+theta= overalltwist(T,A1,A2,arc,l,ha,xa,G,t,l1,l2,l3,l4,n,inittwist)[0]
 
 #plt.axis([0.0,0.5,-0.02,0,0025])
 #plt.xlim(0,0.37)
