@@ -14,35 +14,37 @@ j = 0
 with open("./data/F100-19.inp") as g:
     for oneline in g:
         if oneline.startswith('*') == False:
-            if j < 3244:
-                #print("First list node", j)
+            if j < 3244:    #Putting all the nodes in a list
                 oneline = oneline.strip('\n')
                 line_cont = [float(y) for y in oneline.split(',')]
                 node.append(line_cont)
                 
             elif j > 3243 and j < (3243+3251):
-                #print("2nd list point ",j)
+                #putting all the elements in a list
                 oneline = oneline.strip('\n')
                 line_cont = [float(y) for y in oneline.split(',')]
                 element_set.append(line_cont)
              
             elif j > 7020 and j < (7041):
+                #Assigning which nodes belong to Ribs
                 oneline = oneline.strip(',\n')
                 line_cont = [float(y) for y in oneline.split(',')]
                 node_set.append(line_cont)                
         j = j + 1
         
+#Dividing which of the selected nodes belong to rib A, B, C, or D (still in lists)
 noderib_a = node_set[:4]
 noderib_b = node_set[4:8]
 noderib_c = node_set[8:12]
 noderib_d = node_set[12:16]
 
-#index of elements for ribs
+#Convert the lists into one array (per rib) 
 noderib_a = np.array([j for i in noderib_a for j in i]) - 1
 noderib_b = np.array([j for i in noderib_b for j in i]) - 1
 noderib_c = np.array([j for i in noderib_c for j in i]) - 1
 noderib_d = np.array([j for i in noderib_d for j in i]) - 1
 
+#Make empty lists of the elements to later link them to the nodes
 noderib_a_element = []
 noderib_b_element = []
 noderib_c_element = []
@@ -77,6 +79,8 @@ with open ("./data/F100_SLC1.rpt") as g_i:
     von_misses_stress = von_misses_stress.astype(float)    
     von_misses_stress = np.column_stack((von_misses_stress[:,0],((von_misses_stress[:,2]+von_misses_stress[:,3])/2)))
     von_misses_stress = von_misses_stress[np.argsort(von_misses_stress[:,0])]
+
+#------------------------------------
 
 k = 0
 von_misses_stress_element = []
@@ -169,10 +173,41 @@ ypos_trailingedge = (dypos_trailingedge - ypos_trailingedge)
 ypos_leadingedge = (dypos_leadingedge - ypos_leadingedge)
 dist = np.column_stack((xpos_trailingedge ,dypos_trailingedge))
 dist = dist[np.argsort(dist[:,0])]
+    
+"""PLOTTING THE """
+
+slopes_val = []
+steps_val = []
+for i in range(dist[:,0].size):
+    if i+1 < dist[:,1].size :
+        dx = dist[i+1,0] - dist[i,0]
+        slope = (dist[i+1,1] - dist[i,1])
+        slopes_val.append(slope)
+        steps_val.append(dist[i,0])
+
+#the code underneath is only used for plotting the slope graph. Otherwise the other lines forthe plotting is used.
+#plt.plot(steps_num , slopes_num , 'ro')
+#plt.plot(steps_val , slopes_val , 'bo')
+#plt.plot(steps_val , slopes_val , 'blue ')
+
+
+#to plot the deflection over the x-position
+plt.plot(dist[:,0],dist[:,1], 'bo',label = 'Validation Data' )
+#plt.plot(numx ,numdefl , 'ro',label = 'Numerical data')
+plt.plot(dist[:,0],dist[:,1], 'k' )
+#plt.plot(numx ,numdefl , 'k')
+
+plt.xlabel("X-position along span (mm)")
+plt.ylabel("Y-position (mm)")
+plt.grid('on')
+axes = plt.gca()
+
+axes.set_xlim([-150,1800])
+axes.set_ylim([150,600])
+#plt.scatter(x_LE , dy_LE , alpha=0.5)
+plt.legend(['Validation data','Numerical data'])
+plt.show()
 
 
 
-    
-    
-    
-    
+
