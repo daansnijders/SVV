@@ -115,7 +115,7 @@ for j in range(len(node)):
     z.append([node[j][0]]+[node[j][3]])
     y.append([node[j][0]]+[node[j][2]])
     
-    j =+ 1
+    j += 1
 
 #Appending the coordinates to the nodes lists.
 node = np.array(node)
@@ -170,6 +170,7 @@ for li in l:
     i = i + 1
     
 
+<<<<<<< HEAD
     
 #location_y = np.array(location_y).astype(np.float)
 #location_y = location_y[:,[0,5,6,7,8]]
@@ -192,10 +193,27 @@ for li in l:
 #ypos_leadingedge = np.take(location_y[:,3],LEzi)
 #xpos_trailingedge = np.take(node[:,1],TEzi)
 #xpos_leadingedge = np.take(node[:,1],LEzi)
+=======
+#Find out which nodes lay on the leading and trailing edge:
+y_n = np.argwhere(y == 0)
+
+LEzi = np.argwhere(z == max(z))
+TEzi = np.argwhere(z == min(z))
+TEzn = np.take(node[:,0],TEzi)
+LEzn = np.take(node[:,0],LEzi)
+
+dypos_trailingedge = np.take(deflection[:,3],TEzi)
+dypos_leadingedge = np.take(deflection[:,3],LEzi)
+ypos_trailingedge = np.take(location_y[:,3],TEzi)
+ypos_leadingedge = np.take(location_y[:,3],LEzi)
+xpos_trailingedge = np.take(node[:,1],TEzi)
+xpos_leadingedge = np.take(node[:,1],LEzi)
+>>>>>>> 2a33d9f265865d078a95bb6359714c769c7fa034
 #ypos_trailingedge = np.take(node[:,2],TEzi)
 #ypos_leadingedge = np.take(node[:,2],LEzi)
 #ypos_trailingedge = (dypos_trailingedge - ypos_trailingedge)
 #ypos_leadingedge = (dypos_leadingedge - ypos_leadingedge)
+<<<<<<< HEAD
 #dist = np.column_stack((xpos_trailingedge ,dypos_trailingedge))
 #dist = dist[np.argsort(dist[:,0])]
 #    
@@ -219,20 +237,97 @@ for li in l:
 ##to plot the deflection over the x-position
 #plt.plot(dist[:,0],dist[:,1], 'bo',label = 'Validation Data' )
 ##plt.plot(numx ,numdefl , 'ro',label = 'Numerical data')
+=======
+
+dist = np.column_stack((xpos_trailingedge ,dypos_trailingedge))
+dist = dist[np.argsort(dist[:,0])]
+
+"""Import nummerical Data from TE and LE """
+
+#plt.plot(steps_num , slopes_num , 'ro') - NUM
+#plt.plot(numx ,numdefl , 'ro',label = 'Numerical data') - NUM
+#plt.plot(numx ,numdefl , 'k') - NUM
+
+"""Einde nummerical model"""
+
+validation_slope = []
+validation_step = []
+for j in range(dist[:,0].size):
+    if j+1 < dist[:,1].size :
+        s = dist[j+1,0] - dist[j,0]
+        pitch = (dist[j+1,1] - dist[j,1])
+        validation_slope.append(pitch)
+        validation_step.append(dist[j,0])
+
+#To plot the slope:
+#plt.plot(validation_step, validation_slope , 'ro')
+#plt.plot(validation_step, validation_slope , 'red')
+
+
+#Deflection along x:
+#plt.plot(dist[:,0],dist[:,1], 'ro',label = 'Validation Data' )
+>>>>>>> 2a33d9f265865d078a95bb6359714c769c7fa034
 #plt.plot(dist[:,0],dist[:,1], 'k' )
-##plt.plot(numx ,numdefl , 'k')
-#
-#plt.xlabel("X-position along span (mm)")
-#plt.ylabel("Y-position (mm)")
+
+
+#plt.xlabel("X along span b (mm)")
+#plt.ylabel("Y along span b (mm)")
 #plt.grid('on')
 #axes = plt.gca()
-#
+
 #axes.set_xlim([-150,1800])
-#axes.set_ylim([150,600])
-##plt.scatter(x_LE , dy_LE , alpha=0.5)
-#plt.legend(['Validation data','Numerical data'])
+#axes.set_ylim([-1,1])
+#plt.scatter(xpos_leadingedge , dypos_leadingedge , alpha=0.5)
+#plt.legend(['Data validation','Data numerical model'])
 #plt.show()
+        
+        
+element_set = np.array(element_set)
+element_hinges = element_set[0][1:],element_set[2][1:],element_set[4][1:]
+element_hinges = np.array([i for sl in element_hinges for i in sl]) - 1
+#Calculate the stresses on the hinges'elements 
+stress_hinge_1 = (von_misses_stress_element[[int(element_hinges[0])],1]+von_misses_stress_element[[int(element_hinges[1])],1] + von_misses_stress_element[[int(element_hinges[2])],1] + von_misses_stress_element[[int(element_hinges[3])],1])/4
+stress_hinge_2 = (von_misses_stress_element[[int(element_hinges[4])],1]+von_misses_stress_element[[int(element_hinges[5])],1] + von_misses_stress_element[[int(element_hinges[6])],1] +von_misses_stress_element[[int(element_hinges[7])],1])/4
+stress_hinge_3 = (von_misses_stress_element[[int(element_hinges[8])],1]+von_misses_stress_element[[int(element_hinges[9])],1] + von_misses_stress_element[[int(element_hinges[10])],1] + von_misses_stress_element[[int(element_hinges[11])],1])/4
+oppervlakte = ((max(x)-min(x))/(len(TEzn)-1))**2
+
+"""INSET REACTION FORCES IN Y-DIR AT HINGES"""
+yh1 = 1.
+yh2 = 1.
+yh3 = 1.
+
+"""INSET MAX STRESSES AT RIBS """
+ribas = 1.
+ribbs = 1.
+ribcs = 1
+ribds = 1.
+
+noderib_a_element = np.array([i for sl in noderib_a_element for i in sl]) - 1
+noderib_a_element = noderib_a_element.astype(np.int)
+stress_rib_a = np.take(von_misses_stress_element[:,1],noderib_a_element)
+
+noderib_b_element = np.array([i for sl in noderib_b_element for i in sl]) - 1
+noderib_b_element = noderib_b_element.astype(np.int)
+stress_rib_b = np.take(von_misses_stress_element[:,1],noderib_b_element)
+
+noderib_c_element = np.array([i for sl in noderib_c_element for i in sl]) - 1
+noderib_c_element = noderib_c_element.astype(np.int)
+stress_rib_c = np.take(von_misses_stress_element[:,1],noderib_c_element)
+
+noderib_d_element = np.array([i for sl in noderib_d_element for i in sl]) - 1
+noderib_d_element = noderib_d_element.astype(np.int)
+stress_rib_d = np.take(von_misses_stress_element[:,1],noderib_d_element)
 
 
+
+print (stress_hinge_1*1000,stress_hinge_2*1000,stress_hinge_3*1000)
+print (stress_hinge_1*(4*oppervlakte),stress_hinge_2*(4*oppervlakte),stress_hinge_3*(4*oppervlakte))
+print ("ABS",(stress_hinge_1*(4*oppervlakte) -yh1), stress_hinge_2*(4*oppervlakte) -yh2, stress_hinge_3*(4*oppervlakte)- yh3)
+print ("Abs" ,(((stress_hinge_1*(4*oppervlakte) -yh1)/yh1))*100, ((stress_hinge_2*(4*oppervlakte) -yh2)/yh2)*100, ((stress_hinge_3*(4*oppervlakte)- yh3)/yh3)*100)
+print (max(stress_rib_a)*1000)
+print (max(stress_rib_b)*1000)
+print (max(stress_rib_c)*1000)
+print (max(stress_rib_d)*1000)
+print (((max(stress_rib_a)*1000) - ribas) ,((max(stress_rib_b)*1000) -ribbs) ,((max(stress_rib_c)*1000)-ribcs) ,((max(stress_rib_d)*1000) -ribds))
 
 
