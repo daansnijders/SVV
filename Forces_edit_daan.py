@@ -19,11 +19,11 @@ def ReactionForces(theta,P,q,Ca,ha,E,Izz,x1,x2,x3,xa,span,d1,d3):
     eq1 = [1.,1.,1.,0.,0.]                      #Sum of forces in y
     eq2 = [-(x2 - x1),0.,(x3-x2),0.,0.]         #sum of moments around hinge 2
     eq3 = [0.,0.,0.,x1,1.]                      #deflection of hinge 1
-    eq4 = [((x2-x1)**3.)/6., 0.,0.,x2,1.]      #deflection of hinge 2
-    eq5 = [((x3-x1)**3.)/6., ((x3-x2)**3.)/6., 0., x3, 1.]    #deflection of hinge 3
+    eq4 = [(-(x2-x1)**3.)/6., 0.,0.,x2,1.]      #deflection of hinge 2
+    eq5 = [(-(x3-x1)**3.)/6., (-(x3-x2)**3.)/6., 0., x3, 1.]    #deflection of hinge 3
     ans1 = [span*q]
     ans2 = [(span/2. - x2)*span*q]
-    ans3 = [E*Izz*d1 + q/24.* x1**4.]
+    ans3 = [-E*Izz*d1 + q/24.* x1**4.]
     ans4 = [q/24.*(x2**4.)]
     ans5 = [E*Izz*d3 + q/24.* x3**4.]
     
@@ -67,7 +67,7 @@ def ReactionForces(theta,P,q,Ca,ha,E,Izz,x1,x2,x3,xa,span,d1,d3):
     R2z = float(y[1])
     R3z = float(y[2])
     
-    return R1y, -R1z, R2x, R2y, -R2z, R3y, -R3z, -A1
+    return R1y, R1z, R2x, R2y, R2z, R3y, R3z, A1
     
         
 def ExactMOI(theta,Ca,ha,t_sk,t_sp,t_st,w_st,h_st,zcg,n,spacing,nodepos):
@@ -204,15 +204,11 @@ h_st = 0.013
 A = (w_st*t_st + (h_st-t_st)*t_st)
 n = 11
 list_length = 14
-spacing, Cr, alpharad, Ct = Definitions.boom_spacing(ha, Ca, n)
-nodepos, arc, dist = Definitions.boom_location(spacing, Cr, alpharad, list_length, ha)
-ycg, zcg = Definitions.centroid_nonidealized(t_sk, ha, Ca, Ct, t_sp, nodepos, A)
-Iyy_0, Izz_0, Iyy_theta, Izz_theta, Izy_theta = ExactMOI(theta,Ca,ha,t_sk,t_sp,t_st,w_st,h_st,zcg,n,spacing,nodepos)
-test = ReactionForces(theta,P,q,Ca,ha,E,Izz_theta,x1,x2,x3,xa,span,d1,d3)
 
 
-q = -4530 #load distribution, + upwards
-P2 = 91700 #Actuator II force in negative direction
+
+q = -3860 #load distribution, + upwards
+P2 = 49200 #Actuator II force in negative direction
 E = 73.1e+09 #E-modulus
 #Convergence Variables
 
@@ -221,22 +217,22 @@ spread = 0.001 #dx for Jacobian Convergence
 
 
 #Aileron Geometry
-l1 = 0.153
-l2 = 1.281
-l3 = 2.681
-l4 = 2.771
-xa = 0.28
-Ca = 0.547
-ha = 0.225
+l1 = 0.125
+l2 = 0.498
+l3 = 1.494
+l4 = 1.611
+xa = 0.245
+Ca = 0.505
+ha = 0.161
 
 #Beam Deflection and Mx Distribution Variables
 inittwist = 0 #Twist of rib C in degrees (counterclockwise upwards)
 theta = np.ones(ndis*6+1)*inittwist/180*np.pi #theta[4*n] is actuator 2 and theta[2*n] is actuator 1
 
 #Y deflections of hinges
-d1 = 0.01103
+d1 = 0.00389
 d2 = 0
-d3 = 0.01642
+d3 = 0.01245
 
 #Boom Area Variables
 n = 11 #No. of stringers
@@ -250,6 +246,12 @@ zsc = 0 #Shear Center Location (Required but left at 0)
 
 
 #####General Code######
+
+spacing, Cr, alpharad, Ct = Definitions.boom_spacing(ha, Ca, n)
+nodepos, arc, dist = Definitions.boom_location(spacing, Cr, alpharad, list_length, ha)
+ycg, zcg = Definitions.centroid_nonidealized(t_sk, ha, Ca, Ct, t_sp, nodepos, A)
+Iyy_0, Izz_0, Iyy_theta, Izz_theta, Izy_theta = ExactMOI(theta[2*ndis],Ca,ha,t_sk,t_sp,t_st,w_st,h_st,zcg,n,spacing,nodepos)
+test = ReactionForces(theta,P,q,Ca,ha,E,Izz_theta,x1,x2,x3,xa,span,d1,d3)
 
 
 I = np.array([[np.ones(ndis*6+1)*9.434e-05, np.ones(ndis*6+1)*0],[np.ones(ndis*6+1)*0, np.ones(ndis*6+1)*1.252e-05]])
