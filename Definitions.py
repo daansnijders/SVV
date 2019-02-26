@@ -695,13 +695,13 @@ def ReactionForces(theta,P,q,Ca,ha,E,Izz,x1,x2,x3,xa,span,d1,d3):
     eq1 = [1.,1.,1.,0.,0.]                      #Sum of forces in y
     eq2 = [-(x2 - x1),0.,(x3-x2),0.,0.]         #sum of moments around hinge 2
     eq3 = [0.,0.,0.,x1,1.]                      #deflection of hinge 1
-    eq4 = [(-(x2-x1)**3.)/6., 0.,0.,x2,1.]      #deflection of hinge 2
-    eq5 = [(-(x3-x1)**3.)/6., (-(x3-x2)**3.)/6., 0., x3, 1.]    #deflection of hinge 3
+    eq4 = [((x2-x1)**3.)/6., 0.,0.,x2,1.]      #deflection of hinge 2
+    eq5 = [((x3-x1)**3.)/6., ((x3-x2)**3.)/6., 0., x3, 1.]    #deflection of hinge 3
     ans1 = [span*q]
     ans2 = [(span/2. - x2)*span*q]
-    ans3 = [E*Izz*d1 - q/24.* x1**4.]
-    ans4 = [-q/24.*(x2**4.)]
-    ans5 = [E*Izz*d3 - q/24.* x3**4.]
+    ans3 = [E*Izz*d1 + q/24.* x1**4.]
+    ans4 = [q/24.*(x2**4.)]
+    ans5 = [E*Izz*d3 + q/24.* x3**4.]
     
     A = np.array([eq1, eq2, eq3, eq4, eq5])
     b = np.array([ans1,ans2,ans3,ans4,ans5])
@@ -743,7 +743,7 @@ def ReactionForces(theta,P,q,Ca,ha,E,Izz,x1,x2,x3,xa,span,d1,d3):
     R2z = float(y[1])
     R3z = float(y[2])
     
-    return R1y, R1z, R2x, R2y, R2z, R3y, R3z, A1
+    return R1y, -R1z, R2x, R2y, -R2z, R3y, -R3z, -A1
     
         
 
