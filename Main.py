@@ -114,7 +114,11 @@ theta, rate_twist_lst,xt = Definitions.overalltwist(Mx,A1,A2,arc,Cr,ha,xa,G,tski
 
 iteration = 0
 
+<<<<<<< HEAD
 while iteration < 1:
+=======
+while iteration < 2:
+>>>>>>> ce83e40608b1206093e12b2dd76442b2ee093888
 
     iteration += 1
     print('Iteration no. ' + str(iteration)+'\n')
