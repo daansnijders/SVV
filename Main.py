@@ -119,7 +119,7 @@ while iteration < 1:
 
     #Initial Moment of Inertia - Working
 
-    I = Definitions.ExactMOIdiscretisation(q,ndis,l1,l2,l3,l4,tskin,tspar,t_stiff,w_stiff,h_stiff,zcg,n,spacing,nodepos,xa,Ca,ha,theta,zsc)[0]
+    I, Ilocal = Definitions.idealisedMOIdiscretisation(ndis,l1,l2,l3,l4,xa,list_length, nodepos, B)
 
     #Beam Deflection Convergence
 
