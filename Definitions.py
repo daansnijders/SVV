@@ -708,9 +708,13 @@ def shear_flow_rib(tring_qsum,circ_qsum,nodepos,ha,circ_booms,tring_booms,alphar
         
     
     
-def boom_area_updater(tsk, spacing, Mz, My, Izz, Iyy, stiff_area, zcg, nodepos, dist, arc, tspar, ha):
+def boom_area_updater(tsk, spacing, Mz, My, Izz, Iyy, stiff_area, zcg, nodepos, dist, arc, tspar, ha, theta):
+    
+    My = My*math.cos(theta)+Mz*math.sin(theta)
+    Mz = Mz*math.cos(theta)-My*math.sin(theta)
+    
     a= -1
-    b= -(Mz*Iyy)/(My*Izz)
+    b= (Mz*Iyy)/(My*Izz)
     c= zcg
     
     d=[0]
