@@ -35,7 +35,7 @@ ha = 0.161
 ###Beam Deflection and Mx Distribution Variables ###
 
 
-inittwist = 00 #Twist of rib C in degrees (counterclockwise upwards)
+inittwist = 30 #Twist of rib C in degrees (counterclockwise upwards)
 
 theta = np.ones(ndis*6+1)*inittwist/180*np.pi #theta[4*n] is actuator 2 and theta[2*n] is actuator 1
 

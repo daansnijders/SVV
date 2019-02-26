@@ -906,7 +906,7 @@ def ExactMOIdiscretisation(q,ndis,l1,l2,l3,l4,t_sk,t_sp,t_st,w_st,h_st,zcg,n,spa
         dx = l1/(n)
 
 
-        Iyy, Izz, Izy = ExactMOI(theta[i-1],Ca,ha,t_sk,t_sp,t_st,w_st,h_st,zcg,n,spacing,nodepos)[2:]
+        Iyy, Izz, Izy = ExactMOI2(theta[i-1],Ca,ha,t_sk,t_sp,t_st,w_st,h_st,zcg,n,spacing,nodepos)[2:]
         I = np.reshape(np.append(np.ravel(I,'F'), [Iyy,Izy,Izy,Izz]),[2,2,i], 'F')
         
 
@@ -916,7 +916,7 @@ def ExactMOIdiscretisation(q,ndis,l1,l2,l3,l4,t_sk,t_sp,t_st,w_st,h_st,zcg,n,spa
         xt = np.append(xt, x)
         dx = (l2-l1)/(n)
         
-        Iyy, Izz, Izy = ExactMOI(theta[i-1],Ca,ha,t_sk,t_sp,t_st,w_st,h_st,zcg,n,spacing,nodepos)[2:]
+        Iyy, Izz, Izy = ExactMOI2(theta[i-1],Ca,ha,t_sk,t_sp,t_st,w_st,h_st,zcg,n,spacing,nodepos)[2:]
         I = np.reshape(np.append(np.ravel(I,'F'), [Iyy,Izy,Izy,Izz]),[2,2,i], 'F')
 
         i = i+1
@@ -926,7 +926,7 @@ def ExactMOIdiscretisation(q,ndis,l1,l2,l3,l4,t_sk,t_sp,t_st,w_st,h_st,zcg,n,spa
         dx = (l2-l1)/(n)
         
        
-        Iyy, Izz, Izy = ExactMOI(theta[i-1],Ca,ha,t_sk,t_sp,t_st,w_st,h_st,zcg,n,spacing,nodepos)[2:]
+        Iyy, Izz, Izy = ExactMOI2(theta[i-1],Ca,ha,t_sk,t_sp,t_st,w_st,h_st,zcg,n,spacing,nodepos)[2:]
         I = np.reshape(np.append(np.ravel(I,'F'), [Iyy,Izy,Izy,Izz]),[2,2,i], 'F')
 
         i = i+1
@@ -934,7 +934,7 @@ def ExactMOIdiscretisation(q,ndis,l1,l2,l3,l4,t_sk,t_sp,t_st,w_st,h_st,zcg,n,spa
         xt = np.append(xt, x)
         dx = (l3-l2)/(n)
         
-        Iyy, Izz, Izy = ExactMOI(theta[i-1],Ca,ha,t_sk,t_sp,t_st,w_st,h_st,zcg,n,spacing,nodepos)[2:]
+        Iyy, Izz, Izy = ExactMOI2(theta[i-1],Ca,ha,t_sk,t_sp,t_st,w_st,h_st,zcg,n,spacing,nodepos)[2:]
         I = np.reshape(np.append(np.ravel(I,'F'), [Iyy,Izy,Izy,Izz]),[2,2,i], 'F')
         
         i = i+1
@@ -942,7 +942,7 @@ def ExactMOIdiscretisation(q,ndis,l1,l2,l3,l4,t_sk,t_sp,t_st,w_st,h_st,zcg,n,spa
         xt = np.append(xt, x)
         dx = (l3-l2)/(n)
         
-        Iyy, Izz, Izy = ExactMOI(theta[i-1],Ca,ha,t_sk,t_sp,t_st,w_st,h_st,zcg,n,spacing,nodepos)[2:]
+        Iyy, Izz, Izy = ExactMOI2(theta[i-1],Ca,ha,t_sk,t_sp,t_st,w_st,h_st,zcg,n,spacing,nodepos)[2:]
         I = np.reshape(np.append(np.ravel(I,'F'), [Iyy,Izy,Izy,Izz]),[2,2,i], 'F')
         
         i = i+1
@@ -950,7 +950,7 @@ def ExactMOIdiscretisation(q,ndis,l1,l2,l3,l4,t_sk,t_sp,t_st,w_st,h_st,zcg,n,spa
         xt = np.append(xt, x)
         dx = (l4-l3)/(n)
 
-        Iyy, Izz, Izy = ExactMOI(theta[i-1],Ca,ha,t_sk,t_sp,t_st,w_st,h_st,zcg,n,spacing,nodepos)[2:]
+        Iyy, Izz, Izy = ExactMOI2(theta[i-1],Ca,ha,t_sk,t_sp,t_st,w_st,h_st,zcg,n,spacing,nodepos)[2:]
         I = np.reshape(np.append(np.ravel(I,'F'), [Iyy,Izy,Izy,Izz]),[2,2,i], 'F')
        
 
