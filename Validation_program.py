@@ -167,33 +167,12 @@ i = 0
 for li in l:
     if l[i][0].isdigit() == True:
         location_y.append(l[i])
-    i = i + 1
-    
+    i = i + 1 
 
-<<<<<<< HEAD
-    
-#location_y = np.array(location_y).astype(np.float)
-#location_y = location_y[:,[0,5,6,7,8]]
-#location_y = location_y[0:3254]
-#
-##we can do this by checking at which indices y,z are the max or min valua
-#i = 0
-#yn = np.argwhere(y == 0)
-#LEzi = np.argwhere(z == max(z))
-#TEzi = np.argwhere(z == min(z))
-#TEzn = np.take(node[:,0],TEzi)
-#LEzn = np.take(node[:,0],LEzi)
-##now that we know the indices where the trailing edge and leading edge are, we can extract the indices of x
-##we now know all the nodes of the trailing and the leading edge.
-##now for a 2d scatter plot we need to take the x values and the deflectionection in y values
-#dypos_trailingedge = np.take(deflection[:,3],TEzi)
-#dypos_leadingedge = np.take(deflection[:,3],LEzi)
-#
-#ypos_trailingedge = np.take(location_y[:,3],TEzi)
-#ypos_leadingedge = np.take(location_y[:,3],LEzi)
-#xpos_trailingedge = np.take(node[:,1],TEzi)
-#xpos_leadingedge = np.take(node[:,1],LEzi)
-=======
+location_y = np.array(location_y).astype(np.float)
+location_y = location_y[:,[0,5,6,7,8]]
+location_y = location_y[0:3254]
+
 #Find out which nodes lay on the leading and trailing edge:
 y_n = np.argwhere(y == 0)
 
@@ -208,36 +187,12 @@ ypos_trailingedge = np.take(location_y[:,3],TEzi)
 ypos_leadingedge = np.take(location_y[:,3],LEzi)
 xpos_trailingedge = np.take(node[:,1],TEzi)
 xpos_leadingedge = np.take(node[:,1],LEzi)
->>>>>>> 2a33d9f265865d078a95bb6359714c769c7fa034
+
 #ypos_trailingedge = np.take(node[:,2],TEzi)
 #ypos_leadingedge = np.take(node[:,2],LEzi)
 #ypos_trailingedge = (dypos_trailingedge - ypos_trailingedge)
 #ypos_leadingedge = (dypos_leadingedge - ypos_leadingedge)
-<<<<<<< HEAD
-#dist = np.column_stack((xpos_trailingedge ,dypos_trailingedge))
-#dist = dist[np.argsort(dist[:,0])]
-#    
-#"""PLOTTING THE """
-#
-#slopes_val = []
-#steps_val = []
-#for i in range(dist[:,0].size):
-#    if i+1 < dist[:,1].size :
-#        dx = dist[i+1,0] - dist[i,0]
-#        slope = (dist[i+1,1] - dist[i,1])
-#        slopes_val.append(slope)
-#        steps_val.append(dist[i,0])
-#
-##the code underneath is only used for plotting the slope graph. Otherwise the other lines forthe plotting is used.
-##plt.plot(steps_num , slopes_num , 'ro')
-##plt.plot(steps_val , slopes_val , 'bo')
-##plt.plot(steps_val , slopes_val , 'blue ')
-#
-#
-##to plot the deflection over the x-position
-#plt.plot(dist[:,0],dist[:,1], 'bo',label = 'Validation Data' )
-##plt.plot(numx ,numdefl , 'ro',label = 'Numerical data')
-=======
+
 
 dist = np.column_stack((xpos_trailingedge ,dypos_trailingedge))
 dist = dist[np.argsort(dist[:,0])]
@@ -266,7 +221,6 @@ plt.plot(validation_step, validation_slope , 'red')
 
 #Deflection along x:
 #plt.plot(dist[:,0],dist[:,1], 'ro',label = 'Validation Data' )
->>>>>>> 2a33d9f265865d078a95bb6359714c769c7fa034
 #plt.plot(dist[:,0],dist[:,1], 'k' )
 
 
