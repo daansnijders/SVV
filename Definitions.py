@@ -1389,9 +1389,16 @@ def ratetwistandshearflowdiscretisation(t_skin, t_spar, spacing, l1,l2,l3,l4,xa,
     return boom_area, twist_rate, qrib_1, qrib_2
 
 
-def offset(zcentroidglobal, ycentroidglobal, theta, nodepos, v2, u2):
-    zoffset = v2 + ycentroidglobal
-    yoffset = u2 + zcentroidglobal
+def offset(zcg, theta, nodepos, v2, u2, xt):
+    zoffset = v2 - zcg*np.sin(theta)
+    yoffset = u2 + zcg*np.cos(theta)
+
+    nodepos = np.array([])
+
+    for i in len(nodepos)-1:
+        y = np.cos(theta)*nodepos[i][1]-np.sin(theta)*nodepos[i][2]
+        z = np.cos(theta)*nodepos[i][2]+np.sin(theta)*nodepos[i][1]
+        print(y,z)
 
     return zoffset, yoffset
         
