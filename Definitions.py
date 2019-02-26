@@ -1306,7 +1306,9 @@ def ExactMOI2(theta,Ca,ha,t_sk,t_sp,t_st,w_st,h_st,zcg,n,spacing,nodepos):
     
     
     
-    
+def centroidglobal(zcg, theta):
+    zcentroidglobal, ycentroidglobal = -zcg*np.cos(theta), zcg*np.sin(theta)
+    return zcentroidglobal, ycentroidglobal
     
     
     
