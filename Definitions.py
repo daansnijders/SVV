@@ -1167,8 +1167,83 @@ def centroidglobal(zcg, theta):
     zcentroidglobal, ycentroidglobal = zcg*np.cos(theta), -zcg*np.sin(theta)
     return zcentroidglobal, ycentroidglobal
     
+
+def ratetwistandshearflowdiscretisation(t_skin, t_spar, spacing, Mz, My, Mx, Vy, Vz, I, stiff_area, zcg, nodepos, dist, arc, Ca, ha, G, theta, n):
+
+
+    xt=np.array([0])
+
+    twist_rate= np.array([])
+    qrib1,qrib2 = np.array([]),np.array([])
+   
+    i = 1
+    for x in np.linspace(0,l1,n+1)[1:]:
+        xt=np.append(xt,x)
+        dx = l1/(n)
+
+        boom_area = Definitions.boom_area_updater(t_skin, spacing, Mz[i-1], My[i-1], I[1][1][i-1], I[0][0][i-1], stiff_area, zcg, nodepos, dist, arc, t_spar, ha, theta[i-1])
+        twist_rate, circ_qt, tring_qt = Definitions.shear_flow_finder(boom_area, I[1][1][i-1], I[0][0][i-1], theta[i-1], nodepos, t_skin, t_spar)
+        qrib_1,qrib_2 = np.append(qrib_1, Definitions.shear_flow_rib(tring_qt,circ_qt,nodepos,ha,circ_booms,tring_booms,alpharad)[0]), np.append(qrib_2, Definitions.shear_flow_rib(tring_qt,circ_qt,nodepos,ha,circ_booms,tring_booms,alpharad)[1])
+        
+        i = i+1
+           
+    for x in np.linspace(l1,l2-xa/2,n+1)[1:]:
+        xt=np.append(xt,x)
+        dx = (l2-l1)/(n)
+
+        boom_area = Definitions.boom_area_updater(t_skin, spacing, Mz[i-1], My[i-1], I[1][1][i-1], I[0][0][i-1], stiff_area, zcg, nodepos, dist, arc, t_spar, ha, theta[i-1])
+        twist_rate, circ_qt, tring_qt = Definitions.shear_flow_finder(boom_area, I[1][1][i-1], I[0][0][i-1], theta[i-1], nodepos, t_skin, t_spar)
+        qrib_1,qrib_2 = np.append(qrib_1, Definitions.shear_flow_rib(tring_qt,circ_qt,nodepos,ha,circ_booms,tring_booms,alpharad)[0]), np.append(qrib_2, Definitions.shear_flow_rib(tring_qt,circ_qt,nodepos,ha,circ_booms,tring_booms,alpharad)[1])
+        
+        i = i+1
+    
+    for x in np.linspace(l2-xa/2,l2,n+1)[1:]:
+        xt=np.append(xt,x)
+        dx = (l2-l1)/(n)
+        
+        boom_area = Definitions.boom_area_updater(t_skin, spacing, Mz[i-1], My[i-1], I[1][1][i-1], I[0][0][i-1], stiff_area, zcg, nodepos, dist, arc, t_spar, ha, theta[i-1])
+        twist_rate, circ_qt, tring_qt = Definitions.shear_flow_finder(boom_area, I[1][1][i-1], I[0][0][i-1], theta[i-1], nodepos, t_skin, t_spar)
+        qrib_1,qrib_2 = np.append(qrib_1, Definitions.shear_flow_rib(tring_qt,circ_qt,nodepos,ha,circ_booms,tring_booms,alpharad)[0]), np.append(qrib_2, Definitions.shear_flow_rib(tring_qt,circ_qt,nodepos,ha,circ_booms,tring_booms,alpharad)[1])
+        
+        i = i+1
     
     
+    for x in np.linspace(l2,l2+xa/2,n+1)[1:]:
+        xt=np.append(xt,x)
+        dx = (l3-l2)/(n)
+        
+        boom_area = Definitions.boom_area_updater(t_skin, spacing, Mz[i-1], My[i-1], I[1][1][i-1], I[0][0][i-1], stiff_area, zcg, nodepos, dist, arc, t_spar, ha, theta[i-1])
+        twist_rate, circ_qt, tring_qt = Definitions.shear_flow_finder(boom_area, I[1][1][i-1], I[0][0][i-1], theta[i-1], nodepos, t_skin, t_spar)
+        qrib_1,qrib_2 = np.append(qrib_1, Definitions.shear_flow_rib(tring_qt,circ_qt,nodepos,ha,circ_booms,tring_booms,alpharad)[0]), np.append(qrib_2, Definitions.shear_flow_rib(tring_qt,circ_qt,nodepos,ha,circ_booms,tring_booms,alpharad)[1])
+        
+        i = i+1
+    
+    for x in np.linspace(l2+xa/2,l3,n+1)[1:]:
+        xt=np.append(xt,x)
+        dx = (l3-l2)/(n)
+
+        boom_area = Definitions.boom_area_updater(t_skin, spacing, Mz[i-1], My[i-1], I[1][1][i-1], I[0][0][i-1], stiff_area, zcg, nodepos, dist, arc, t_spar, ha, theta[i-1])
+        twist_rate, circ_qt, tring_qt = Definitions.shear_flow_finder(boom_area, I[1][1][i-1], I[0][0][i-1], theta[i-1], nodepos, t_skin, t_spar)
+        qrib_1,qrib_2 = np.append(qrib_1, Definitions.shear_flow_rib(tring_qt,circ_qt,nodepos,ha,circ_booms,tring_booms,alpharad)[0]), np.append(qrib_2, Definitions.shear_flow_rib(tring_qt,circ_qt,nodepos,ha,circ_booms,tring_booms,alpharad)[1])
+
+        i = i+1
+    
+        
+        
+    for x in np.linspace(l3,l4,n+1)[1:]:
+        xt=np.append(xt,x)
+        dx = (l4-l3)/(n)
+        
+        boom_area = Definitions.boom_area_updater(t_skin, spacing, Mz[i-1], My[i-1], I[1][1][i-1], I[0][0][i-1], stiff_area, zcg, nodepos, dist, arc, t_spar, ha, theta[i-1])
+        twist_rate, circ_qt, tring_qt = Definitions.shear_flow_finder(boom_area, I[1][1][i-1], I[0][0][i-1], theta[i-1], nodepos, t_skin, t_spar)
+        qrib_1,qrib_2 = np.append(qrib_1, Definitions.shear_flow_rib(tring_qt,circ_qt,nodepos,ha,circ_booms,tring_booms,alpharad)[0]), np.append(qrib_2, Definitions.shear_flow_rib(tring_qt,circ_qt,nodepos,ha,circ_booms,tring_booms,alpharad)[1])
+        
+        i = i+1
+
+
+    return boom_area, twist_rate, qrib_1, qrib_2
+        
+        
     
     
     
