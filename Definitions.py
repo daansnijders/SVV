@@ -843,8 +843,8 @@ def shear_flow_finder(boom_area_inclskin, Izz, Iyy, theta, node_pos, Ca, ha, Mx,
     circ_q = [0]
     for i in tring_booms:
         tring_q.append((-Vy/Izz)*baes[i]*bxyz[i][1]+(-Vz/Iyy)*baes[i]*bxyz[i][2]+tring_q[-1])
-    for j in circ_booms:
-        circ_q.append((-Vy/Izz)*baes[j]*bxyz[j][1]+(-Vz/Iyy)*baes[i]*bxyz[i][2]+circ_q[-1])
+    for i in circ_booms:
+        circ_q.append((-Vy/Izz)*baes[i]*bxyz[i][1]+(-Vz/Iyy)*baes[i]*bxyz[i][2]+circ_q[-1])
     
     #find force produced by each boom due to shear flows
     tring_fz=[]
@@ -897,8 +897,8 @@ def shear_flow_finder(boom_area_inclskin, Izz, Iyy, theta, node_pos, Ca, ha, Mx,
     for i in range(len(tring_dist)):
         tring_li += (tring_q[i+1]*tring_dist[i])/(tring_thicc[i]*G)
 
-    for j in range(len(circ_dist)):
-        circ_li += (circ_q[j+1]*circ_dist[i])/(circ_thicc[i]*G)
+    for i in range(len(circ_dist)):
+        circ_li += (circ_q[i+1]*circ_dist[i])/(circ_thicc[i]*G)
     #set up matrix
     A=np.matrix([[1/(2*AI)*(peri/(tsk*G)+ha/(tspar*G)), -ha/(2*AI*tspar*G), -1], [-ha/(2*AII*tspar*G), 1/(2*AII)*(2*s/(tsk*G)+ha/(tspar*G)), -1], [2*AI, 2*AII, 0]])
     b=np.matrix([[1/(-2*AI)*circ_li], [1/(-2*AII)*tring_li], [Mx-moments]])
