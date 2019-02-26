@@ -122,6 +122,7 @@ node = np.array(node)
 x,y,z = node[:,1], node[:,2], node[:,3]
 
 display = plt.figure()
+plt.title('Selected nodes and their resp. x,y,z.')
 axis = plt.axes(projection='3d')
 axis.scatter3D(x,-z,y, c=z, cmap='Blues');
 axis.set_xlim3d(-200,2000)
@@ -137,7 +138,6 @@ l = []
 
 """Opening the F100_ULC1_rpt file """
 
-#With Aerodynamic Loads:
 with open("./data/F100_ULC1.rpt") as g3:
     l = (regel.rstrip().split() for regel in g3)
     l = list(regel for regel in l if regel)
@@ -148,6 +148,7 @@ for regel in l:
     if l[j][0].isdigit() == True:
         deflection.append(l[j])
     j += 1
+       
     
     
 deflection = np.array(deflection)
@@ -157,52 +158,51 @@ deflection = deflection[:,[0,5,6,7,8]]
 #Only selecting the datarows we need:
 deflection = deflection[0:3254] 
 
-#Without aerodyamics loads:
+#now we need to sort the nodes for which the z and y coordinates are the same , with a varying x - coordinate
 location_y = []
-with open("./data/F100_UR1.rpt") as g4:
-    l = (regel.rstrip().split() for regel in g4)
-    l = list(regel for regel in l if regel)
+with open("./data/F100_UR1.rpt") as f_in:
+    l = (li.rstrip().split() for li in f_in)
+    l = list(li for li in l if li)
+i = 0
+for li in l:
+    if l[i][0].isdigit() == True:
+        location_y.append(l[i])
+    i = i + 1
+    
 
-j = 0
-for regel in l:
-    #Again, append the loc if the first in line is a digit
-    if l[j][0].isdigit() == True:
-        location_y.append(l[j])
-    j += 1
-        
-location_y = np.array(location_y)
-location_y = location_y.astype(np.float)
-location_y = location_y[:,[0,5,6,7,8]]
-location_y = location_y[0:3254]
-
-#-----Debug:--------
-
-j = 0
-
-#Find out which nodes lay on the leading and trailing edge:
-y_n = np.argwhere(y == 0)
-
-LEzi = np.argwhere(z == max(z))
-TEzi = np.argwhere(z == min(z))
-TEzn = np.take(node[:,0],TEzi)
-LEzn = np.take(node[:,0],LEzi)
-
-dypos_trailingedge = np.take(deflection[:,3],TEzi)
-dypos_leadingedge = np.take(deflection[:,3],LEzi)
-ypos_trailingedge = np.take(location_y[:,3],TEzi)
-ypos_leadingedge = np.take(location_y[:,3],LEzi)
-xpos_trailingedge = np.take(node[:,1],TEzi)
-xpos_leadingedge = np.take(node[:,1],LEzi)
-ypos_trailingedge = np.take(node[:,2],TEzi)
-ypos_leadingedge = np.take(node[:,2],LEzi)
-ypos_trailingedge = (dypos_trailingedge - ypos_trailingedge)
-ypos_leadingedge = (dypos_leadingedge - ypos_leadingedge)
-
-dist = np.column_stack((xpos_trailingedge ,dypos_trailingedge))
-dist = dist[np.argsort(dist[:,0])]
-
-slopes_val = []
-steps_val = []
+    
+#location_y = np.array(location_y).astype(np.float)
+#location_y = location_y[:,[0,5,6,7,8]]
+#location_y = location_y[0:3254]
+#
+##we can do this by checking at which indices y,z are the max or min valua
+#i = 0
+#yn = np.argwhere(y == 0)
+#LEzi = np.argwhere(z == max(z))
+#TEzi = np.argwhere(z == min(z))
+#TEzn = np.take(node[:,0],TEzi)
+#LEzn = np.take(node[:,0],LEzi)
+##now that we know the indices where the trailing edge and leading edge are, we can extract the indices of x
+##we now know all the nodes of the trailing and the leading edge.
+##now for a 2d scatter plot we need to take the x values and the deflectionection in y values
+#dypos_trailingedge = np.take(deflection[:,3],TEzi)
+#dypos_leadingedge = np.take(deflection[:,3],LEzi)
+#
+#ypos_trailingedge = np.take(location_y[:,3],TEzi)
+#ypos_leadingedge = np.take(location_y[:,3],LEzi)
+#xpos_trailingedge = np.take(node[:,1],TEzi)
+#xpos_leadingedge = np.take(node[:,1],LEzi)
+#ypos_trailingedge = np.take(node[:,2],TEzi)
+#ypos_leadingedge = np.take(node[:,2],LEzi)
+#ypos_trailingedge = (dypos_trailingedge - ypos_trailingedge)
+#ypos_leadingedge = (dypos_leadingedge - ypos_leadingedge)
+#dist = np.column_stack((xpos_trailingedge ,dypos_trailingedge))
+#dist = dist[np.argsort(dist[:,0])]
+#    
+#"""PLOTTING THE """
+#
+#slopes_val = []
+#steps_val = []
 #for i in range(dist[:,0].size):
 #    if i+1 < dist[:,1].size :
 #        dx = dist[i+1,0] - dist[i,0]
