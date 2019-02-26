@@ -695,13 +695,13 @@ def ReactionForces(theta,P,q,Ca,ha,E,Izz,x1,x2,x3,xa,span,d1,d3):
     eq1 = [1.,1.,1.,0.,0.]                      #Sum of forces in y
     eq2 = [-(x2 - x1),0.,(x3-x2),0.,0.]         #sum of moments around hinge 2
     eq3 = [0.,0.,0.,x1,1.]                      #deflection of hinge 1
-    eq4 = [(-(x2-x1)**3.)/6., 0.,0.,x2,1.]      #deflection of hinge 2
-    eq5 = [(-(x3-x1)**3.)/6., (-(x3-x2)**3.)/6., 0., x3, 1.]    #deflection of hinge 3
+    eq4 = [((x2-x1)**3.)/6., 0.,0.,x2,1.]      #deflection of hinge 2
+    eq5 = [((x3-x1)**3.)/6., ((x3-x2)**3.)/6., 0., x3, 1.]    #deflection of hinge 3
     ans1 = [span*q]
     ans2 = [(span/2. - x2)*span*q]
-    ans3 = [E*Izz*d1 - q/24.* x1**4.]
-    ans4 = [-q/24.*(x2**4.)]
-    ans5 = [E*Izz*d3 - q/24.* x3**4.]
+    ans3 = [E*Izz*d1 + q/24.* x1**4.]
+    ans4 = [q/24.*(x2**4.)]
+    ans5 = [E*Izz*d3 + q/24.* x3**4.]
     
     A = np.array([eq1, eq2, eq3, eq4, eq5])
     b = np.array([ans1,ans2,ans3,ans4,ans5])
@@ -743,7 +743,7 @@ def ReactionForces(theta,P,q,Ca,ha,E,Izz,x1,x2,x3,xa,span,d1,d3):
     R2z = float(y[1])
     R3z = float(y[2])
     
-    return R1y, R1z, R2x, R2y, R2z, R3y, R3z, A1
+    return R1y, -R1z, R2x, R2y, -R2z, R3y, -R3z, -A1
     
         
 
@@ -843,8 +843,8 @@ def shear_flow_finder(boom_area_inclskin, Izz, Iyy, theta, node_pos, Ca, ha, Mx,
     circ_q = [0]
     for i in tring_booms:
         tring_q.append((-Vy/Izz)*baes[i]*bxyz[i][1]+(-Vz/Iyy)*baes[i]*bxyz[i][2]+tring_q[-1])
-    for j in circ_booms:
-        circ_q.append((-Vy/Izz)*baes[j]*bxyz[j][1]+(-Vz/Iyy)*baes[i]*bxyz[i][2]+circ_q[-1])
+    for i in circ_booms:
+        circ_q.append((-Vy/Izz)*baes[i]*bxyz[i][1]+(-Vz/Iyy)*baes[i]*bxyz[i][2]+circ_q[-1])
     
     #find force produced by each boom due to shear flows
     tring_fz=[]
@@ -897,8 +897,8 @@ def shear_flow_finder(boom_area_inclskin, Izz, Iyy, theta, node_pos, Ca, ha, Mx,
     for i in range(len(tring_dist)):
         tring_li += (tring_q[i+1]*tring_dist[i])/(tring_thicc[i]*G)
 
-    for j in range(len(circ_dist)):
-        circ_li += (circ_q[j+1]*circ_dist[i])/(circ_thicc[i]*G)
+    for i in range(len(circ_dist)):
+        circ_li += (circ_q[i+1]*circ_dist[i])/(circ_thicc[i]*G)
     #set up matrix
     A=np.matrix([[1/(2*AI)*(peri/(tsk*G)+ha/(tspar*G)), -ha/(2*AI*tspar*G), -1], [-ha/(2*AII*tspar*G), 1/(2*AII)*(2*s/(tsk*G)+ha/(tspar*G)), -1], [2*AI, 2*AII, 0]])
     b=np.matrix([[1/(-2*AI)*circ_li], [1/(-2*AII)*tring_li], [Mx-moments]])
