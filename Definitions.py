@@ -362,7 +362,6 @@ def boom_inertia(list_length, nodepos, B): #TO BE CHECKED
     
     #nodepos = boom_location() #getting positions from previous function
 
-    Ixx = [0 for _ in range(list_length)] #Defining lists of Ixx Iyy and Izz
     Iyy = [] #Etc.
     Izz = [] #Etc.
     
@@ -378,15 +377,20 @@ def boom_inertia(list_length, nodepos, B): #TO BE CHECKED
     #print()    
     #print()
     
-    Ixx_final = 0.
     Iyy_final = 0.
     Izz_final = 0.
     for i in range (14):
-        Ixx_final = Ixx_final + Ixx[i]
         Iyy_final = Iyy_final + Iyy[i]
         Izz_final = Izz_final + Izz[i]
+
+    Izz_0 = Izz_final
+    Iyy_0 = Iyy_final     
     
-    return Ixx_final, Iyy_final, Izz_final
+    Iyy_theta = (Izz_0 + Iyy_0)/2. + (Iyy_0 - Izz_0)/2. * math.cos(-2.*theta)
+    Izz_theta = (Izz_0 + Iyy_0)/2. - (Iyy_0 - Izz_0)/2. * math.cos(-2.*theta)
+    Izy_theta = (Iyy_0 - Izz_0)/2. *math.sin(2.*(-1.)*theta)
+    
+    return Iyy_final, Izz_final, Iyy_theta, Izz_theta, Izy_theta
 
 def scatter(nodepos):
     y = []
@@ -790,6 +794,7 @@ def ExactMOIdiscretisation(q,ndis,l1,l2,l3,l4,t_sk,t_sp,t_st,w_st,h_st,zcg,n,spa
 
 
     I = np.array([])
+    Ilocal = np.array([])
 
     xt = np.array([0])
 
@@ -801,8 +806,9 @@ def ExactMOIdiscretisation(q,ndis,l1,l2,l3,l4,t_sk,t_sp,t_st,w_st,h_st,zcg,n,spa
         dx = l1/(n)
 
 
-        Iyy, Izz, Izy = ExactMOI2(theta[i-1],Ca,ha,t_sk,t_sp,t_st,w_st,h_st,zcg,n,spacing,nodepos)[2:]
+        Iyy_0, Izz_0, Iyy, Izz, Izy = ExactMOI2(theta[i-1],Ca,ha,t_sk,t_sp,t_st,w_st,h_st,zcg,n,spacing,nodepos)
         I = np.reshape(np.append(np.ravel(I,'F'), [Iyy,Izy,Izy,Izz]),[2,2,i], 'F')
+        Ilocal = np.reshape(np.append(np.ravel(Ilocal,'F'), [Iyy_0,0,0,Izz_0]),[2,2,i], 'F')
         
 
 
@@ -811,8 +817,9 @@ def ExactMOIdiscretisation(q,ndis,l1,l2,l3,l4,t_sk,t_sp,t_st,w_st,h_st,zcg,n,spa
         xt = np.append(xt, x)
         dx = (l2-l1)/(n)
         
-        Iyy, Izz, Izy = ExactMOI2(theta[i-1],Ca,ha,t_sk,t_sp,t_st,w_st,h_st,zcg,n,spacing,nodepos)[2:]
+        Iyy_0, Izz_0, Iyy, Izz, Izy = ExactMOI2(theta[i-1],Ca,ha,t_sk,t_sp,t_st,w_st,h_st,zcg,n,spacing,nodepos)
         I = np.reshape(np.append(np.ravel(I,'F'), [Iyy,Izy,Izy,Izz]),[2,2,i], 'F')
+        Ilocal = np.reshape(np.append(np.ravel(Ilocal,'F'), [Iyy_0,0,0,Izz_0]),[2,2,i], 'F')
 
         i = i+1
 
@@ -821,37 +828,41 @@ def ExactMOIdiscretisation(q,ndis,l1,l2,l3,l4,t_sk,t_sp,t_st,w_st,h_st,zcg,n,spa
         dx = (l2-l1)/(n)
         
        
-        Iyy, Izz, Izy = ExactMOI2(theta[i-1],Ca,ha,t_sk,t_sp,t_st,w_st,h_st,zcg,n,spacing,nodepos)[2:]
+        Iyy_0, Izz_0, Iyy, Izz, Izy = ExactMOI2(theta[i-1],Ca,ha,t_sk,t_sp,t_st,w_st,h_st,zcg,n,spacing,nodepos)
         I = np.reshape(np.append(np.ravel(I,'F'), [Iyy,Izy,Izy,Izz]),[2,2,i], 'F')
+        Ilocal = np.reshape(np.append(np.ravel(Ilocal,'F'), [Iyy_0,0,0,Izz_0]),[2,2,i], 'F')
 
         i = i+1
     for x in np.linspace(l2,l2+xa/2,ndis+1)[1:]:
         xt = np.append(xt, x)
         dx = (l3-l2)/(n)
         
-        Iyy, Izz, Izy = ExactMOI2(theta[i-1],Ca,ha,t_sk,t_sp,t_st,w_st,h_st,zcg,n,spacing,nodepos)[2:]
+        Iyy_0, Izz_0, Iyy, Izz, Izy = ExactMOI2(theta[i-1],Ca,ha,t_sk,t_sp,t_st,w_st,h_st,zcg,n,spacing,nodepos)
         I = np.reshape(np.append(np.ravel(I,'F'), [Iyy,Izy,Izy,Izz]),[2,2,i], 'F')
+        Ilocal = np.reshape(np.append(np.ravel(Ilocal,'F'), [Iyy_0,0,0,Izz_0]),[2,2,i], 'F')
         
         i = i+1
     for x in np.linspace(l2+xa/2,l3,ndis+1)[1:]:
         xt = np.append(xt, x)
         dx = (l3-l2)/(n)
         
-        Iyy, Izz, Izy = ExactMOI2(theta[i-1],Ca,ha,t_sk,t_sp,t_st,w_st,h_st,zcg,n,spacing,nodepos)[2:]
+        Iyy_0, Izz_0, Iyy, Izz, Izy = ExactMOI2(theta[i-1],Ca,ha,t_sk,t_sp,t_st,w_st,h_st,zcg,n,spacing,nodepos)
         I = np.reshape(np.append(np.ravel(I,'F'), [Iyy,Izy,Izy,Izz]),[2,2,i], 'F')
+        Ilocal = np.reshape(np.append(np.ravel(Ilocal,'F'), [Iyy_0,0,0,Izz_0]),[2,2,i], 'F')
         
         i = i+1
     for x in np.linspace(l3,l4,ndis+1)[1:]:
         xt = np.append(xt, x)
         dx = (l4-l3)/(n)
 
-        Iyy, Izz, Izy = ExactMOI2(theta[i-1],Ca,ha,t_sk,t_sp,t_st,w_st,h_st,zcg,n,spacing,nodepos)[2:]
+        Iyy_0, Izz_0, Iyy, Izz, Izy = ExactMOI2(theta[i-1],Ca,ha,t_sk,t_sp,t_st,w_st,h_st,zcg,n,spacing,nodepos)
         I = np.reshape(np.append(np.ravel(I,'F'), [Iyy,Izy,Izy,Izz]),[2,2,i], 'F')
+        Ilocal = np.reshape(np.append(np.ravel(Ilocal,'F'), [Iyy_0,0,0,Izz_0]),[2,2,i], 'F')
        
 
         i = i+1
 
-    return I
+    return I, Ilocal
 
 def shear_flow_finder(boom_area_inclskin, Izz, Iyy, theta, node_pos, Ca, ha, Mx, Vy, Vz, G, tsk, tspar):
     #decompose forces to be local
