@@ -1,7 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-n=100
+n=10000
 #T = np.ones(6*n+1)*3.76 # list containing the torque values at each spanwise location of the aileron 
 A1=0.0101791529 # Area of cell 1 
 A2=0.03417225 # Area of cell 2
@@ -16,8 +16,8 @@ l2=0.498
 l3=1.494
 l4=1.611
 xa=0.245
-q=-3860
-P1=57561.755
+q=3860
+P1=53585
 P2=49200
 Ca=0.505
 theta=np.ones(6*n+1)*30*(np.pi/180)
@@ -124,6 +124,7 @@ def overalltwist(l1,l2,l3,l4,n):
         theta_elem=theta[-1]+rate_twist_lst[i-1]*dx
         theta = np.append(theta,theta_elem)
         i = i+1
+    
            
     for x in np.linspace(l1,l2-xa/2,n+1)[1:]:
         xt=np.append(xt,x)
