@@ -143,7 +143,7 @@ while iteration < 2:
 
 #Discretised Boom Area Twist rate and Qrib
 
-boom_area, twist_rate, qrib_1, qrib_2 = Definitions.ratetwistandshearflowdiscretisation(tskin, tspar, spacing, l1,l2,l3,l4,xa, Mz, My, Mx, Vy, Vz, I, area_stiff, zcg, nodepos, dist, arc, Ca, ha, G, theta, ndis)
+boom_area, twist_rate, qrib_1, qrib_2 = Definitions.ratetwistandshearflowdiscretisation(tskin, tspar, spacing, l1,l2,l3,l4,xa, Mz, My, Mx, Vy, Vz, I, area_stiff, zcg, nodepos, dist, arc, Ca, ha, G, theta, alpharad, ndis)
 
 
 
