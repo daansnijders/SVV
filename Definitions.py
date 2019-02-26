@@ -358,7 +358,7 @@ def area_stiff(t_stiff, h_stiff, w_stiff):
 ##    return boom_area
     
 
-def boom_inertia(list_length, nodepos, B): #TO BE CHECKED
+def boom_inertia(list_length, nodepos, B,theta): #TO BE CHECKED
     
     #nodepos = boom_location() #getting positions from previous function
 
@@ -392,7 +392,7 @@ def boom_inertia(list_length, nodepos, B): #TO BE CHECKED
     
     return Iyy_final, Izz_final, Iyy_theta, Izz_theta, Izy_theta
 
-def idealisedMOIdiscretisation(ndis,l1,l2,l3,l4,xa,list_length, nodepos, B):
+def idealisedMOIdiscretisation(ndis,l1,l2,l3,l4,xa,list_length, nodepos, B, theta):
 
 
     I = np.array([])
@@ -407,7 +407,7 @@ def idealisedMOIdiscretisation(ndis,l1,l2,l3,l4,xa,list_length, nodepos, B):
         xt = np.append(xt, x)
         dx = l1/(ndis)
 
-        Iyy_0, Izz_0, Iyy, Izz, Izy = boom_inertia(list_length, nodepos, B[i-1])
+        Iyy_0, Izz_0, Iyy, Izz, Izy = boom_inertia(list_length, nodepos, B[i-1],theta[i-1])
         I = np.reshape(np.append(np.ravel(I,'F'), [Iyy,Izy,Izy,Izz]),[2,2,i], 'F')
         Ilocal = np.reshape(np.append(np.ravel(Ilocal,'F'), [Iyy_0,0,0,Izz_0]),[2,2,i], 'F')
         
@@ -418,7 +418,7 @@ def idealisedMOIdiscretisation(ndis,l1,l2,l3,l4,xa,list_length, nodepos, B):
         xt = np.append(xt, x)
         dx = (l2-l1)/(ndis)
         
-        Iyy_0, Izz_0, Iyy, Izz, Izy = boom_inertia(list_length, nodepos, B[i-1])
+        Iyy_0, Izz_0, Iyy, Izz, Izy = boom_inertia(list_length, nodepos, B[i-1],theta[i-1])
         I = np.reshape(np.append(np.ravel(I,'F'), [Iyy,Izy,Izy,Izz]),[2,2,i], 'F')
         Ilocal = np.reshape(np.append(np.ravel(Ilocal,'F'), [Iyy_0,0,0,Izz_0]),[2,2,i], 'F')
 
@@ -429,7 +429,7 @@ def idealisedMOIdiscretisation(ndis,l1,l2,l3,l4,xa,list_length, nodepos, B):
         dx = (l2-l1)/(ndis)
         
        
-        Iyy_0, Izz_0, Iyy, Izz, Izy = boom_inertia(list_length, nodepos, B[i-1])
+        Iyy_0, Izz_0, Iyy, Izz, Izy = boom_inertia(list_length, nodepos, B[i-1],theta[i-1])
         I = np.reshape(np.append(np.ravel(I,'F'), [Iyy,Izy,Izy,Izz]),[2,2,i], 'F')
         Ilocal = np.reshape(np.append(np.ravel(Ilocal,'F'), [Iyy_0,0,0,Izz_0]),[2,2,i], 'F')
 
@@ -438,7 +438,7 @@ def idealisedMOIdiscretisation(ndis,l1,l2,l3,l4,xa,list_length, nodepos, B):
         xt = np.append(xt, x)
         dx = (l3-l2)/(ndis)
         
-        Iyy_0, Izz_0, Iyy, Izz, Izy = boom_inertia(list_length, nodepos, B[i-1])
+        Iyy_0, Izz_0, Iyy, Izz, Izy = boom_inertia(list_length, nodepos, B[i-1],theta[i-1])
         I = np.reshape(np.append(np.ravel(I,'F'), [Iyy,Izy,Izy,Izz]),[2,2,i], 'F')
         Ilocal = np.reshape(np.append(np.ravel(Ilocal,'F'), [Iyy_0,0,0,Izz_0]),[2,2,i], 'F')
         
@@ -447,7 +447,7 @@ def idealisedMOIdiscretisation(ndis,l1,l2,l3,l4,xa,list_length, nodepos, B):
         xt = np.append(xt, x)
         dx = (l3-l2)/(ndis)
         
-        Iyy_0, Izz_0, Iyy, Izz, Izy = boom_inertia(list_length, nodepos, B[i-1])
+        Iyy_0, Izz_0, Iyy, Izz, Izy = boom_inertia(list_length, nodepos, B[i-1],theta[i-1])
         I = np.reshape(np.append(np.ravel(I,'F'), [Iyy,Izy,Izy,Izz]),[2,2,i], 'F')
         Ilocal = np.reshape(np.append(np.ravel(Ilocal,'F'), [Iyy_0,0,0,Izz_0]),[2,2,i], 'F')
         
@@ -456,7 +456,7 @@ def idealisedMOIdiscretisation(ndis,l1,l2,l3,l4,xa,list_length, nodepos, B):
         xt = np.append(xt, x)
         dx = (l4-l3)/(ndis)
 
-        Iyy_0, Izz_0, Iyy, Izz, Izy = boom_inertia(list_length, nodepos, B[i-1])
+        Iyy_0, Izz_0, Iyy, Izz, Izy = boom_inertia(list_length, nodepos, B[i-1],theta[i-1])
         I = np.reshape(np.append(np.ravel(I,'F'), [Iyy,Izy,Izy,Izz]),[2,2,i], 'F')
         Ilocal = np.reshape(np.append(np.ravel(Ilocal,'F'), [Iyy_0,0,0,Izz_0]),[2,2,i], 'F')
        
