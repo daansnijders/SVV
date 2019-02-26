@@ -405,9 +405,9 @@ def idealisedMOIdiscretisation(ndis,l1,l2,l3,l4,xa,list_length, nodepos, B):
 
     for x in np.linspace(0,l1,ndis+1)[1:]:
         xt = np.append(xt, x)
-        dx = l1/(n)
+        dx = l1/(ndis)
 
-        Iyy_0, Izz_0, Iyy, Izz, Izy = boom_inertia(list_length, nodepos, B)
+        Iyy_0, Izz_0, Iyy, Izz, Izy = boom_inertia(list_length, nodepos, B[i-1])
         I = np.reshape(np.append(np.ravel(I,'F'), [Iyy,Izy,Izy,Izz]),[2,2,i], 'F')
         Ilocal = np.reshape(np.append(np.ravel(Ilocal,'F'), [Iyy_0,0,0,Izz_0]),[2,2,i], 'F')
         
@@ -416,9 +416,9 @@ def idealisedMOIdiscretisation(ndis,l1,l2,l3,l4,xa,list_length, nodepos, B):
         i = i+1
     for x in np.linspace(l1,l2-xa/2,ndis+1)[1:]:
         xt = np.append(xt, x)
-        dx = (l2-l1)/(n)
+        dx = (l2-l1)/(ndis)
         
-        Iyy_0, Izz_0, Iyy, Izz, Izy = ExactMOI2(theta[i-1],Ca,ha,t_sk,t_sp,t_st,w_st,h_st,zcg,n,spacing,nodepos)
+        Iyy_0, Izz_0, Iyy, Izz, Izy = boom_inertia(list_length, nodepos, B[i-1])
         I = np.reshape(np.append(np.ravel(I,'F'), [Iyy,Izy,Izy,Izz]),[2,2,i], 'F')
         Ilocal = np.reshape(np.append(np.ravel(Ilocal,'F'), [Iyy_0,0,0,Izz_0]),[2,2,i], 'F')
 
@@ -426,37 +426,37 @@ def idealisedMOIdiscretisation(ndis,l1,l2,l3,l4,xa,list_length, nodepos, B):
 
     for x in np.linspace(l2-xa/2,l2,ndis+1)[1:]:
         xt = np.append(xt, x)
-        dx = (l2-l1)/(n)
+        dx = (l2-l1)/(ndis)
         
        
-        Iyy_0, Izz_0, Iyy, Izz, Izy = ExactMOI2(theta[i-1],Ca,ha,t_sk,t_sp,t_st,w_st,h_st,zcg,n,spacing,nodepos)
+        Iyy_0, Izz_0, Iyy, Izz, Izy = boom_inertia(list_length, nodepos, B[i-1])
         I = np.reshape(np.append(np.ravel(I,'F'), [Iyy,Izy,Izy,Izz]),[2,2,i], 'F')
         Ilocal = np.reshape(np.append(np.ravel(Ilocal,'F'), [Iyy_0,0,0,Izz_0]),[2,2,i], 'F')
 
         i = i+1
     for x in np.linspace(l2,l2+xa/2,ndis+1)[1:]:
         xt = np.append(xt, x)
-        dx = (l3-l2)/(n)
+        dx = (l3-l2)/(ndis)
         
-        Iyy_0, Izz_0, Iyy, Izz, Izy = ExactMOI2(theta[i-1],Ca,ha,t_sk,t_sp,t_st,w_st,h_st,zcg,n,spacing,nodepos)
+        Iyy_0, Izz_0, Iyy, Izz, Izy = boom_inertia(list_length, nodepos, B[i-1])
         I = np.reshape(np.append(np.ravel(I,'F'), [Iyy,Izy,Izy,Izz]),[2,2,i], 'F')
         Ilocal = np.reshape(np.append(np.ravel(Ilocal,'F'), [Iyy_0,0,0,Izz_0]),[2,2,i], 'F')
         
         i = i+1
     for x in np.linspace(l2+xa/2,l3,ndis+1)[1:]:
         xt = np.append(xt, x)
-        dx = (l3-l2)/(n)
+        dx = (l3-l2)/(ndis)
         
-        Iyy_0, Izz_0, Iyy, Izz, Izy = ExactMOI2(theta[i-1],Ca,ha,t_sk,t_sp,t_st,w_st,h_st,zcg,n,spacing,nodepos)
+        Iyy_0, Izz_0, Iyy, Izz, Izy = boom_inertia(list_length, nodepos, B[i-1])
         I = np.reshape(np.append(np.ravel(I,'F'), [Iyy,Izy,Izy,Izz]),[2,2,i], 'F')
         Ilocal = np.reshape(np.append(np.ravel(Ilocal,'F'), [Iyy_0,0,0,Izz_0]),[2,2,i], 'F')
         
         i = i+1
     for x in np.linspace(l3,l4,ndis+1)[1:]:
         xt = np.append(xt, x)
-        dx = (l4-l3)/(n)
+        dx = (l4-l3)/(ndis)
 
-        Iyy_0, Izz_0, Iyy, Izz, Izy = ExactMOI2(theta[i-1],Ca,ha,t_sk,t_sp,t_st,w_st,h_st,zcg,n,spacing,nodepos)
+        Iyy_0, Izz_0, Iyy, Izz, Izy = boom_inertia(list_length, nodepos, B[i-1])
         I = np.reshape(np.append(np.ravel(I,'F'), [Iyy,Izy,Izy,Izz]),[2,2,i], 'F')
         Ilocal = np.reshape(np.append(np.ravel(Ilocal,'F'), [Iyy_0,0,0,Izz_0]),[2,2,i], 'F')
        
