@@ -35,7 +35,7 @@ ha = 0.161
 ###Beam Deflection and Mx Distribution Variables ###
 
 
-inittwist = 30 #Twist of rib C in degrees (counterclockwise upwards)
+inittwist = 0 #Twist of rib C in degrees (counterclockwise upwards)
 
 theta = np.ones(ndis*6+1)*inittwist/180*np.pi #theta[4*n] is actuator 2 and theta[2*n] is actuator 1
 
@@ -106,7 +106,7 @@ theta, rate_twist_lst,xt = Definitions.overalltwist(Mx,A1,A2,arc,Cr,ha,xa,G,tski
 
 iteration = 0
 
-while iteration < 5:
+while iteration < 10:
 
     iteration += 1
     print('Iteration no. ' + str(iteration)+'\n')
@@ -126,7 +126,7 @@ while iteration < 5:
     theta, rate_twist_lst,xt = Definitions.overalltwist(-Mx,A1,A2,arc,Cr,ha,xa,G,tskin,l1,l2,l3,l4,ndis,inittwist)
 
    
-    print('\n'+'Ry1 = ' , float(r1[0]) ,' Ry2 = ', float(r2[0]) , ' Ry3 = ', float(r3[0]) , '\n'+' Rz1 = ', float(rz1[0]) , ' Rz2 = ', float(rz2[0]) ,' Rz3 = ',float(rz3[0]), '\n')
+    print('\n'+'Ry1 = ' , float(r1[0]) ,' Ry2 = ', float(r2[0]) , ' Ry3 = ', float(r3[0]) , '\n\r'+' Rz1 = ', float(rz1[0]) , ' Rz2 = ', float(rz2[0]) ,' Rz3 = ',float(rz3[0]), '\n')
 
     
 
