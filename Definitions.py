@@ -1300,7 +1300,7 @@ def ExactMOI2(theta,Ca,ha,t_sk,t_sp,t_st,w_st,h_st,zcg,n,spacing,nodepos):
     
     Iyy_theta = (Izz_0 + Iyy_0)/2. + (Iyy_0 - Izz_0)/2. * math.cos(-2.*theta)
     Izz_theta = (Izz_0 + Iyy_0)/2. - (Iyy_0 - Izz_0)/2. * math.cos(-2.*theta)
-    Izy_theta = (Izz_0 - Iyy_0)/2. *math.sin(2.*(1.)*theta)
+    Izy_theta = (Izz_0 - Iyy_0)/2. *math.sin(2.*(-1.)*theta)
     
     return Iyy_0, Izz_0, Iyy_theta, Izz_theta, Izy_theta
     
