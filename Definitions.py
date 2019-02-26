@@ -551,25 +551,25 @@ def scatter(nodepos):
 ##    
 ##    return rate_twist,q1,q2
 
-##def shear_flow_total(tring_qt,circ_qt,q1,q2):
-##    
-##    tring_qsum=[] # list containing all the total shearflows along the triangular section 
-##    # given by the contribution of the shear flow due to shear and the shearflow due to torsion
-##    
-##    circ_qsum=[]  # list containing all the total shearflows along the circular section 
-##    # given by the contribution of the shear flow due to shear and the shearflow due to torsion
-##    
-##    for i in tring_qt:
-##        
-##        tring_qsum_element=i+q1
-##        tring_qsum.append(tring_qsum_element)
-##        
-##    for j in circ_qt:
-##        
-##        circ_qsum_element=j+q2
-##        circ_qsum.append(circ_qsum_element)
-##        
-##        return tring_qsum, circ_qsum
+def shear_flow_total(tring_qt,circ_qt,q1,q2):
+    
+    tring_qsum=[] # list containing all the total shearflows along the triangular section 
+    # given by the contribution of the shear flow due to shear and the shearflow due to torsion
+    
+    circ_qsum=[]  # list containing all the total shearflows along the circular section 
+    # given by the contribution of the shear flow due to shear and the shearflow due to torsion
+    
+    for i in tring_qt:
+        
+        tring_qsum_element=i+q1
+        tring_qsum.append(tring_qsum_element)
+        
+    for j in circ_qt:
+        
+        circ_qsum_element=j+q2
+        circ_qsum.append(circ_qsum_element)
+        
+        return tring_qsum, circ_qsum
 
 def shear_flow_rib(tring_qsum,circ_qsum,nodepos,ha,circ_booms,tring_booms,alpharad):
     
