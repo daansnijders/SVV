@@ -204,11 +204,7 @@ h_st = 0.013
 A = (w_st*t_st + (h_st-t_st)*t_st)
 n = 11
 list_length = 14
-spacing, Cr, alpharad, Ct = Definitions.boom_spacing(ha, Ca, n)
-nodepos, arc, dist = Definitions.boom_location(spacing, Cr, alpharad, list_length, ha)
-ycg, zcg = Definitions.centroid_nonidealized(t_sk, ha, Ca, Ct, t_sp, nodepos, A)
-Iyy_0, Izz_0, Iyy_theta, Izz_theta, Izy_theta = ExactMOI(theta,Ca,ha,t_sk,t_sp,t_st,w_st,h_st,zcg,n,spacing,nodepos)
-test = ReactionForces(theta,P,q,Ca,ha,E,Izz_theta,x1,x2,x3,xa,span,d1,d3)
+
 
 
 q = -3860 #load distribution, + upwards
@@ -250,6 +246,12 @@ zsc = 0 #Shear Center Location (Required but left at 0)
 
 
 #####General Code######
+
+spacing, Cr, alpharad, Ct = Definitions.boom_spacing(ha, Ca, n)
+nodepos, arc, dist = Definitions.boom_location(spacing, Cr, alpharad, list_length, ha)
+ycg, zcg = Definitions.centroid_nonidealized(t_sk, ha, Ca, Ct, t_sp, nodepos, A)
+Iyy_0, Izz_0, Iyy_theta, Izz_theta, Izy_theta = ExactMOI(theta[2*ndis],Ca,ha,t_sk,t_sp,t_st,w_st,h_st,zcg,n,spacing,nodepos)
+test = ReactionForces(theta,P,q,Ca,ha,E,Izz_theta,x1,x2,x3,xa,span,d1,d3)
 
 
 I = np.array([[np.ones(ndis*6+1)*9.434e-05, np.ones(ndis*6+1)*0],[np.ones(ndis*6+1)*0, np.ones(ndis*6+1)*1.252e-05]])
