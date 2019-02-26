@@ -5,6 +5,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import sys
 import time
+from mpl_toolkits.mplot3d import Axes3D
 
 ################################# Variable Definition ########################################################################
 
@@ -107,7 +108,7 @@ theta, rate_twist_lst,xt = Definitions.overalltwist(Mx,A1,A2,arc,Cr,ha,xa,G,tski
 
 iteration = 0
 
-while iteration < 20:
+while iteration < 100:
 
     iteration += 1
     print('Iteration no. ' + str(iteration)+'\n')
@@ -141,8 +142,12 @@ while iteration < 20:
     
 
 
-boom_area, twist_rate, qrib_1, qrib_2 = Definitions.ratetwistandshearflowdiscretisation(tskin, tspar, spacing, l1,l2,l3,l4,xa, Mz, My, Mx, Vy, Vz, I, area_stiff, zcg, nodepos, dist, arc, Ca, ha, G, theta, alpharad, ndis)
+nodepos2 = Definitions.offset(zcg, theta, nodepos, v2, u2, xt)
 
+fig = plt.figure()
+ax = fig.add_subplot(111, projection='3d')
+
+ax.scatter(np.concatenate(nodepos2, axis = 0)[:,0],np.concatenate(nodepos2, axis = 0)[:,1],np.concatenate(nodepos2, axis = 0)[:,2])
 
 
 
