@@ -1392,7 +1392,20 @@ def ratetwistandshearflowdiscretisation(t_skin, t_spar, spacing, l1,l2,l3,l4,xa,
     
     
     
+def von_mises_stress ():
+       
+    sigma_x = 0.
+    sigma_y = 0.
+    sigma_z = 0.
+    tau_xy = 0.
+    tau_yz = 0.
+    tau_xz = 0.
     
+    sigma_v = np.sqrt(0.5((sigma_x-sigma_y)**2+(sigma_y-sigma_z)**2+(sigma_z-sigma_x)**2)+3*(tua_xy**2 + tau_yz**2 + tauxz**2))
+    
+    
+    
+    return sigma_v
     
     
     
