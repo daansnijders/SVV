@@ -23,9 +23,9 @@ def ReactionForces(theta,P,q,Ca,ha,E,Izz,x1,x2,x3,xa,span,d1,d3):
     eq5 = [(-(x3-x1)**3.)/6., (-(x3-x2)**3.)/6., 0., x3, 1.]    #deflection of hinge 3
     ans1 = [span*q]
     ans2 = [(span/2. - x2)*span*q]
-    ans3 = [E*Izz*d1 - q/24.* x1**4.]
-    ans4 = [-q/24.*(x2**4.)]
-    ans5 = [E*Izz*d3 - q/24.* x3**4.]
+    ans3 = [-E*Izz*d1 + q/24.* x1**4.]
+    ans4 = [q/24.*(x2**4.)]
+    ans5 = [E*Izz*d3 + q/24.* x3**4.]
     
     A = np.array([eq1, eq2, eq3, eq4, eq5])
     b = np.array([ans1,ans2,ans3,ans4,ans5])
@@ -211,8 +211,8 @@ Iyy_0, Izz_0, Iyy_theta, Izz_theta, Izy_theta = ExactMOI(theta,Ca,ha,t_sk,t_sp,t
 test = ReactionForces(theta,P,q,Ca,ha,E,Izz_theta,x1,x2,x3,xa,span,d1,d3)
 
 
-q = -4530 #load distribution, + upwards
-P2 = 91700 #Actuator II force in negative direction
+q = -3860 #load distribution, + upwards
+P2 = 49200 #Actuator II force in negative direction
 E = 73.1e+09 #E-modulus
 #Convergence Variables
 
@@ -221,22 +221,22 @@ spread = 0.001 #dx for Jacobian Convergence
 
 
 #Aileron Geometry
-l1 = 0.153
-l2 = 1.281
-l3 = 2.681
-l4 = 2.771
-xa = 0.28
-Ca = 0.547
-ha = 0.225
+l1 = 0.125
+l2 = 0.498
+l3 = 1.494
+l4 = 1.611
+xa = 0.245
+Ca = 0.505
+ha = 0.161
 
 #Beam Deflection and Mx Distribution Variables
 inittwist = 0 #Twist of rib C in degrees (counterclockwise upwards)
 theta = np.ones(ndis*6+1)*inittwist/180*np.pi #theta[4*n] is actuator 2 and theta[2*n] is actuator 1
 
 #Y deflections of hinges
-d1 = 0.01103
+d1 = 0.00389
 d2 = 0
-d3 = 0.01642
+d3 = 0.01245
 
 #Boom Area Variables
 n = 11 #No. of stringers
