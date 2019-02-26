@@ -67,7 +67,7 @@ def ReactionForces(theta,P,q,Ca,ha,E,Izz,x1,x2,x3,xa,span,d1,d3):
     R2z = float(y[1])
     R3z = float(y[2])
     
-    return R1y, R1z, R2x, R2y, R2z, R3y, R3z, A1
+    return R1y, -R1z, R2x, R2y, -R2z, R3y, -R3z, -A1
     
         
 def ExactMOI(theta,Ca,ha,t_sk,t_sp,t_st,w_st,h_st,zcg,n,spacing,nodepos):
