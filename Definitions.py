@@ -1173,7 +1173,7 @@ def booms():
     circ_booms = [12,5,6,7,13]
     return tring_booms, circ_booms
 
-def ratetwistandshearflowdiscretisation(t_skin, t_spar, spacing, l1,l2,l3,l4,xa, Mz, My, Mx, Vy, Vz, I, stiff_area, zcg, nodepos, dist, arc, Ca, ha, G, theta, n):
+def ratetwistandshearflowdiscretisation(t_skin, t_spar, spacing, l1,l2,l3,l4,xa, Mz, My, Mx, Vy, Vz, I, stiff_area, zcg, nodepos, dist, arc, Ca, ha, G, theta, alpharad, n):
 
 
     xt=np.array([0])
