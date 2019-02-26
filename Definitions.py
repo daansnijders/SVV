@@ -670,8 +670,8 @@ def boom_area_updater(tsk, spacing, Mz, My, Izz, Iyy, stiff_area, zcg, nodepos, 
     My = My*math.cos(theta)+Mz*math.sin(theta)
     Mz = Mz*math.cos(theta)-My*math.sin(theta)
     
-    a= -1
-    b= (Mz*Iyy)/(My*Izz)
+    a= -1.
+    b= float((Mz*Iyy)/(My*Izz))
     c= zcg
     
     d=[0]
@@ -1193,8 +1193,6 @@ def booms():
 
 def ratetwistandshearflowdiscretisation(t_skin, t_spar, spacing, l1,l2,l3,l4,xa, Mz, My, Mx, Vy, Vz, I, stiff_area, zcg, nodepos, dist, arc, Ca, ha, G, theta, alpharad, n):
 
-
-
     xt=np.array([0])
 
     twist_rate= np.array([])
@@ -1273,7 +1271,6 @@ def ratetwistandshearflowdiscretisation(t_skin, t_spar, spacing, l1,l2,l3,l4,xa,
         twist_rate, circ_qt, tring_qt = shear_flow_finder(boom_area, I[1][1][i-1], I[0][0][i-1], theta[i-1], nodepos, Ca, ha, Mx[i-1], Vy[i-1], Vz[i-1], G, t_skin, t_spar)
         qrib_1 = np.append(qrib_1, shear_flow_rib(tring_qt,circ_qt,nodepos,ha,booms()[1],booms()[0],alpharad)[0])
         qrib_2 = np.append(qrib_2, shear_flow_rib(tring_qt,circ_qt,nodepos,ha,booms()[1],booms()[0],alpharad)[1])
-        
         i = i+1
 
 
