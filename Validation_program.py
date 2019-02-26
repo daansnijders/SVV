@@ -193,29 +193,31 @@ ypos_trailingedge = np.take(location_y[:,3],TEzi)
 ypos_leadingedge = np.take(location_y[:,3],LEzi)
 xpos_trailingedge = np.take(node[:,1],TEzi)
 xpos_leadingedge = np.take(node[:,1],LEzi)
-ypos_trailingedge = np.take(node[:,2],TEzi)
-ypos_leadingedge = np.take(node[:,2],LEzi)
-ypos_trailingedge = (dypos_trailingedge - ypos_trailingedge)
-ypos_leadingedge = (dypos_leadingedge - ypos_leadingedge)
+#ypos_trailingedge = np.take(node[:,2],TEzi)
+#ypos_leadingedge = np.take(node[:,2],LEzi)
+#ypos_trailingedge = (dypos_trailingedge - ypos_trailingedge)
+#ypos_leadingedge = (dypos_leadingedge - ypos_leadingedge)
 
 dist = np.column_stack((xpos_trailingedge ,dypos_trailingedge))
 dist = dist[np.argsort(dist[:,0])]
 
-slopes_val = []
-steps_val = []
-#for i in range(dist[:,0].size):
-#    if i+1 < dist[:,1].size :
-#        dx = dist[i+1,0] - dist[i,0]
-#        slope = (dist[i+1,1] - dist[i,1])
-#        slopes_val.append(slope)
-#        steps_val.append(dist[i,0])
-#
-##the code underneath is only used for plotting the slope graph. Otherwise the other lines forthe plotting is used.
-##plt.plot(steps_num , slopes_num , 'ro')
-##plt.plot(steps_val , slopes_val , 'bo')
-##plt.plot(steps_val , slopes_val , 'blue ')
-#
-#
+"""Import nummerical Data from TE and LE """
+
+validation_slope = []
+validation_step = []
+for j in range(dist[:,0].size):
+    if j+1 < dist[:,1].size :
+        s = dist[j+1,0] - dist[j,0]
+        pitch = (dist[j+1,1] - dist[j,1])
+        validation_slope.append(pitch)
+        validation_step.append(dist[j,0])
+
+#the code underneath is only used for plotting the slope graph. Otherwise the other lines forthe plotting is used.
+#plt.plot(steps_num , slopes_num , 'ro')
+#plt.plot(steps_val , slopes_val , 'bo')
+#plt.plot(steps_val , slopes_val , 'blue ')
+
+
 ##to plot the deflection over the x-position
 #plt.plot(dist[:,0],dist[:,1], 'bo',label = 'Validation Data' )
 ##plt.plot(numx ,numdefl , 'ro',label = 'Numerical data')
