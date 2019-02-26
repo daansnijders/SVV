@@ -1387,6 +1387,10 @@ def ratetwistandshearflowdiscretisation(t_skin, t_spar, spacing, l1,l2,l3,l4,xa,
 
 
     return boom_area, twist_rate, qrib_1, qrib_2
+
+
+def offset(zcentroidglobal, ycentroidglobal, theta, nodepos, v2, u2):
+    
         
         
     
