@@ -35,16 +35,16 @@ ha = 0.161
 ###Beam Deflection and Mx Distribution Variables ###
 
 
-inittwist = 0 #Twist of rib C in degrees (counterclockwise upwards)
+inittwist = 00 #Twist of rib C in degrees (counterclockwise upwards)
 
 theta = np.ones(ndis*6+1)*inittwist/180*np.pi #theta[4*n] is actuator 2 and theta[2*n] is actuator 1
 
 
 ###Y deflections of hinges ###
 
-d1 = 0.000389
+d1 = 0.00389
 d2 = 0
-d3 = 0.001245
+d3 = 0.01245
 
 
 ###Boom Area Variables ###
