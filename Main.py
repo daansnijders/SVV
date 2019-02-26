@@ -65,8 +65,6 @@ zsc = 0 #Shear Center Location (Required but left at 0)
 
 ##################################### General Code #############################################################################
 
-
-
 #Initial Centroid - Working
 
 spacing, Cr, alpharad, Ct = Definitions.boom_spacing(ha, Ca, n)
@@ -78,15 +76,9 @@ area_stiff = Definitions.area_stiff(t_stiff, h_stiff, w_stiff)
 ycg, zcg = Definitions.centroid_nonidealized(tskin, ha, Ca, Ct, tspar, nodepos, area_stiff)
 
 
-#Plot Nodepos
-
-Definitions.scatter(nodepos)
-
 #Initial Moment of Inertia - Working
 
 I = Definitions.ExactMOIdiscretisation(q,ndis,l1,l2,l3,l4,tskin,tspar,t_stiff,w_stiff,h_stiff,zcg,n,spacing,nodepos,xa,Ca,ha,theta,zsc)
-
-zcentroidglobal, ycentroidglobal = Definitions.centroidglobal(zcg,theta)
 
 #Initial reaction forces
 
@@ -114,9 +106,7 @@ theta, rate_twist_lst,xt = Definitions.overalltwist(Mx,A1,A2,arc,Cr,ha,xa,G,tski
 
 iteration = 0
 
-
 while iteration < 2:
-
 
     iteration += 1
     print('Iteration no. ' + str(iteration)+'\n')
@@ -128,7 +118,6 @@ while iteration < 2:
     #Initial Moment of Inertia - Working
 
     I = Definitions.ExactMOIdiscretisation(q,ndis,l1,l2,l3,l4,tskin,tspar,t_stiff,w_stiff,h_stiff,zcg,n,spacing,nodepos,xa,Ca,ha,theta,zsc)
-    zcentroidglobal, ycentroidglobal = Definitions.centroidglobal(zcg,theta)
 
     #Initial Twist Calculation
 
@@ -137,14 +126,12 @@ while iteration < 2:
     theta, rate_twist_lst,xt = Definitions.overalltwist(-Mx,A1,A2,arc,Cr,ha,xa,G,tskin,l1,l2,l3,l4,ndis,inittwist)
 
    
-    print('\n'+'Ry1 = ' , float(r1[0]) ,' Ry2 = ', float(r2[0]) , ' Ry3 = ', float(r3[0]) , '\n\r'+' Rz1 = ', float(rz1[0]) , ' Rz2 = ', float(rz2[0]) ,' Rz3 = ',float(rz3[0]), '\r')
+    print('\n'+'Ry1 = ' , float(r1[0]) ,' Ry2 = ', float(r2[0]) , ' Ry3 = ', float(r3[0]) , '\n\r'+' Rz1 = ', float(rz1[0]) , ' Rz2 = ', float(rz2[0]) ,' Rz3 = ',float(rz3[0]), '\n')
+
+    
 
 
-
-#Discretised Boom Area Twist rate and Qrib
-
-boom_area, twist_rate, qrib_1, qrib_2 = Definitions.ratetwistandshearflowdiscretisation(tskin, tspar, spacing, l1,l2,l3,l4,xa, Mz, My, Mx, Vy, Vz, I, area_stiff, zcg, nodepos, dist, arc, Ca, ha, G, theta, ndis)
-
+boom_area, twist_rate, qrib_1, qrib_2 = Definitions.ratetwistandshearflowdiscretisation(tskin, tspar, spacing, l1,l2,l3,l4,xa, Mz, My, Mx, Vy, Vz, I, area_stiff, zcg, nodepos, dist, arc, Ca, ha, G, theta, alpharad, ndis)
 
 
 
