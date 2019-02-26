@@ -616,7 +616,7 @@ def shear_flow_rib(tring_qt,circ_qt,nodepos,ha,circ_booms,tring_booms,alpharad):
     #print(circ_booms,lst_circ)
     #print(len(tring_booms),len(lst_tri))
     
-    print(lst_tri)
+    #print(lst_tri)
     for j in lst_tri:
         
         r=r+1
