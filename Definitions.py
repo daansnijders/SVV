@@ -1185,7 +1185,6 @@ def centroidglobal(zcg, theta):
     return zcentroidglobal, ycentroidglobal
     
 
-def ratetwistandshearflowdiscretisation(t_skin, t_spar, spacing, l1,l2,l3,l4,xa, Mz, My, Mx, Vy, Vz, I, stiff_area, zcg, nodepos, dist, arc, Ca, ha, G, theta, n):
 
 def booms():
     tring_booms = [1,2,3,4,12,13,8,9,10,11]
