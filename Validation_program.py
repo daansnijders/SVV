@@ -219,8 +219,8 @@ for j in range(dist[:,0].size):
         validation_step.append(dist[j,0])
 
 #To plot the slope:
-#plt.plot(validation_step, validation_slope , 'ro')
-#plt.plot(validation_step, validation_slope , 'red')
+plt.plot(validation_step, validation_slope , 'ro')
+plt.plot(validation_step, validation_slope , 'red')
 
 
 #Deflection along x:
@@ -228,16 +228,16 @@ for j in range(dist[:,0].size):
 #plt.plot(dist[:,0],dist[:,1], 'k' )
 
 
-#plt.xlabel("X along span b (mm)")
-#plt.ylabel("Y along span b (mm)")
-#plt.grid('on')
-#axes = plt.gca()
+plt.xlabel("X along span b (mm)")
+plt.ylabel("Y along span b (mm)")
+plt.grid('on')
+axes = plt.gca()
 
-#axes.set_xlim([-150,1800])
-#axes.set_ylim([-1,1])
-#plt.scatter(xpos_leadingedge , dypos_leadingedge , alpha=0.5)
+axes.set_xlim([-100,1700])
+axes.set_ylim([-1,1])
+#plt.scatter(xpos_leadingedge , ypos_leadingedge , alpha=0.5)
 #plt.legend(['Data validation','Data numerical model'])
-#plt.show()
+plt.show()
         
         
 element_set = np.array(element_set)
@@ -278,14 +278,14 @@ stress_rib_d = np.take(von_misses_stress_element[:,1],noderib_d_element)
 
 
 
-print (stress_hinge_1*1000,stress_hinge_2*1000,stress_hinge_3*1000)
-print (stress_hinge_1*(4*oppervlakte),stress_hinge_2*(4*oppervlakte),stress_hinge_3*(4*oppervlakte))
-print ("ABS",(stress_hinge_1*(4*oppervlakte) -yh1), stress_hinge_2*(4*oppervlakte) -yh2, stress_hinge_3*(4*oppervlakte)- yh3)
-print ("Abs" ,(((stress_hinge_1*(4*oppervlakte) -yh1)/yh1))*100, ((stress_hinge_2*(4*oppervlakte) -yh2)/yh2)*100, ((stress_hinge_3*(4*oppervlakte)- yh3)/yh3)*100)
-print (max(stress_rib_a)*1000)
-print (max(stress_rib_b)*1000)
-print (max(stress_rib_c)*1000)
-print (max(stress_rib_d)*1000)
-print (((max(stress_rib_a)*1000) - ribas) ,((max(stress_rib_b)*1000) -ribbs) ,((max(stress_rib_c)*1000)-ribcs) ,((max(stress_rib_d)*1000) -ribds))
+#print (stress_hinge_1*1000,stress_hinge_2*1000,stress_hinge_3*1000)
+#print (stress_hinge_1*(4*oppervlakte),stress_hinge_2*(4*oppervlakte),stress_hinge_3*(4*oppervlakte))
+#print ("ABS",(stress_hinge_1*(4*oppervlakte) -yh1), stress_hinge_2*(4*oppervlakte) -yh2, stress_hinge_3*(4*oppervlakte)- yh3)
+#print ("Abs" ,(((stress_hinge_1*(4*oppervlakte) -yh1)/yh1))*100, ((stress_hinge_2*(4*oppervlakte) -yh2)/yh2)*100, ((stress_hinge_3*(4*oppervlakte)- yh3)/yh3)*100)
+#print (max(stress_rib_a)*1000)
+#print (max(stress_rib_b)*1000)
+#print (max(stress_rib_c)*1000)
+#print (max(stress_rib_d)*1000)
+#print (((max(stress_rib_a)*1000) - ribas) ,((max(stress_rib_b)*1000) -ribbs) ,((max(stress_rib_c)*1000)-ribcs) ,((max(stress_rib_d)*1000) -ribds))
 
 
