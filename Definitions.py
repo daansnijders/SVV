@@ -1390,7 +1390,10 @@ def ratetwistandshearflowdiscretisation(t_skin, t_spar, spacing, l1,l2,l3,l4,xa,
 
 
 def offset(zcentroidglobal, ycentroidglobal, theta, nodepos, v2, u2):
-    
+    zoffset = v2 + ycentroidglobal
+    yoffset = u2 + zcentroidglobal
+
+    return zoffset, yoffset
         
         
     
