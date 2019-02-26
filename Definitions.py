@@ -1171,12 +1171,6 @@ def overalltwist(T,A1,A2,arc,l,ha,xa,G,t,l1,l2,l3,l4,n,inittwist):
         theta = np.append(theta,theta_elem)
         i = i+1
     
-    a=0
-    for r in theta:
-        Theta=r-theta_elem
-        theta[a]=Theta
-        a+=1
-
     for x in np.linspace(l2-xa/2,l2,n+1)[1:]:
         xt=np.append(xt,x)
         dx = (l2-l1)/(n)
