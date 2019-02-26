@@ -1216,6 +1216,7 @@ def ratetwistandshearflowdiscretisation(t_skin, t_spar, spacing, l1,l2,l3,l4,xa,
 
     xt=np.array([0])
 
+    boom_area = np.array([])
     twist_rate= np.array([])
     qrib_1 = np.array([])
     qrib_2 = np.array([])
@@ -1226,8 +1227,9 @@ def ratetwistandshearflowdiscretisation(t_skin, t_spar, spacing, l1,l2,l3,l4,xa,
         dx = l1/(n)
 
         
-        boom_area = boom_area_updater(t_skin, spacing, Mz[i-1], My[i-1], I[1][1][i-1], I[0][0][i-1], stiff_area, zcg, nodepos, dist, arc, t_spar, ha, theta[i-1])
-        twist_rate, circ_qt, tring_qt = shear_flow_finder(boom_area, I[1][1][i-1], I[0][0][i-1], theta[i-1], nodepos, Ca, ha, Mx[i-1], Vy[i-1], Vz[i-1], G, t_skin, t_spar)
+        boom_area = np.append(boom_area, boom_area_updater(t_skin, spacing, Mz[i-1], My[i-1], I[1][1][i-1], I[0][0][i-1], stiff_area, zcg, nodepos, dist, arc, t_spar, ha, theta[i-1]))
+        rate_twist, circ_qt, tring_qt = shear_flow_finder(boom_area, I[1][1][i-1], I[0][0][i-1], theta[i-1], nodepos, Ca, ha, Mx[i-1], Vy[i-1], Vz[i-1], G, t_skin, t_spar)
+        twist_rate = np.append(twist_rate, rate_twist)
         qrib_1 = np.append(qrib_1, shear_flow_rib(tring_qt,circ_qt,nodepos,ha,booms()[1],booms()[0],alpharad)[0])
         qrib_2 = np.append(qrib_2, shear_flow_rib(tring_qt,circ_qt,nodepos,ha,booms()[1],booms()[0],alpharad)[1])
         
@@ -1237,8 +1239,9 @@ def ratetwistandshearflowdiscretisation(t_skin, t_spar, spacing, l1,l2,l3,l4,xa,
         xt=np.append(xt,x)
         dx = (l2-l1)/(n)
 
-        boom_area = boom_area_updater(t_skin, spacing, Mz[i-1], My[i-1], I[1][1][i-1], I[0][0][i-1], stiff_area, zcg, nodepos, dist, arc, t_spar, ha, theta[i-1])
-        twist_rate, circ_qt, tring_qt = shear_flow_finder(boom_area, I[1][1][i-1], I[0][0][i-1], theta[i-1], nodepos, Ca, ha, Mx[i-1], Vy[i-1], Vz[i-1], G, t_skin, t_spar)
+        boom_area = np.append(boom_area, boom_area_updater(t_skin, spacing, Mz[i-1], My[i-1], I[1][1][i-1], I[0][0][i-1], stiff_area, zcg, nodepos, dist, arc, t_spar, ha, theta[i-1]))
+        rate_twist, circ_qt, tring_qt = shear_flow_finder(boom_area, I[1][1][i-1], I[0][0][i-1], theta[i-1], nodepos, Ca, ha, Mx[i-1], Vy[i-1], Vz[i-1], G, t_skin, t_spar)
+        twist_rate = np.append(twist_rate, rate_twist)
         qrib_1 = np.append(qrib_1, shear_flow_rib(tring_qt,circ_qt,nodepos,ha,booms()[1],booms()[0],alpharad)[0])
         qrib_2 = np.append(qrib_2, shear_flow_rib(tring_qt,circ_qt,nodepos,ha,booms()[1],booms()[0],alpharad)[1])
 
@@ -1249,8 +1252,9 @@ def ratetwistandshearflowdiscretisation(t_skin, t_spar, spacing, l1,l2,l3,l4,xa,
         xt=np.append(xt,x)
         dx = (l2-l1)/(n)
         
-        boom_area = boom_area_updater(t_skin, spacing, Mz[i-1], My[i-1], I[1][1][i-1], I[0][0][i-1], stiff_area, zcg, nodepos, dist, arc, t_spar, ha, theta[i-1])
-        twist_rate, circ_qt, tring_qt = shear_flow_finder(boom_area, I[1][1][i-1], I[0][0][i-1], theta[i-1], nodepos, Ca, ha, Mx[i-1], Vy[i-1], Vz[i-1], G, t_skin, t_spar)
+        boom_area = np.append(boom_area, boom_area_updater(t_skin, spacing, Mz[i-1], My[i-1], I[1][1][i-1], I[0][0][i-1], stiff_area, zcg, nodepos, dist, arc, t_spar, ha, theta[i-1]))
+        rate_twist, circ_qt, tring_qt = shear_flow_finder(boom_area, I[1][1][i-1], I[0][0][i-1], theta[i-1], nodepos, Ca, ha, Mx[i-1], Vy[i-1], Vz[i-1], G, t_skin, t_spar)
+        twist_rate = np.append(twist_rate, rate_twist)
         qrib_1 = np.append(qrib_1, shear_flow_rib(tring_qt,circ_qt,nodepos,ha,booms()[1],booms()[0],alpharad)[0])
         qrib_2 = np.append(qrib_2, shear_flow_rib(tring_qt,circ_qt,nodepos,ha,booms()[1],booms()[0],alpharad)[1])
 
@@ -1262,8 +1266,9 @@ def ratetwistandshearflowdiscretisation(t_skin, t_spar, spacing, l1,l2,l3,l4,xa,
         xt=np.append(xt,x)
         dx = (l3-l2)/(n)
         
-        boom_area = boom_area_updater(t_skin, spacing, Mz[i-1], My[i-1], I[1][1][i-1], I[0][0][i-1], stiff_area, zcg, nodepos, dist, arc, t_spar, ha, theta[i-1])
-        twist_rate, circ_qt, tring_qt = shear_flow_finder(boom_area, I[1][1][i-1], I[0][0][i-1], theta[i-1], nodepos, Ca, ha, Mx[i-1], Vy[i-1], Vz[i-1], G, t_skin, t_spar)
+        boom_area = np.append(boom_area, boom_area_updater(t_skin, spacing, Mz[i-1], My[i-1], I[1][1][i-1], I[0][0][i-1], stiff_area, zcg, nodepos, dist, arc, t_spar, ha, theta[i-1]))
+        rate_twist, circ_qt, tring_qt = shear_flow_finder(boom_area, I[1][1][i-1], I[0][0][i-1], theta[i-1], nodepos, Ca, ha, Mx[i-1], Vy[i-1], Vz[i-1], G, t_skin, t_spar)
+        twist_rate = np.append(twist_rate, rate_twist)
         qrib_1 = np.append(qrib_1, shear_flow_rib(tring_qt,circ_qt,nodepos,ha,booms()[1],booms()[0],alpharad)[0])
         qrib_2 = np.append(qrib_2, shear_flow_rib(tring_qt,circ_qt,nodepos,ha,booms()[1],booms()[0],alpharad)[1])
 
@@ -1274,8 +1279,9 @@ def ratetwistandshearflowdiscretisation(t_skin, t_spar, spacing, l1,l2,l3,l4,xa,
         xt=np.append(xt,x)
         dx = (l3-l2)/(n)
 
-        boom_area = boom_area_updater(t_skin, spacing, Mz[i-1], My[i-1], I[1][1][i-1], I[0][0][i-1], stiff_area, zcg, nodepos, dist, arc, t_spar, ha, theta[i-1])
-        twist_rate, circ_qt, tring_qt = shear_flow_finder(boom_area, I[1][1][i-1], I[0][0][i-1], theta[i-1], nodepos, Ca, ha, Mx[i-1], Vy[i-1], Vz[i-1], G, t_skin, t_spar)
+        boom_area = np.append(boom_area, boom_area_updater(t_skin, spacing, Mz[i-1], My[i-1], I[1][1][i-1], I[0][0][i-1], stiff_area, zcg, nodepos, dist, arc, t_spar, ha, theta[i-1]))
+        rate_twist, circ_qt, tring_qt = shear_flow_finder(boom_area, I[1][1][i-1], I[0][0][i-1], theta[i-1], nodepos, Ca, ha, Mx[i-1], Vy[i-1], Vz[i-1], G, t_skin, t_spar)
+        twist_rate = np.append(twist_rate, rate_twist)
         qrib_1 = np.append(qrib_1, shear_flow_rib(tring_qt,circ_qt,nodepos,ha,booms()[1],booms()[0],alpharad)[0])
         qrib_2 = np.append(qrib_2, shear_flow_rib(tring_qt,circ_qt,nodepos,ha,booms()[1],booms()[0],alpharad)[1])
 
@@ -1288,8 +1294,9 @@ def ratetwistandshearflowdiscretisation(t_skin, t_spar, spacing, l1,l2,l3,l4,xa,
         xt=np.append(xt,x)
         dx = (l4-l3)/(n)
         
-        boom_area = boom_area_updater(t_skin, spacing, Mz[i-1], My[i-1], I[1][1][i-1], I[0][0][i-1], stiff_area, zcg, nodepos, dist, arc, t_spar, ha, theta[i-1])
-        twist_rate, circ_qt, tring_qt = shear_flow_finder(boom_area, I[1][1][i-1], I[0][0][i-1], theta[i-1], nodepos, Ca, ha, Mx[i-1], Vy[i-1], Vz[i-1], G, t_skin, t_spar)
+        boom_area = np.append(boom_area, boom_area_updater(t_skin, spacing, Mz[i-1], My[i-1], I[1][1][i-1], I[0][0][i-1], stiff_area, zcg, nodepos, dist, arc, t_spar, ha, theta[i-1]))
+        rate_twist, circ_qt, tring_qt = shear_flow_finder(boom_area, I[1][1][i-1], I[0][0][i-1], theta[i-1], nodepos, Ca, ha, Mx[i-1], Vy[i-1], Vz[i-1], G, t_skin, t_spar)
+        twist_rate = np.append(twist_rate, rate_twist)
         qrib_1 = np.append(qrib_1, shear_flow_rib(tring_qt,circ_qt,nodepos,ha,booms()[1],booms()[0],alpharad)[0])
         qrib_2 = np.append(qrib_2, shear_flow_rib(tring_qt,circ_qt,nodepos,ha,booms()[1],booms()[0],alpharad)[1])
         i = i+1
