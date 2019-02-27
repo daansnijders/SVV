@@ -389,7 +389,7 @@ def boom_inertia(list_length, nodepos, B,theta): #TO BE CHECKED
     
     Iyy_theta = (Izz_0 + Iyy_0)/2. + (Iyy_0 - Izz_0)/2. * math.cos(-2.*theta)
     Izz_theta = (Izz_0 + Iyy_0)/2. - (Iyy_0 - Izz_0)/2. * math.cos(-2.*theta)
-    Izy_theta = (Iyy_0 - Izz_0)/2. *math.sin(2.*(-1.)*theta)
+    Izy_theta = (Iyy_0 - Izz_0)/2. *math.sin(2.*(1.)*theta)
     
     return Iyy_final, Izz_final, Iyy_theta, Izz_theta, Izy_theta
 
@@ -1148,7 +1148,7 @@ def overalltwist(T,A1,A2,arc,l,ha,xa,G,t,l1,l2,l3,l4,n,inittwist):
            
     for x in np.linspace(l1,l2-xa/2,n+1)[1:]:
         xt=np.append(xt,x)
-        dx = (l2-l1)/(n)
+        dx = (l2-xa/2-l1)/(n)
         rate_twist=shear_flow_torsion(T[i-1],A1,A2,arc,l,ha,G,t)[0]
         rate_twist_lst = np.append(rate_twist_lst,rate_twist)
         theta_elem=theta[-1]+rate_twist_lst[i-1]*dx
@@ -1157,7 +1157,7 @@ def overalltwist(T,A1,A2,arc,l,ha,xa,G,t,l1,l2,l3,l4,n,inittwist):
     
     for x in np.linspace(l2-xa/2,l2,n+1)[1:]:
         xt=np.append(xt,x)
-        dx = (l2-l1)/(n)
+        dx = (l2-l2+xa/2)/(n)
         rate_twist=shear_flow_torsion(T[i-1],A1,A2,arc,l,ha,G,t)[0]
         rate_twist_lst = np.append(rate_twist_lst,rate_twist)
         theta_elem=theta[-1]+rate_twist_lst[i-1]*dx
@@ -1167,7 +1167,7 @@ def overalltwist(T,A1,A2,arc,l,ha,xa,G,t,l1,l2,l3,l4,n,inittwist):
     
     for x in np.linspace(l2,l2+xa/2,n+1)[1:]:
         xt=np.append(xt,x)
-        dx = (l3-l2)/(n)
+        dx = (l2+xa/2-l2)/(n)
         rate_twist=shear_flow_torsion(T[i-1],A1,A2,arc,l,ha,G,t)[0]
         rate_twist_lst = np.append(rate_twist_lst,rate_twist)
         theta_elem=theta[-1]+rate_twist_lst[i-1]*dx
@@ -1176,7 +1176,7 @@ def overalltwist(T,A1,A2,arc,l,ha,xa,G,t,l1,l2,l3,l4,n,inittwist):
     
     for x in np.linspace(l2+xa/2,l3,n+1)[1:]:
         xt=np.append(xt,x)
-        dx = (l3-l2)/(n)
+        dx = (l3-l2-xa/2)/(n)
         rate_twist=shear_flow_torsion(T[i-1],A1,A2,arc,l,ha,G,t)[0]
         rate_twist_lst = np.append(rate_twist_lst,rate_twist)
         theta_elem=theta[-1]+rate_twist_lst[i-1]*dx
@@ -1198,6 +1198,74 @@ def overalltwist(T,A1,A2,arc,l,ha,xa,G,t,l1,l2,l3,l4,n,inittwist):
     theta = theta + (inittwist*np.pi/180-theta[2*n])
 
     return theta, rate_twist_lst,xt
+
+def overalltwist2(twist_rate,xa,G,l1,l2,l3,l4,n,inittwist):
+
+    xt=np.array([0])
+    theta = np.array([0])
+
+    i = 1
+    for x in np.linspace(0,l1,n+1)[1:]:
+        xt=np.append(xt,x)
+        dx = l1/(n)
+        
+        rate_twist_lst = twist_rate[i-1]
+        theta_elem=theta[-1]+rate_twist_lst*dx
+        theta = np.append(theta,theta_elem)
+        i = i+1
+           
+    for x in np.linspace(l1,l2-xa/2,n+1)[1:]:
+        xt=np.append(xt,x)
+        dx = (l2-xa/2-l1)/(n)
+
+        rate_twist_lst = twist_rate[i-1]
+        theta_elem=theta[-1]+rate_twist_lst*dx
+        theta = np.append(theta,theta_elem)
+        i = i+1
+    
+    for x in np.linspace(l2-xa/2,l2,n+1)[1:]:
+        xt=np.append(xt,x)
+        dx = (l2-l2+xa/2)/(n)
+
+        rate_twist_lst = twist_rate[i-1]
+        theta_elem=theta[-1]+rate_twist_lst*dx
+        theta = np.append(theta,theta_elem)
+        i = i+1
+    
+    
+    for x in np.linspace(l2,l2+xa/2,n+1)[1:]:
+        xt=np.append(xt,x)
+        dx = (l2+xa/2-l2)/(n)
+
+        rate_twist_lst = twist_rate[i-1]
+        theta_elem=theta[-1]+rate_twist_lst*dx
+        theta = np.append(theta,theta_elem)
+        i = i+1
+    
+    for x in np.linspace(l2+xa/2,l3,n+1)[1:]:
+        xt=np.append(xt,x)
+        dx = (l3-l2-xa/2)/(n)
+        
+        rate_twist_lst = twist_rate[i-1]
+        theta_elem=theta[-1]+rate_twist_lst*dx
+        theta = np.append(theta,theta_elem)
+        i = i+1
+    
+        
+        
+    for x in np.linspace(l3,l4,n+1)[1:]:
+        xt=np.append(xt,x)
+        dx = (l4-l3)/(n)
+        
+        rate_twist_lst = twist_rate[i-1]
+        theta_elem=theta[-1]+rate_twist_lst*dx
+        theta = np.append(theta,theta_elem)
+        i = i+1
+        
+
+    theta = theta + (inittwist*np.pi/180-theta[2*n])
+
+    return theta, xt
         
 def ExactMOI2(theta,Ca,ha,t_sk,t_sp,t_st,w_st,h_st,zcg,n,spacing,nodepos):
     
@@ -1305,6 +1373,7 @@ def ratetwistandshearflowdiscretisation(t_skin, t_spar, spacing, l1,l2,l3,l4,xa,
     twist_rate= np.array([])
     qrib_1 = np.array([])
     qrib_2 = np.array([])
+    Mx = -Mx
    
     i = 1
     for x in np.linspace(0,l1,n+1)[1:]:
