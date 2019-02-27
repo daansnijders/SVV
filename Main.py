@@ -144,7 +144,7 @@ while error > tol:
 #Update q-rib1 and qrib2 and find nodepositions
 
 boom_area, twist_rate, qrib_1, qrib_2 = Definitions.ratetwistandshearflowdiscretisation(tskin, tspar, spacing, l1,l2,l3,l4,xa, Mz, My, Mx, Vy, Vz, Ilocal, area_stiff, zcg, nodepos, dist, arc, Ca, ha, G, theta, alpharad, ndis)
-nodepos2, rot = Definitions.offset(zcg, theta, nodepos, v2, u2, xt)
+nodepos2, nodepos2local, rot = Definitions.offset(zcg, theta, nodepos, v2, u2, xt,ndis)
 
 
 #Print Forces
@@ -155,14 +155,14 @@ print('\n'+'Ry1 = ' , float(r1[0]) ,' Ry2 = ', float(r2[0]) , ' Ry3 = ', float(r
 #Plot node positions
 
 plt.subplot(2,2,1)
-plt.plot(nodepos2[0][:,0],nodepos2[0][:,1])
+plt.plot(nodepos2local[0][:,0],nodepos2local[0][:,1])
 plt.subplot(2,2,2)
-plt.plot(nodepos2[0][:,0], nodepos2[0][:,2])
+plt.plot(nodepos2local[0][:,0], nodepos2local[0][:,2])
 
 plt.subplot(2,2,3)
-plt.plot(nodepos2[6][:,0],nodepos2[6][:,1])
+plt.plot(nodepos2local[6][:,0],nodepos2local[6][:,1])
 plt.subplot(2,2,4)
-plt.plot(nodepos2[6][:,0], nodepos2[6][:,2])
+plt.plot(nodepos2local[6][:,0], nodepos2local[6][:,2])
 
 plt.show()
 
