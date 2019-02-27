@@ -6,6 +6,7 @@ import numpy as np
 import sys
 
 
+
 def deflection(q,n,r3,l1,l2,l3,l4,E,I,d1,d2,d3,rz3,P2,xa,Ca,ha,theta):
     #theta2 is the angle of section 2 where hinge 2 is
     
@@ -358,35 +359,112 @@ def area_stiff(t_stiff, h_stiff, w_stiff):
 ##    return boom_area
     
 
-##def boom_inertia(list_length, nodepos, B): #TO BE CHECKED
-##    
-##    #nodepos = boom_location() #getting positions from previous function
-##
-##    Ixx = [0 for _ in range(list_length)] #Defining lists of Ixx Iyy and Izz
-##    Iyy = [] #Etc.
-##    Izz = [] #Etc.
-##    
-##    for i in range(list_length):
-##        Iyy.append( B[i] * (nodepos[i][2]) ** 2) # Iyy = Boom Area * Z distance squared
-##        Izz.append( B[i] * (nodepos[i][1]) ** 2) # Izz = Boom Area * Y distance squared
-##        
-##    #print()
-##    #print("Ixx is: ",Ixx)
-##    #print()
-##    #print("Iyy is: ",Iyy)
-##    #print("Izz is: ",Izz)
-##    #print()    
-##    #print()
-##    
-##    Ixx_final = 0.
-##    Iyy_final = 0.
-##    Izz_final = 0.
-##    for i in range (14):
-##        Ixx_final = Ixx_final + Ixx[i]
-##        Iyy_final = Iyy_final + Iyy[i]
-##        Izz_final = Izz_final + Izz[i]
-##    
-##    return Ixx_final, Iyy_final, Izz_final
+def boom_inertia(list_length, nodepos, B,theta): #TO BE CHECKED
+    
+    #nodepos = boom_location() #getting positions from previous function
+
+    Iyy = [] #Etc.
+    Izz = [] #Etc.
+    
+    for i in range(list_length):
+        Iyy.append( B[i] * (nodepos[i][2]) ** 2) # Iyy = Boom Area * Z distance squared
+        Izz.append( B[i] * (nodepos[i][1]) ** 2) # Izz = Boom Area * Y distance squared
+        
+    #print()
+    #print("Ixx is: ",Ixx)
+    #print()
+    #print("Iyy is: ",Iyy)
+    #print("Izz is: ",Izz)
+    #print()    
+    #print()
+    
+    Iyy_final = 0.
+    Izz_final = 0.
+    for i in range (14):
+        Iyy_final = Iyy_final + Iyy[i]
+        Izz_final = Izz_final + Izz[i]
+
+    Izz_0 = Izz_final
+    Iyy_0 = Iyy_final     
+    
+    Iyy_theta = (Izz_0 + Iyy_0)/2. + (Iyy_0 - Izz_0)/2. * math.cos(-2.*theta)
+    Izz_theta = (Izz_0 + Iyy_0)/2. - (Iyy_0 - Izz_0)/2. * math.cos(-2.*theta)
+    Izy_theta = (Iyy_0 - Izz_0)/2. *math.sin(2.*(-1.)*theta)
+    
+    return Iyy_final, Izz_final, Iyy_theta, Izz_theta, Izy_theta
+
+def idealisedMOIdiscretisation(ndis,l1,l2,l3,l4,xa,list_length, nodepos, B, theta):
+
+
+    I = np.array([])
+    Ilocal = np.array([])
+
+    xt = np.array([0])
+
+
+    i = 1
+
+    for x in np.linspace(0,l1,ndis+1)[1:]:
+        xt = np.append(xt, x)
+        dx = l1/(ndis)
+
+        Iyy_0, Izz_0, Iyy, Izz, Izy = boom_inertia(list_length, nodepos, B[i-1],theta[i-1])
+        I = np.reshape(np.append(np.ravel(I,'F'), [Iyy,Izy,Izy,Izz]),[2,2,i], 'F')
+        Ilocal = np.reshape(np.append(np.ravel(Ilocal,'F'), [Iyy_0,0,0,Izz_0]),[2,2,i], 'F')
+        
+
+
+        i = i+1
+    for x in np.linspace(l1,l2-xa/2,ndis+1)[1:]:
+        xt = np.append(xt, x)
+        dx = (l2-l1)/(ndis)
+        
+        Iyy_0, Izz_0, Iyy, Izz, Izy = boom_inertia(list_length, nodepos, B[i-1],theta[i-1])
+        I = np.reshape(np.append(np.ravel(I,'F'), [Iyy,Izy,Izy,Izz]),[2,2,i], 'F')
+        Ilocal = np.reshape(np.append(np.ravel(Ilocal,'F'), [Iyy_0,0,0,Izz_0]),[2,2,i], 'F')
+
+        i = i+1
+
+    for x in np.linspace(l2-xa/2,l2,ndis+1)[1:]:
+        xt = np.append(xt, x)
+        dx = (l2-l1)/(ndis)
+        
+       
+        Iyy_0, Izz_0, Iyy, Izz, Izy = boom_inertia(list_length, nodepos, B[i-1],theta[i-1])
+        I = np.reshape(np.append(np.ravel(I,'F'), [Iyy,Izy,Izy,Izz]),[2,2,i], 'F')
+        Ilocal = np.reshape(np.append(np.ravel(Ilocal,'F'), [Iyy_0,0,0,Izz_0]),[2,2,i], 'F')
+
+        i = i+1
+    for x in np.linspace(l2,l2+xa/2,ndis+1)[1:]:
+        xt = np.append(xt, x)
+        dx = (l3-l2)/(ndis)
+        
+        Iyy_0, Izz_0, Iyy, Izz, Izy = boom_inertia(list_length, nodepos, B[i-1],theta[i-1])
+        I = np.reshape(np.append(np.ravel(I,'F'), [Iyy,Izy,Izy,Izz]),[2,2,i], 'F')
+        Ilocal = np.reshape(np.append(np.ravel(Ilocal,'F'), [Iyy_0,0,0,Izz_0]),[2,2,i], 'F')
+        
+        i = i+1
+    for x in np.linspace(l2+xa/2,l3,ndis+1)[1:]:
+        xt = np.append(xt, x)
+        dx = (l3-l2)/(ndis)
+        
+        Iyy_0, Izz_0, Iyy, Izz, Izy = boom_inertia(list_length, nodepos, B[i-1],theta[i-1])
+        I = np.reshape(np.append(np.ravel(I,'F'), [Iyy,Izy,Izy,Izz]),[2,2,i], 'F')
+        Ilocal = np.reshape(np.append(np.ravel(Ilocal,'F'), [Iyy_0,0,0,Izz_0]),[2,2,i], 'F')
+        
+        i = i+1
+    for x in np.linspace(l3,l4,ndis+1)[1:]:
+        xt = np.append(xt, x)
+        dx = (l4-l3)/(ndis)
+
+        Iyy_0, Izz_0, Iyy, Izz, Izy = boom_inertia(list_length, nodepos, B[i-1],theta[i-1])
+        I = np.reshape(np.append(np.ravel(I,'F'), [Iyy,Izy,Izy,Izz]),[2,2,i], 'F')
+        Ilocal = np.reshape(np.append(np.ravel(Ilocal,'F'), [Iyy_0,0,0,Izz_0]),[2,2,i], 'F')
+       
+
+        i = i+1
+
+    return I, Ilocal
 
 def scatter(nodepos):
     y = []
@@ -571,60 +649,77 @@ def shear_flow_total(tring_qt,circ_qt,q1,q2):
         
         return tring_qsum, circ_qsum
 
-def shear_flow_rib(tring_qsum,circ_qsum,nodepos,ha,circ_booms,tring_booms,alpharad):
+def shear_flow_rib(tring_qt,circ_qt,nodepos,ha,circ_booms,tring_booms,alpharad):
     
     lst_tri=[]  # list containing the wing skin shear flows for the triangular cell excluding the shear flows along the spar
     lst_circ=[] # list containing the wing skin shear flows for the circular cell excluding the shear flows along the spar
     
     
-    for i in range(len(tring_qsum)):
+    for i in range(len(tring_qt)):
         
-        lst_tri.append(tring_qsum(i))
-        
-        if i==5:
+        lst_tri.append(tring_qt[i])
+        #print(lst_tri)
+        if i==4:
             
-            lst_tri.revove(tring_qsum(i))
+            lst_tri.remove(tring_qt[i])
     
-    for j in range(len(circ_qsum)):
+    
+    for j in range(len(circ_qt)):
         
-        lst_circ.append(circ_qsum(i))
+        lst_circ.append(circ_qt[j])
+       # print(lst_circ)
         
-        if i==5:
-            lst_circ.remove(circ_qsum(i))
+        if j==4:
+            lst_circ.remove(circ_qt[j])
+    #print(lst_circ)
     
     # rib shear flow circular cell
     
     Sy1=0.
-    r=0.
+    r=0
+    #print(lst_circ)
     for i in lst_circ:
         
         r=r+1
-        Sy1=Sy1+i*(nodepos[circ_booms(r)][1]-nodepos[circ_booms(r-1)][1]) # total vertical shear force acting due to the wing skin shear flow in the circular cell
-    
+        
+        Sy1=Sy1+i*(nodepos[circ_booms[r]][1]-nodepos[circ_booms[r-1]][1]) # total vertical shear force acting due to the wing skin shear flow in the circular cell
+        
     qrib_1 = Sy1/ha
     
     # rib shear flow triangular cell
     
     Sy2=0.
-    r=0.
+    r=0
+   
+    #print(circ_booms,lst_circ)
+    #print(len(tring_booms),len(lst_tri))
     
+    #print(lst_tri)
     for j in lst_tri:
         
         r=r+1
-        Sy2=Sy2+i*(nodepos[tring_booms(r)][1]-nodepos[tring_booms(r-1)][1]) # total vertical shear force acting due to the wing skin shear flow in the triangular cell
+        if r==5:
+            r=r+1
         
+        if r==10:
+            Sy2=Sy2+j*(nodepos[tring_booms[9]][1]-nodepos[tring_booms[0]][1])
+            
+        else:
+            #print(r)
+            Sy2=Sy2+j*(nodepos[tring_booms[r]][1]-nodepos[tring_booms[r-1]][1]) # total vertical shear force acting due to the wing skin shear flow in the triangular cell
+       
     lst_tri_mom=[] # list containing the wing skin triangular shear flow which do create a moment about boom 13
     
-    i=0.
+    i=0
     while i<=3:
-        lst_tri_mom.append(lst_tri(i))
+        lst_tri_mom.append(lst_tri[i])
         i+=1
-    
+    #print(lst_tri_mom)
     
     mom_sum=0. # total sum of the moments genarated by the wing skin shear flows about boom n 13
     mom_sumy=0. # sum of the moments generated by the wing skin shear forces acting in the y direction about boom 13
     mom_sumz=0. # sum of the moments generated by the wing skin shear forces acting in the z direction about boom 13
-    r=0.
+    r=0
     
     for i in lst_tri_mom:
         
@@ -653,34 +748,55 @@ def boom_area_updater(tsk, spacing, Mz, My, Izz, Iyy, stiff_area, zcg, nodepos, 
     My = My*math.cos(theta)+Mz*math.sin(theta)
     Mz = Mz*math.cos(theta)-My*math.sin(theta)
     
-    a= -1
-    b= (Mz*Iyy)/(My*Izz)
-    c= zcg
+    if My ==0:
+        d=[0]
+        for i in range(13):
+            d.append(nodepos[i+1][1])
+        boom_area=[0]
+        boom_area.append(stiff_area+(tsk*spacing/6)*(4+(d[11]+d[2])/d[1]))
+        for i in range(2):
+            boom_area.append(stiff_area+(tsk*spacing/6)*(4+(d[i+1]+d[i+3])/d[i+2]))
+        boom_area.append(stiff_area+(tsk*spacing/6)*(2+d[3]/d[4])+(tsk*dist/6)*(2+d[12]/d[4]))
+        boom_area.append(stiff_area+(tsk*spacing/6)*(2+d[6]/d[5])+(tsk*arc/6)*(2+d[12]/d[5]))
+        boom_area.append(stiff_area)
+        boom_area.append(stiff_area+(tsk*spacing/6)*(2+d[6]/d[7])+(tsk*arc/6)*(2+d[13]/d[7]))
+        boom_area.append(stiff_area+(tsk*spacing/6)*(2+d[9]/d[8])+(tsk*dist/6)*(2+d[13]/d[8]))
+        for i in range(2):
+            boom_area.append(stiff_area+(tsk*spacing/6)*(4+(d[i+8]+d[i+10])/d[i+9]))
+        boom_area.append(stiff_area+(tsk*spacing/6)*(4+(d[10]+d[1])/d[11]))
+        boom_area.append((tsk*dist/6)*(2+d[4]/d[12])+(tsk*arc/6)*(2+d[5]/d[12])+(tspar*ha/6)*(2+d[13]/d[12]))
+        boom_area.append((tsk*dist/6)*(2+d[8]/d[13])+(tsk*arc/6)*(2+d[7]/d[13])+(tspar*ha/6)*(2+d[12]/d[13]))
+        
+
+    else:
+        a= -1.
+        b= float((Mz*Iyy)/(My*Izz))
+        c= zcg
+
+        d=[0]
+        for i in range(13):
+            x=0.
+            x=abs(a*nodepos[i+1][2]+b*nodepos[i+1][1]+c)/(math.sqrt(a**2+b**2))
+            if nodepos[i+1][1]+(c+a*nodepos[i+1][2])/b < 0:
+                x=x*(-1)
+            else:
+                x=x
+            d.append(x)
     
-    d=[0]
-    for i in range(13):
-        x=0.
-        x=abs(a*nodepos[i+1][2]+b*nodepos[i+1][1]+c)/(math.sqrt(a**2+b**2))
-        if nodepos[i+1][1]+(c+a*nodepos[i+1][2])/b < 0:
-            x=x*(-1)
-        else:
-            x=x
-        d.append(x)
-    
-    boom_area=[0]
-    boom_area.append(stiff_area+(tsk*spacing/6)*(4+(d[11]+d[2])/d[1]))
-    for i in range(2):
-        boom_area.append(stiff_area+(tsk*spacing/6)*(4+(d[i+1]+d[i+3])/d[i+2]))
-    boom_area.append(stiff_area+(tsk*spacing/6)*(2+d[3]/d[4])+(tsk*dist/6)*(2+d[12]/d[4]))
-    boom_area.append(stiff_area+(tsk*spacing/6)*(2+d[6]/d[5])+(tsk*arc/6)*(2+d[12]/d[5]))
-    boom_area.append(stiff_area+(tsk*spacing/6)*(4+(d[5]+d[7])/d[6]))
-    boom_area.append(stiff_area+(tsk*spacing/6)*(2+d[6]/d[7])+(tsk*arc/6)*(2+d[13]/d[7]))
-    boom_area.append(stiff_area+(tsk*spacing/6)*(2+d[9]/d[8])+(tsk*dist/6)*(2+d[13]/d[8]))
-    for i in range(2):
-        boom_area.append(stiff_area+(tsk*spacing/6)*(4+(d[i+8]+d[i+10])/d[i+9]))
-    boom_area.append(stiff_area+(tsk*spacing/6)*(4+(d[10]+d[1])/d[11]))
-    boom_area.append((tsk*dist/6)*(2+d[4]/d[12])+(tsk*arc/6)*(2+d[5]/d[12])+(tspar*ha/6)*(2+d[13]/d[12]))
-    boom_area.append((tsk*dist/6)*(2+d[8]/d[13])+(tsk*arc/6)*(2+d[7]/d[13])+(tspar*ha/6)*(2+d[12]/d[13]))
+        boom_area=[0]
+        boom_area.append(stiff_area+(tsk*spacing/6)*(4+(d[11]+d[2])/d[1]))
+        for i in range(2):
+            boom_area.append(stiff_area+(tsk*spacing/6)*(4+(d[i+1]+d[i+3])/d[i+2]))
+        boom_area.append(stiff_area+(tsk*spacing/6)*(2+d[3]/d[4])+(tsk*dist/6)*(2+d[12]/d[4]))
+        boom_area.append(stiff_area+(tsk*spacing/6)*(2+d[6]/d[5])+(tsk*arc/6)*(2+d[12]/d[5]))
+        boom_area.append(stiff_area+(tsk*spacing/6)*(4+(d[5]+d[7])/d[6]))
+        boom_area.append(stiff_area+(tsk*spacing/6)*(2+d[6]/d[7])+(tsk*arc/6)*(2+d[13]/d[7]))
+        boom_area.append(stiff_area+(tsk*spacing/6)*(2+d[9]/d[8])+(tsk*dist/6)*(2+d[13]/d[8]))
+        for i in range(2):
+            boom_area.append(stiff_area+(tsk*spacing/6)*(4+(d[i+8]+d[i+10])/d[i+9]))
+        boom_area.append(stiff_area+(tsk*spacing/6)*(4+(d[10]+d[1])/d[11]))
+        boom_area.append((tsk*dist/6)*(2+d[4]/d[12])+(tsk*arc/6)*(2+d[5]/d[12])+(tspar*ha/6)*(2+d[13]/d[12]))
+        boom_area.append((tsk*dist/6)*(2+d[8]/d[13])+(tsk*arc/6)*(2+d[7]/d[13])+(tspar*ha/6)*(2+d[12]/d[13]))
     return boom_area
             
         
@@ -752,6 +868,7 @@ def ExactMOIdiscretisation(q,ndis,l1,l2,l3,l4,t_sk,t_sp,t_st,w_st,h_st,zcg,n,spa
 
 
     I = np.array([])
+    Ilocal = np.array([])
 
     xt = np.array([0])
 
@@ -763,8 +880,9 @@ def ExactMOIdiscretisation(q,ndis,l1,l2,l3,l4,t_sk,t_sp,t_st,w_st,h_st,zcg,n,spa
         dx = l1/(n)
 
 
-        Iyy, Izz, Izy = ExactMOI2(theta[i-1],Ca,ha,t_sk,t_sp,t_st,w_st,h_st,zcg,n,spacing,nodepos)[2:]
+        Iyy_0, Izz_0, Iyy, Izz, Izy = ExactMOI2(theta[i-1],Ca,ha,t_sk,t_sp,t_st,w_st,h_st,zcg,n,spacing,nodepos)
         I = np.reshape(np.append(np.ravel(I,'F'), [Iyy,Izy,Izy,Izz]),[2,2,i], 'F')
+        Ilocal = np.reshape(np.append(np.ravel(Ilocal,'F'), [Iyy_0,0,0,Izz_0]),[2,2,i], 'F')
         
 
 
@@ -773,8 +891,9 @@ def ExactMOIdiscretisation(q,ndis,l1,l2,l3,l4,t_sk,t_sp,t_st,w_st,h_st,zcg,n,spa
         xt = np.append(xt, x)
         dx = (l2-l1)/(n)
         
-        Iyy, Izz, Izy = ExactMOI2(theta[i-1],Ca,ha,t_sk,t_sp,t_st,w_st,h_st,zcg,n,spacing,nodepos)[2:]
+        Iyy_0, Izz_0, Iyy, Izz, Izy = ExactMOI2(theta[i-1],Ca,ha,t_sk,t_sp,t_st,w_st,h_st,zcg,n,spacing,nodepos)
         I = np.reshape(np.append(np.ravel(I,'F'), [Iyy,Izy,Izy,Izz]),[2,2,i], 'F')
+        Ilocal = np.reshape(np.append(np.ravel(Ilocal,'F'), [Iyy_0,0,0,Izz_0]),[2,2,i], 'F')
 
         i = i+1
 
@@ -783,37 +902,41 @@ def ExactMOIdiscretisation(q,ndis,l1,l2,l3,l4,t_sk,t_sp,t_st,w_st,h_st,zcg,n,spa
         dx = (l2-l1)/(n)
         
        
-        Iyy, Izz, Izy = ExactMOI2(theta[i-1],Ca,ha,t_sk,t_sp,t_st,w_st,h_st,zcg,n,spacing,nodepos)[2:]
+        Iyy_0, Izz_0, Iyy, Izz, Izy = ExactMOI2(theta[i-1],Ca,ha,t_sk,t_sp,t_st,w_st,h_st,zcg,n,spacing,nodepos)
         I = np.reshape(np.append(np.ravel(I,'F'), [Iyy,Izy,Izy,Izz]),[2,2,i], 'F')
+        Ilocal = np.reshape(np.append(np.ravel(Ilocal,'F'), [Iyy_0,0,0,Izz_0]),[2,2,i], 'F')
 
         i = i+1
     for x in np.linspace(l2,l2+xa/2,ndis+1)[1:]:
         xt = np.append(xt, x)
         dx = (l3-l2)/(n)
         
-        Iyy, Izz, Izy = ExactMOI2(theta[i-1],Ca,ha,t_sk,t_sp,t_st,w_st,h_st,zcg,n,spacing,nodepos)[2:]
+        Iyy_0, Izz_0, Iyy, Izz, Izy = ExactMOI2(theta[i-1],Ca,ha,t_sk,t_sp,t_st,w_st,h_st,zcg,n,spacing,nodepos)
         I = np.reshape(np.append(np.ravel(I,'F'), [Iyy,Izy,Izy,Izz]),[2,2,i], 'F')
+        Ilocal = np.reshape(np.append(np.ravel(Ilocal,'F'), [Iyy_0,0,0,Izz_0]),[2,2,i], 'F')
         
         i = i+1
     for x in np.linspace(l2+xa/2,l3,ndis+1)[1:]:
         xt = np.append(xt, x)
         dx = (l3-l2)/(n)
         
-        Iyy, Izz, Izy = ExactMOI2(theta[i-1],Ca,ha,t_sk,t_sp,t_st,w_st,h_st,zcg,n,spacing,nodepos)[2:]
+        Iyy_0, Izz_0, Iyy, Izz, Izy = ExactMOI2(theta[i-1],Ca,ha,t_sk,t_sp,t_st,w_st,h_st,zcg,n,spacing,nodepos)
         I = np.reshape(np.append(np.ravel(I,'F'), [Iyy,Izy,Izy,Izz]),[2,2,i], 'F')
+        Ilocal = np.reshape(np.append(np.ravel(Ilocal,'F'), [Iyy_0,0,0,Izz_0]),[2,2,i], 'F')
         
         i = i+1
     for x in np.linspace(l3,l4,ndis+1)[1:]:
         xt = np.append(xt, x)
         dx = (l4-l3)/(n)
 
-        Iyy, Izz, Izy = ExactMOI2(theta[i-1],Ca,ha,t_sk,t_sp,t_st,w_st,h_st,zcg,n,spacing,nodepos)[2:]
+        Iyy_0, Izz_0, Iyy, Izz, Izy = ExactMOI2(theta[i-1],Ca,ha,t_sk,t_sp,t_st,w_st,h_st,zcg,n,spacing,nodepos)
         I = np.reshape(np.append(np.ravel(I,'F'), [Iyy,Izy,Izy,Izz]),[2,2,i], 'F')
+        Ilocal = np.reshape(np.append(np.ravel(Ilocal,'F'), [Iyy_0,0,0,Izz_0]),[2,2,i], 'F')
        
 
         i = i+1
 
-    return I
+    return I, Ilocal
 
 def shear_flow_finder(boom_area_inclskin, Izz, Iyy, theta, node_pos, Ca, ha, Mx, Vy, Vz, G, tsk, tspar):
     #decompose forces to be local
@@ -843,8 +966,8 @@ def shear_flow_finder(boom_area_inclskin, Izz, Iyy, theta, node_pos, Ca, ha, Mx,
     circ_q = [0]
     for i in tring_booms:
         tring_q.append((-Vy/Izz)*baes[i]*bxyz[i][1]+(-Vz/Iyy)*baes[i]*bxyz[i][2]+tring_q[-1])
-    for j in circ_booms:
-        circ_q.append((-Vy/Izz)*baes[j]*bxyz[j][1]+(-Vz/Iyy)*baes[i]*bxyz[i][2]+circ_q[-1])
+    for i in circ_booms:
+        circ_q.append((-Vy/Izz)*baes[i]*bxyz[i][1]+(-Vz/Iyy)*baes[i]*bxyz[i][2]+circ_q[-1])
     
     #find force produced by each boom due to shear flows
     tring_fz=[]
@@ -897,8 +1020,8 @@ def shear_flow_finder(boom_area_inclskin, Izz, Iyy, theta, node_pos, Ca, ha, Mx,
     for i in range(len(tring_dist)):
         tring_li += (tring_q[i+1]*tring_dist[i])/(tring_thicc[i]*G)
 
-    for j in range(len(circ_dist)):
-        circ_li += (circ_q[j+1]*circ_dist[i])/(circ_thicc[i]*G)
+    for i in range(len(circ_dist)):
+        circ_li += (circ_q[i+1]*circ_dist[i])/(circ_thicc[i]*G)
     #set up matrix
     A=np.matrix([[1/(2*AI)*(peri/(tsk*G)+ha/(tspar*G)), -ha/(2*AI*tspar*G), -1], [-ha/(2*AII*tspar*G), 1/(2*AII)*(2*s/(tsk*G)+ha/(tspar*G)), -1], [2*AI, 2*AII, 0]])
     b=np.matrix([[1/(-2*AI)*circ_li], [1/(-2*AII)*tring_li], [Mx-moments]])
@@ -1167,12 +1290,140 @@ def centroidglobal(zcg, theta):
     zcentroidglobal, ycentroidglobal = zcg*np.cos(theta), -zcg*np.sin(theta)
     return zcentroidglobal, ycentroidglobal
     
+
+
+def booms():
+    tring_booms = [1,2,3,4,12,13,8,9,10,11]
+    circ_booms = [12,5,6,7,13]
+    return tring_booms, circ_booms
+
+def ratetwistandshearflowdiscretisation(t_skin, t_spar, spacing, l1,l2,l3,l4,xa, Mz, My, Mx, Vy, Vz, I, stiff_area, zcg, nodepos, dist, arc, Ca, ha, G, theta, alpharad, n):
+
+    xt=np.array([0])
+
+    boom_area = np.array([])
+    twist_rate= np.array([])
+    qrib_1 = np.array([])
+    qrib_2 = np.array([])
+   
+    i = 1
+    for x in np.linspace(0,l1,n+1)[1:]:
+        xt=np.append(xt,x)
+        dx = l1/(n)
+
+        
+        boom_area = np.reshape(np.append(np.ravel(boom_area, 'C'), [boom_area_updater(t_skin, spacing, Mz[i-1], My[i-1], I[1][1][i-1], I[0][0][i-1], stiff_area, zcg, nodepos, dist, arc, t_spar, ha, theta[i-1])]),[i,14], 'C')
+        rate_twist, circ_qt, tring_qt = shear_flow_finder(boom_area[i-1], I[1][1][i-1], I[0][0][i-1], theta[i-1], nodepos, Ca, ha, Mx[i-1], Vy[i-1], Vz[i-1], G, t_skin, t_spar)
+        twist_rate = np.append(twist_rate, rate_twist)
+        qrib_1 = np.append(qrib_1, shear_flow_rib(tring_qt,circ_qt,nodepos,ha,booms()[1],booms()[0],alpharad)[0])
+        qrib_2 = np.append(qrib_2, shear_flow_rib(tring_qt,circ_qt,nodepos,ha,booms()[1],booms()[0],alpharad)[1])
+        
+        i = i+1
+           
+    for x in np.linspace(l1,l2-xa/2,n+1)[1:]:
+        xt=np.append(xt,x)
+        dx = (l2-l1)/(n)
+
+        boom_area = np.reshape(np.append(np.ravel(boom_area, 'C'), [boom_area_updater(t_skin, spacing, Mz[i-1], My[i-1], I[1][1][i-1], I[0][0][i-1], stiff_area, zcg, nodepos, dist, arc, t_spar, ha, theta[i-1])]),[i,14], 'C')
+        rate_twist, circ_qt, tring_qt = shear_flow_finder(boom_area[i-1], I[1][1][i-1], I[0][0][i-1], theta[i-1], nodepos, Ca, ha, Mx[i-1], Vy[i-1], Vz[i-1], G, t_skin, t_spar)
+        twist_rate = np.append(twist_rate, rate_twist)
+        qrib_1 = np.append(qrib_1, shear_flow_rib(tring_qt,circ_qt,nodepos,ha,booms()[1],booms()[0],alpharad)[0])
+        qrib_2 = np.append(qrib_2, shear_flow_rib(tring_qt,circ_qt,nodepos,ha,booms()[1],booms()[0],alpharad)[1])
+
+        
+        i = i+1
+    
+    for x in np.linspace(l2-xa/2,l2,n+1)[1:]:
+        xt=np.append(xt,x)
+        dx = (l2-l1)/(n)
+        
+        boom_area = np.reshape(np.append(np.ravel(boom_area, 'C'), [boom_area_updater(t_skin, spacing, Mz[i-1], My[i-1], I[1][1][i-1], I[0][0][i-1], stiff_area, zcg, nodepos, dist, arc, t_spar, ha, theta[i-1])]),[i,14], 'C')
+        rate_twist, circ_qt, tring_qt = shear_flow_finder(boom_area[i-1], I[1][1][i-1], I[0][0][i-1], theta[i-1], nodepos, Ca, ha, Mx[i-1], Vy[i-1], Vz[i-1], G, t_skin, t_spar)
+        twist_rate = np.append(twist_rate, rate_twist)
+        qrib_1 = np.append(qrib_1, shear_flow_rib(tring_qt,circ_qt,nodepos,ha,booms()[1],booms()[0],alpharad)[0])
+        qrib_2 = np.append(qrib_2, shear_flow_rib(tring_qt,circ_qt,nodepos,ha,booms()[1],booms()[0],alpharad)[1])
+
+        
+        i = i+1
+    
+    
+    for x in np.linspace(l2,l2+xa/2,n+1)[1:]:
+        xt=np.append(xt,x)
+        dx = (l3-l2)/(n)
+        
+        boom_area = np.reshape(np.append(np.ravel(boom_area, 'C'), [boom_area_updater(t_skin, spacing, Mz[i-1], My[i-1], I[1][1][i-1], I[0][0][i-1], stiff_area, zcg, nodepos, dist, arc, t_spar, ha, theta[i-1])]),[i,14], 'C')
+        rate_twist, circ_qt, tring_qt = shear_flow_finder(boom_area[i-1], I[1][1][i-1], I[0][0][i-1], theta[i-1], nodepos, Ca, ha, Mx[i-1], Vy[i-1], Vz[i-1], G, t_skin, t_spar)
+        twist_rate = np.append(twist_rate, rate_twist)
+        qrib_1 = np.append(qrib_1, shear_flow_rib(tring_qt,circ_qt,nodepos,ha,booms()[1],booms()[0],alpharad)[0])
+        qrib_2 = np.append(qrib_2, shear_flow_rib(tring_qt,circ_qt,nodepos,ha,booms()[1],booms()[0],alpharad)[1])
+
+        
+        i = i+1
+    
+    for x in np.linspace(l2+xa/2,l3,n+1)[1:]:
+        xt=np.append(xt,x)
+        dx = (l3-l2)/(n)
+
+        boom_area = np.reshape(np.append(np.ravel(boom_area, 'C'), [boom_area_updater(t_skin, spacing, Mz[i-1], My[i-1], I[1][1][i-1], I[0][0][i-1], stiff_area, zcg, nodepos, dist, arc, t_spar, ha, theta[i-1])]),[i,14], 'C')
+        rate_twist, circ_qt, tring_qt = shear_flow_finder(boom_area[i-1], I[1][1][i-1], I[0][0][i-1], theta[i-1], nodepos, Ca, ha, Mx[i-1], Vy[i-1], Vz[i-1], G, t_skin, t_spar)
+        twist_rate = np.append(twist_rate, rate_twist)
+        qrib_1 = np.append(qrib_1, shear_flow_rib(tring_qt,circ_qt,nodepos,ha,booms()[1],booms()[0],alpharad)[0])
+        qrib_2 = np.append(qrib_2, shear_flow_rib(tring_qt,circ_qt,nodepos,ha,booms()[1],booms()[0],alpharad)[1])
+
+
+        i = i+1
+    
+        
+        
+    for x in np.linspace(l3,l4,n+1)[1:]:
+        xt=np.append(xt,x)
+        dx = (l4-l3)/(n)
+        
+        boom_area = np.reshape(np.append(np.ravel(boom_area, 'C'), [boom_area_updater(t_skin, spacing, Mz[i-1], My[i-1], I[1][1][i-1], I[0][0][i-1], stiff_area, zcg, nodepos, dist, arc, t_spar, ha, theta[i-1])]),[i,14], 'C')
+        rate_twist, circ_qt, tring_qt = shear_flow_finder(boom_area[i-1], I[1][1][i-1], I[0][0][i-1], theta[i-1], nodepos, Ca, ha, Mx[i-1], Vy[i-1], Vz[i-1], G, t_skin, t_spar)
+        twist_rate = np.append(twist_rate, rate_twist)
+        qrib_1 = np.append(qrib_1, shear_flow_rib(tring_qt,circ_qt,nodepos,ha,booms()[1],booms()[0],alpharad)[0])
+        qrib_2 = np.append(qrib_2, shear_flow_rib(tring_qt,circ_qt,nodepos,ha,booms()[1],booms()[0],alpharad)[1])
+        i = i+1
+
+
+    return boom_area, twist_rate, qrib_1, qrib_2
+
+
+def offset(zcg, theta, nodepos, v2, u2, xt):
+    zoffset = v2 #- zcg*np.sin(theta)
+    yoffset = u2 #+ zcg*np.cos(theta)
+
+    nodepos2 = ([])
+    for i in range(0,(len(nodepos))):
+        y = np.cos(theta)*nodepos[i][1]-np.sin(theta)*nodepos[i][2]+yoffset
+        z = np.cos(theta)*nodepos[i][2]+np.sin(theta)*nodepos[i][1]+zoffset
+        print(xt,y,z)
+        nodepos2 += [np.reshape(np.ravel([xt,y,z],'F'),(len(xt),3),'C')]
+        if v2 == v2:
+            break
+
+
+    return nodepos2
+        
+        
     
     
     
+def von_mises_stress ():
+       
+    sigma_x = 0.
+    sigma_y = 0.
+    sigma_z = 0.
+    tau_xy = 0.
+    tau_yz = 0.
+    tau_xz = 0.
+    
+    sigma_v = np.sqrt(0.5((sigma_x-sigma_y)**2+(sigma_y-sigma_z)**2+(sigma_z-sigma_x)**2)+3*(tau_xy**2 + tau_yz**2 + tau_xz**2))
     
     
     
+    return sigma_v
     
     
     

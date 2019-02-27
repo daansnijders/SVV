@@ -5,6 +5,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import sys
 import time
+from mpl_toolkits.mplot3d import Axes3D
 
 ################################# Variable Definition ########################################################################
 
@@ -78,7 +79,8 @@ ycg, zcg = Definitions.centroid_nonidealized(tskin, ha, Ca, Ct, tspar, nodepos, 
 
 #Initial Moment of Inertia - Working
 
-I = Definitions.ExactMOIdiscretisation(q,ndis,l1,l2,l3,l4,tskin,tspar,t_stiff,w_stiff,h_stiff,zcg,n,spacing,nodepos,xa,Ca,ha,theta,zsc)
+I, Ilocal = Definitions.ExactMOIdiscretisation(q,ndis,l1,l2,l3,l4,tskin,tspar,t_stiff,w_stiff,h_stiff,zcg,n,spacing,nodepos,xa,Ca,ha,theta,zsc)
+
 
 #Initial reaction forces
 
@@ -106,18 +108,25 @@ theta, rate_twist_lst,xt = Definitions.overalltwist(Mx,A1,A2,arc,Cr,ha,xa,G,tski
 
 iteration = 0
 
-while iteration < 10:
+while iteration < 5:
 
     iteration += 1
     print('Iteration no. ' + str(iteration)+'\n')
 
-    #Beam Deflection Convergence
 
-    v2, u2, xt, r1, r2, r3, Vy, Vz, My, Mz, rz1, rz2, rz3, P1 = Definitions.bendingconvergence(q,ndis,l1,l2,l3,l4,E,I,d1,d2,d3,P2,xa,Ca,ha,theta,spread)
+    #Geometrical Update
+
+    boom_area, twist_rate, qrib_1, qrib_2 = Definitions.ratetwistandshearflowdiscretisation(tskin, tspar, spacing, l1,l2,l3,l4,xa, Mz, My, Mx, Vy, Vz, Ilocal, area_stiff, zcg, nodepos, dist, arc, Ca, ha, G, theta, alpharad, ndis)
 
     #Initial Moment of Inertia - Working
 
-    I = Definitions.ExactMOIdiscretisation(q,ndis,l1,l2,l3,l4,tskin,tspar,t_stiff,w_stiff,h_stiff,zcg,n,spacing,nodepos,xa,Ca,ha,theta,zsc)
+    I, Ilocal = Definitions.idealisedMOIdiscretisation(ndis,l1,l2,l3,l4,xa,list_length, nodepos, boom_area, theta)
+##    I, Ilocal = Definitions.ExactMOIdiscretisation(q,ndis,l1,l2,l3,l4,tskin,tspar,t_stiff,w_stiff,h_stiff,zcg,n,spacing,nodepos,xa,Ca,ha,theta,zsc)
+
+
+    #Beam Deflection Convergence
+
+    v2, u2, xt, r1, r2, r3, Vy, Vz, My, Mz, rz1, rz2, rz3, P1 = Definitions.bendingconvergence(q,ndis,l1,l2,l3,l4,E,I,d1,d2,d3,P2,xa,Ca,ha,theta,spread)
 
     #Initial Twist Calculation
 
@@ -126,9 +135,30 @@ while iteration < 10:
     theta, rate_twist_lst,xt = Definitions.overalltwist(-Mx,A1,A2,arc,Cr,ha,xa,G,tskin,l1,l2,l3,l4,ndis,inittwist)
 
    
+
+   
     print('\n'+'Ry1 = ' , float(r1[0]) ,' Ry2 = ', float(r2[0]) , ' Ry3 = ', float(r3[0]) , '\n\r'+' Rz1 = ', float(rz1[0]) , ' Rz2 = ', float(rz2[0]) ,' Rz3 = ',float(rz3[0]), '\n')
 
     
+
+nodepos2 = Definitions.offset(zcg, theta, nodepos, v2, u2, xt)
+
+plt.subplot(2,2,1)
+plt.plot(nodepos2[0][:,0],nodepos2[0][:,1])
+plt.subplot(2,2,2)
+plt.plot(nodepos2[0][:,0], nodepos2[0][:,2])
+
+plt.subplot(2,2,3)
+plt.plot(nodepos2[6][:,0],nodepos2[6][:,1])
+plt.subplot(2,2,4)
+plt.plot(nodepos2[6][:,0], nodepos2[6][:,2])
+
+plt.show()
+
+
+
+
+
 
 
 
