@@ -77,6 +77,7 @@ area_stiff = Definitions.area_stiff(t_stiff, h_stiff, w_stiff)
 ycg, zcg = Definitions.centroid_nonidealized(tskin, ha, Ca, Ct, tspar, nodepos, area_stiff)
 
 
+
 #Initial Moment of Inertia - Working
 
 I, Ilocal = Definitions.ExactMOIdiscretisation(q,ndis,l1,l2,l3,l4,tskin,tspar,t_stiff,w_stiff,h_stiff,zcg,n,spacing,nodepos,xa,Ca,ha,theta,zsc)
@@ -108,21 +109,18 @@ theta, rate_twist_lst,xt = Definitions.overalltwist(Mx,A1,A2,arc,Cr,ha,xa,G,tski
 
 iteration = 0
 
-while iteration < 100:
+while iteration < 15:
 
     iteration += 1
     print('Iteration no. ' + str(iteration)+'\n')
 
-
     #Geometrical Update
-
+    
     boom_area, twist_rate, qrib_1, qrib_2 = Definitions.ratetwistandshearflowdiscretisation(tskin, tspar, spacing, l1,l2,l3,l4,xa, Mz, My, Mx, Vy, Vz, Ilocal, area_stiff, zcg, nodepos, dist, arc, Ca, ha, G, theta, alpharad, ndis)
 
     #Initial Moment of Inertia - Working
 
     I, Ilocal = Definitions.idealisedMOIdiscretisation(ndis,l1,l2,l3,l4,xa,list_length, nodepos, boom_area, theta)
-##    I, Ilocal = Definitions.ExactMOIdiscretisation(q,ndis,l1,l2,l3,l4,tskin,tspar,t_stiff,w_stiff,h_stiff,zcg,n,spacing,nodepos,xa,Ca,ha,theta,zsc)
-
 
     #Beam Deflection Convergence
 
@@ -135,19 +133,41 @@ while iteration < 100:
     theta, rate_twist_lst,xt = Definitions.overalltwist(-Mx,A1,A2,arc,Cr,ha,xa,G,tskin,l1,l2,l3,l4,ndis,inittwist)
 
    
-
-   
-    print('\n'+'Ry1 = ' , float(r1[0]) ,' Ry2 = ', float(r2[0]) , ' Ry3 = ', float(r3[0]) , '\n\r'+' Rz1 = ', float(rz1[0]) , ' Rz2 = ', float(rz2[0]) ,' Rz3 = ',float(rz3[0]), '\n')
-
-    
+    print('\n'+'Ry1 = ' , float(r1[0]) ,' Ry2 = ', float(r2[0]) , ' Ry3 = ', float(r3[0]) , '\r'+'\n'+' Rz1 = ', float(rz1[0]) , ' Rz2 = ', float(rz2[0]) ,' Rz3 = ',float(rz3[0]), '\n', 'P1 = ', P1)
 
 
+#Update q-rib1 and qrib2 and find nodepositions
+
+boom_area, twist_rate, qrib_1, qrib_2 = Definitions.ratetwistandshearflowdiscretisation(tskin, tspar, spacing, l1,l2,l3,l4,xa, Mz, My, Mx, Vy, Vz, Ilocal, area_stiff, zcg, nodepos, dist, arc, Ca, ha, G, theta, alpharad, ndis)
 nodepos2 = Definitions.offset(zcg, theta, nodepos, v2, u2, xt)
 
-fig = plt.figure()
-ax = fig.add_subplot(111, projection='3d')
 
-ax.scatter(np.concatenate(nodepos2, axis = 0)[:,0],np.concatenate(nodepos2, axis = 0)[:,1],np.concatenate(nodepos2, axis = 0)[:,2])
+#Print Forces
+
+print('\n'+'Ry1 = ' , float(r1[0]) ,' Ry2 = ', float(r2[0]) , ' Ry3 = ', float(r3[0]) , '\r'+'\n'+' Rz1 = ', float(rz1[0]) , ' Rz2 = ', float(rz2[0]) ,' Rz3 = ',float(rz3[0]), '\n', 'P1 = ', P1, 'P2 = ',P2)
+
+
+#Plot node positions
+
+plt.subplot(2,2,1)
+plt.plot(nodepos2[0][:,0],nodepos2[0][:,1])
+plt.subplot(2,2,2)
+plt.plot(nodepos2[0][:,0], nodepos2[0][:,2])
+
+plt.subplot(2,2,3)
+plt.plot(nodepos2[6][:,0],nodepos2[6][:,1])
+plt.subplot(2,2,4)
+plt.plot(nodepos2[6][:,0], nodepos2[6][:,2])
+
+plt.show()
+
+
+
+
+
+
+
+
 
 
 

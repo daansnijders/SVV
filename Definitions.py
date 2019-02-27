@@ -724,8 +724,8 @@ def shear_flow_rib(tring_qt,circ_qt,nodepos,ha,circ_booms,tring_booms,alpharad):
     for i in lst_tri_mom:
         
         r=r+1
-        mom_sumy=mom_sumy+i*(nodepos[r][1]-nodepos[r-1][1])*(nodepos[r][0]-nodepos[r-1][0])
-        mom_sumz=mom_sumz+i*(nodepos[r][0]-nodepos[r-1][0])*(ha/2+(nodepos[r][1]-nodepos[r-1][1]))
+        mom_sumy=mom_sumy+i*(nodepos[r][1]-nodepos[r-1][1])*(nodepos[r-1][0])#-nodepos[r-1][0])
+        mom_sumz=mom_sumz+i*(nodepos[r][0]-nodepos[r-1][0])*(ha/2+(nodepos[r-1][1]))#-nodepos[r-1][1]))
         mom_sum=mom_sum+mom_sumz+mom_sumy
         
     Pz=mom_sum/ha # flange force in the z direction
@@ -1391,8 +1391,8 @@ def ratetwistandshearflowdiscretisation(t_skin, t_spar, spacing, l1,l2,l3,l4,xa,
 
 
 def offset(zcg, theta, nodepos, v2, u2, xt):
-    zoffset = v2 - zcg*np.sin(theta)
-    yoffset = u2 + zcg*np.cos(theta)
+    zoffset = v2 #- zcg*np.sin(theta)
+    yoffset = u2 #+ zcg*np.cos(theta)
 
     nodepos2 = ([])
     for i in range(0,(len(nodepos))):

@@ -71,7 +71,7 @@ def ReactionForces(theta,P,q,Ca,ha,E,Izz,x1,x2,x3,xa,span,d1,d3):
     
         
 def ExactMOI(theta,Ca,ha,t_sk,t_sp,t_st,w_st,h_st,zcg,n,spacing,nodepos):
-    
+        
     """ Stringer MOI """
     y_bar = (h_st**2. * t_st + t_st**2. * (w_st - t_st)) / (2. * (w_st*t_st + (h_st - t_st)*t_st))
     A = (w_st*t_st + (h_st-t_st)*t_st)
