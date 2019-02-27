@@ -159,6 +159,8 @@ plt.plot(nodepos2[0][:,0],nodepos2[0][:,1])
 plt.subplot(2,2,2)
 plt.plot(nodepos2[0][:,0], nodepos2[0][:,2])
 
+
+
 plt.subplot(2,2,3)
 plt.plot(nodepos2[6][:,0],nodepos2[6][:,1])
 plt.subplot(2,2,4)
