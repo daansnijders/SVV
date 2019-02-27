@@ -1479,7 +1479,7 @@ def offset(zcg, theta, nodepos, v2, u2, xt):
 def von_mises_stress (nodepos2, Ilocal, ndis, Mx, My, Mz,circ_qt,tring_qt):
     i = 0
     sigma_x = []
-    for j in range (14):
+    for j in range (13):
         My = My[i*ndis]
         Mx = Mx[i*ndis]
         Mz = Mz[i*ndis]
@@ -1489,9 +1489,9 @@ def von_mises_stress (nodepos2, Ilocal, ndis, Mx, My, Mz,circ_qt,tring_qt):
         Ixy = 0.
         Iyz = Ilocal[1,0][i*ndis]
         Ixz = 0.
-        x = nodepos[j][0]
-        y = nodepos[j][1]
-        z = nodepos[j][2]
+        x = nodepos[j+1][0]
+        y = nodepos[j+1][1]
+        z = nodepos[j+1][2]
     
     
     
@@ -1525,9 +1525,23 @@ def von_mises_stress (nodepos2, Ilocal, ndis, Mx, My, Mz,circ_qt,tring_qt):
         tring_ss.append(ss)
         r=r+1
     print(max(tring_ss))
-    
-    
+
+    tau_yz = 14*[0.]
+    tau_yz[1] = (tring_ss[9] + tring_ss[0])/2
+    tau_yz[2] = (tring_ss[0] + tring_ss[1])/2
+    tau_yz[3] = (tring_ss[1] + tring_ss[2])/2
+    tau_yz[4] = (tring_ss[3] + tring_ss[2])/2
+    tau_yz[5] = (tring_ss[0] + tring_ss[1])/2
+    tau_yz[6] = (tring_ss[0] + tring_ss[1])/2
+    tau_yz[7] = (tring_ss[0] + tring_ss[1])/2
+    tau_yz[8] = (tring_ss[0] + tring_ss[1])/2
+    tau_yz[9] = (tring_ss[0] + tring_ss[1])/2
+    tau_yz[10] = (tring_ss[0] + tring_ss[1])/2
+    tau_yz[11] = (tring_ss[0] + tring_ss[1])/2
+    tau_yz[12] = (tring_ss[0] + tring_ss[1])/2
+    tau_yz[13] = (tring_ss[0] + tring_ss[1])/2
         
+    
         
     tau_xy = 0.
     tau_yz = 0.
