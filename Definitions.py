@@ -389,7 +389,7 @@ def boom_inertia(list_length, nodepos, B,theta): #TO BE CHECKED
     
     Iyy_theta = (Izz_0 + Iyy_0)/2. + (Iyy_0 - Izz_0)/2. * math.cos(-2.*theta)
     Izz_theta = (Izz_0 + Iyy_0)/2. - (Iyy_0 - Izz_0)/2. * math.cos(-2.*theta)
-    Izy_theta = (Iyy_0 - Izz_0)/2. *math.sin(2.*(-1.)*theta)
+    Izy_theta = (Iyy_0 - Izz_0)/2. *math.sin(2.*(1.)*theta)
     
     return Iyy_final, Izz_final, Iyy_theta, Izz_theta, Izy_theta
 
@@ -953,7 +953,7 @@ def shear_flow_finder(boom_area_inclskin, Izz, Iyy, theta, node_pos, Ca, ha, Mx,
     s=math.sqrt((ha/2)**2+(Ca-ha/2)**2)
     peri=(ha/2)*math.pi
     AI=0.5*math.pi*(ha/2)**2
-    AII=0.5*(Ca-ha/2)*(ha/2)
+    AII=0.5*(Ca-ha/2)*(ha)
     #define distances between boom and next one and associated thicknesses
     spac = 0.1015545
     edge = 0.0766246
@@ -1009,10 +1009,10 @@ def shear_flow_finder(boom_area_inclskin, Izz, Iyy, theta, node_pos, Ca, ha, Mx,
         moments += tring_fy[i]*(-1)*bxyz[tring_booms[i]][2]
 
     for i in range(len(circ_fz)):
-        moments += circ_fz[i]*bxyz[tring_booms[i]][1]          
+        moments += circ_fz[i]*bxyz[circ_booms[i]][1]          
 
     for i in range(len(circ_fy)):
-        moments += circ_fy[i]*(-1)*bxyz[tring_booms[i]][2] 
+        moments += circ_fy[i]*(-1)*bxyz[circ_booms[i]][2] 
     
     #find line integral of (qbi*ds)/(t*G)
     tring_li=0
@@ -1148,7 +1148,7 @@ def overalltwist(T,A1,A2,arc,l,ha,xa,G,t,l1,l2,l3,l4,n,inittwist):
            
     for x in np.linspace(l1,l2-xa/2,n+1)[1:]:
         xt=np.append(xt,x)
-        dx = (l2-l1)/(n)
+        dx = (l2-xa/2-l1)/(n)
         rate_twist=shear_flow_torsion(T[i-1],A1,A2,arc,l,ha,G,t)[0]
         rate_twist_lst = np.append(rate_twist_lst,rate_twist)
         theta_elem=theta[-1]+rate_twist_lst[i-1]*dx
@@ -1157,7 +1157,7 @@ def overalltwist(T,A1,A2,arc,l,ha,xa,G,t,l1,l2,l3,l4,n,inittwist):
     
     for x in np.linspace(l2-xa/2,l2,n+1)[1:]:
         xt=np.append(xt,x)
-        dx = (l2-l1)/(n)
+        dx = (l2-l2+xa/2)/(n)
         rate_twist=shear_flow_torsion(T[i-1],A1,A2,arc,l,ha,G,t)[0]
         rate_twist_lst = np.append(rate_twist_lst,rate_twist)
         theta_elem=theta[-1]+rate_twist_lst[i-1]*dx
@@ -1167,7 +1167,7 @@ def overalltwist(T,A1,A2,arc,l,ha,xa,G,t,l1,l2,l3,l4,n,inittwist):
     
     for x in np.linspace(l2,l2+xa/2,n+1)[1:]:
         xt=np.append(xt,x)
-        dx = (l3-l2)/(n)
+        dx = (l2+xa/2-l2)/(n)
         rate_twist=shear_flow_torsion(T[i-1],A1,A2,arc,l,ha,G,t)[0]
         rate_twist_lst = np.append(rate_twist_lst,rate_twist)
         theta_elem=theta[-1]+rate_twist_lst[i-1]*dx
@@ -1176,7 +1176,7 @@ def overalltwist(T,A1,A2,arc,l,ha,xa,G,t,l1,l2,l3,l4,n,inittwist):
     
     for x in np.linspace(l2+xa/2,l3,n+1)[1:]:
         xt=np.append(xt,x)
-        dx = (l3-l2)/(n)
+        dx = (l3-l2-xa/2)/(n)
         rate_twist=shear_flow_torsion(T[i-1],A1,A2,arc,l,ha,G,t)[0]
         rate_twist_lst = np.append(rate_twist_lst,rate_twist)
         theta_elem=theta[-1]+rate_twist_lst[i-1]*dx
@@ -1198,6 +1198,74 @@ def overalltwist(T,A1,A2,arc,l,ha,xa,G,t,l1,l2,l3,l4,n,inittwist):
     theta = theta + (inittwist*np.pi/180-theta[2*n])
 
     return theta, rate_twist_lst,xt
+
+def overalltwist2(twist_rate,xa,G,l1,l2,l3,l4,n,inittwist):
+
+    xt=np.array([0])
+    theta = np.array([0])
+
+    i = 1
+    for x in np.linspace(0,l1,n+1)[1:]:
+        xt=np.append(xt,x)
+        dx = l1/(n)
+        
+        rate_twist_lst = twist_rate[i-1]
+        theta_elem=theta[-1]+rate_twist_lst*dx
+        theta = np.append(theta,theta_elem)
+        i = i+1
+           
+    for x in np.linspace(l1,l2-xa/2,n+1)[1:]:
+        xt=np.append(xt,x)
+        dx = (l2-xa/2-l1)/(n)
+
+        rate_twist_lst = twist_rate[i-1]
+        theta_elem=theta[-1]+rate_twist_lst*dx
+        theta = np.append(theta,theta_elem)
+        i = i+1
+    
+    for x in np.linspace(l2-xa/2,l2,n+1)[1:]:
+        xt=np.append(xt,x)
+        dx = (l2-l2+xa/2)/(n)
+
+        rate_twist_lst = twist_rate[i-1]
+        theta_elem=theta[-1]+rate_twist_lst*dx
+        theta = np.append(theta,theta_elem)
+        i = i+1
+    
+    
+    for x in np.linspace(l2,l2+xa/2,n+1)[1:]:
+        xt=np.append(xt,x)
+        dx = (l2+xa/2-l2)/(n)
+
+        rate_twist_lst = twist_rate[i-1]
+        theta_elem=theta[-1]+rate_twist_lst*dx
+        theta = np.append(theta,theta_elem)
+        i = i+1
+    
+    for x in np.linspace(l2+xa/2,l3,n+1)[1:]:
+        xt=np.append(xt,x)
+        dx = (l3-l2-xa/2)/(n)
+        
+        rate_twist_lst = twist_rate[i-1]
+        theta_elem=theta[-1]+rate_twist_lst*dx
+        theta = np.append(theta,theta_elem)
+        i = i+1
+    
+        
+        
+    for x in np.linspace(l3,l4,n+1)[1:]:
+        xt=np.append(xt,x)
+        dx = (l4-l3)/(n)
+        
+        rate_twist_lst = twist_rate[i-1]
+        theta_elem=theta[-1]+rate_twist_lst*dx
+        theta = np.append(theta,theta_elem)
+        i = i+1
+        
+
+    theta = theta + (inittwist*np.pi/180-theta[2*n])
+
+    return theta, xt
         
 def ExactMOI2(theta,Ca,ha,t_sk,t_sp,t_st,w_st,h_st,zcg,n,spacing,nodepos):
     
@@ -1305,6 +1373,7 @@ def ratetwistandshearflowdiscretisation(t_skin, t_spar, spacing, l1,l2,l3,l4,xa,
     twist_rate= np.array([])
     qrib_1 = np.array([])
     qrib_2 = np.array([])
+    Mx = -Mx
    
     i = 1
     for x in np.linspace(0,l1,n+1)[1:]:
@@ -1407,20 +1476,69 @@ def offset(zcg, theta, nodepos, v2, u2, xt):
     
     
     
-def von_mises_stress ():
-       
-    sigma_x = 0.
-    sigma_y = 0.
-    sigma_z = 0.
+def von_mises_stress (nodepos2, Ilocal, ndis, Mx, My, Mz,circ_qt,tring_qt):
+    i = 0
+    sigma_x = []
+    for j in range (14):
+        My = My[i*ndis]
+        Mx = Mx[i*ndis]
+        Mz = Mz[i*ndis]
+        Ixx = 0.
+        Iyy = Ilocal[0,0][i*ndis]
+        Izz = Ilocal[1,1][i*ndis]
+        Ixy = 0.
+        Iyz = Ilocal[1,0][i*ndis]
+        Ixz = 0.
+        x = nodepos[j][0]
+        y = nodepos[j][1]
+        z = nodepos[j][2]
+    
+    
+    
+        sigma_x.append((Mz*Iyy-My*Iyz)/(Iyy*Izz-Iyz**2)*y + (My*Izz-Mz*Iyz)/(Iyy*Izz-Iyz**2)*z)
+    sigma_y = 14*[0.]
+    sigma_z = 14*[0.]
+    
+    circ_ss=[]
+    tring_ss=[]
+    
+    r=0
+    for i in circ_qt:
+        ssc=i*tsk
+        
+    
+        if r==4:
+            ssc=i*tspar
+        
+        circ_ss.append(ss)
+        r=r+1
+    print(max(circ_ss))
+    
+    r=0
+    for j in tring_qt:
+        sst=i*tsk
+        
+    
+        if r==4:
+            sst=i*tspar
+        
+        tring_ss.append(ss)
+        r=r+1
+    print(max(tring_ss))
+    
+    
+        
+        
     tau_xy = 0.
     tau_yz = 0.
     tau_xz = 0.
     
-    sigma_v = np.sqrt(0.5((sigma_x-sigma_y)**2+(sigma_y-sigma_z)**2+(sigma_z-sigma_x)**2)+3*(tau_xy**2 + tau_yz**2 + tau_xz**2))
+    for i in range (14):
+        sigma_v = np.sqrt(0.5((sigma_x[i]-sigma_y[i])**2+(sigma_y[i]-sigma_z[i])**2+(sigma_z[i]-sigma_x[i])**2)+3*(tau_xy**2 + tau_yz**2 + tau_xz**2))
     
     
     
-    return sigma_v
+    return sigma_v, sigma_x
     
     
     
