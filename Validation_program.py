@@ -4,6 +4,7 @@ from mpl_toolkits.mplot3d import Axes3D
 import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
+import Definitions
 
 node = []
 element_set = []
@@ -134,7 +135,6 @@ plt.show()
 
 
 """CALC DEFLECTIONS"""
-
 deflection = []
 l = []
 
@@ -149,8 +149,7 @@ for regel in l:
         deflection.append(l[j])
     j += 1
        
-    
-    
+      
 deflection = np.array(deflection)
 deflection = deflection.astype(np.float)
 #since we do not care about the RF:
@@ -169,18 +168,18 @@ for li in l:
         location_y.append(l[i])
     i = i + 1 
 
-location_y = np.array(location_y).astype(np.float)
+location_y = np.array(location_y)
+location_y = location_y.astype(np.float)
 location_y = location_y[:,[0,5,6,7,8]]
 location_y = location_y[0:3254]
 
-#Find out which nodes lay on the leading and trailing edge:
+#Strip down to nodes laying on y = 0.
 y_n = np.argwhere(y == 0)
-
+#Find out which nodes lay on the leading and trailing edge:
 LEzi = np.argwhere(z == max(z))
 TEzi = np.argwhere(z == min(z))
 TEzn = np.take(node[:,0],TEzi)
 LEzn = np.take(node[:,0],LEzi)
-
 
 
 dypos_trailingedge = np.take(deflection[:,3],TEzi)
@@ -192,23 +191,17 @@ xpos_leadingedge = np.take(node[:,1],LEzi)
 
 ypos_trailingedge = np.take(node[:,2],TEzi)
 ypos_leadingedge = np.take(node[:,2],LEzi)
+#Taking into account the 
 ypos_trailingedge = (dypos_trailingedge - ypos_trailingedge)
 ypos_leadingedge = (dypos_leadingedge - ypos_leadingedge)
-
 
 dist = np.column_stack((xpos_trailingedge , ypos_trailingedge))
 dist = dist[np.argsort(dist[:,0])]
 distdy = np.column_stack((xpos_trailingedge , dypos_trailingedge))
 distdy = distdy[np.argsort(distdy[:,0])]
 
-"""Import nummerical Data from TE and LE """
 
-#plt.plot(steps_num , slopes_num , 'ro') - NUM
-#plt.plot(numx ,numdefl , 'ro',label = 'Numerical data') - NUM
-#plt.plot(numx ,numdefl , 'k') - NUM
-
-"""Einde nummerical model"""
-
+"""PLOTTING SLOPE"""
 #Finding (and later plotting) slope
 validation_slope = []
 validation_step = []
@@ -224,23 +217,37 @@ for j in range(dist[:,0].size):
 #plt.plot(validation_step, validation_slope , 'red')
 
 
-"""PLOTING ZONE""" 
-#Deflection of y (?) along x:
-plt.plot(dist[:,0],dist[:,1], 'ro',label = 'Validation Data' )
-plt.plot(dist[:,0],dist[:,1], 'k' )
-plt.plot(distdy[:,0],distdy[:,1], 'g' )
 
-plt.xlabel("X along span b (mm)")
-plt.ylabel("???")
+"""Importing nummerical Data from TE and LE """
+
+nodepos2, rot = Definitions.offset(zcg, theta, nodepos, v2, u2, xt)
+
+#plt.plot(steps_num , slopes_num , 'ro') - NUM
+#plt.plot(numx ,numdefl , 'ro',label = 'Numerical data') - NUM
+#plt.plot(numx ,numdefl , 'k') - NUM
+
+
+
+"""PLOTING DEFLECTIONS (Take close care of limits)""" 
+
+#INDIVIDUAL: NUMERICAL:
+#plt.plot(dist[:,0],(dist[:,1]/1000.), 'r',label = 'Validation Data' )
+#plt.plot(distdy[:,0],distdy[:,1], 'g' )
+#INDIVIDUAL: VALIDATION 
+#plt.plot(nodepos2[0][:,0],nodepos2[0][:,1])
+
+plt.plot(nodepos2[0][:,0],nodepos2[0][:,1],"g.-",
+                (dist[:,0]/1000.),(dist[:,1]/1000.),"r.-")
+plt.xlabel("X along span b (m)")
+plt.ylabel("Y-Deflection on points along x (m)")
+plt.title('Deflection over Trailing Edge (Numerical vs. Validated)')
 plt.grid('on')
 axes = plt.gca()
-
-axes.set_xlim([-100,1700])
-axes.set_ylim([210,250])
+axes.set_xlim([-0.1,1.700])
+axes.set_ylim([0.21,0.24])
 #plt.scatter(xpos_leadingedge , ypos_leadingedge , alpha=0.5)
-#plt.legend(['Data validation','Data numerical model'])
+plt.legend(['Numerical Data','Validation Data'])
 plt.show()
-"""END PLOTTING ZONE"""        
 
 
 
@@ -249,10 +256,28 @@ plt.show()
 
 
 
+#"""NEWTRY"""
+#
+#plt.xlabel("X along span b (mm)")
+#plt.ylabel("Y-Deflection of Validated (red line) and Numerical (Blue)???")
+#plt.grid('on')
+#axes = plt.gca()
+#axes.set_xlim([-100,1700])
+#axes.set_ylim([0.18,0.26])
+#fig=plt.figure()
+#
+#ax=fig.add_subplot(111, label="1")
+#ax2=fig.add_subplot(111, label="2", frame_on=False)
+#
+#ax.plot(dist[:,0],(dist[:,1]/1000.), 'r',label = 'Validation Data')
+#ax2.plot(nodepos2[0][:,0],nodepos2[0][:,1], 'g', label = 'Numerical Data')
+#
+#
+#     
 
 
 
-        
+"""MORE ON VONS MISE"""   
 element_set = np.array(element_set)
 element_hinges = element_set[0][1:],element_set[2][1:],element_set[4][1:]
 element_hinges = np.array([i for sl in element_hinges for i in sl]) - 1
@@ -261,6 +286,10 @@ stress_hinge_1 = (von_misses_stress_element[[int(element_hinges[0])],1]+von_miss
 stress_hinge_2 = (von_misses_stress_element[[int(element_hinges[4])],1]+von_misses_stress_element[[int(element_hinges[5])],1] + von_misses_stress_element[[int(element_hinges[6])],1] +von_misses_stress_element[[int(element_hinges[7])],1])/4
 stress_hinge_3 = (von_misses_stress_element[[int(element_hinges[8])],1]+von_misses_stress_element[[int(element_hinges[9])],1] + von_misses_stress_element[[int(element_hinges[10])],1] + von_misses_stress_element[[int(element_hinges[11])],1])/4
 oppervlakte = ((max(x)-min(x))/(len(TEzn)-1))**2
+
+
+
+
 
 """INSET REACTION FORCES IN Y-DIR AT HINGES"""
 yh1 = 1.
