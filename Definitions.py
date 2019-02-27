@@ -1414,10 +1414,10 @@ def von_mises_stress (nodepos2, Ilocal, ndis, Mx, My, Mz):
     Mx = Mx[i*ndis]
     Mz = Mz[i*ndis]
     Ixx = 0.
-    Iyy = I[0,0][i*ndis]
-    Izz = I[1,1][i*ndis]
+    Iyy = Ilocal[0,0][i*ndis]
+    Izz = Ilocal[1,1][i*ndis]
     Ixy = 0.
-    Iyz = 0.
+    Iyz = Ilocal[1,0][i*ndis]
     Ixz = 0.
     x = nodepos[j][0]
     y = nodepos[j][1]
@@ -1425,7 +1425,7 @@ def von_mises_stress (nodepos2, Ilocal, ndis, Mx, My, Mz):
     
     
     
-    sigma_x = 0.
+    sigma_x = (Mz*Iyy-My*Iyz)/(Iyy*Izz-Iyz**2)*y + (My*Izz-Mz*Iyz)/(Iyy*Izz-Iyz**2)*z
     sigma_y = 0.
     sigma_z = 0.
     tau_xy = 0.
