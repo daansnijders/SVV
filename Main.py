@@ -108,7 +108,7 @@ theta, rate_twist_lst,xt = Definitions.overalltwist(Mx,A1,A2,arc,Cr,ha,xa,G,tski
 
 iteration = 0
 
-while iteration < 100:
+while iteration < 15:
 
     iteration += 1
     print('Iteration no. ' + str(iteration)+'\n')
@@ -141,13 +141,19 @@ while iteration < 100:
 
     
 
-
 nodepos2 = Definitions.offset(zcg, theta, nodepos, v2, u2, xt)
 
-fig = plt.figure()
-ax = fig.add_subplot(111, projection='3d')
 
-ax.scatter(np.concatenate(nodepos2, axis = 0)[:,0],np.concatenate(nodepos2, axis = 0)[:,1],np.concatenate(nodepos2, axis = 0)[:,2])
+
+plt.subplot(1,2,1)
+plt.scatter(np.concatenate(nodepos2[0], axis=1)[0], np.concatenate(nodepos2[0], axis=1)[1])
+
+plt.subplot(1,2,2)
+plt.scatter(np.concatenate(nodepos2[0], axis=1)[0], np.concatenate(nodepos2[0], axis=1)[2])
+
+
+
+
 
 
 
