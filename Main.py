@@ -150,7 +150,7 @@ print('\n'+'Ry1 = ' , float(r1[0]) ,' Ry2 = ', float(r2[0]) , ' Ry3 = ', float(r
 
 
 #Calculate von mises stress
-sigma_v = Definitions.von_mises_stress (nodepos2, Ilocal, ndis, Mx, My, Mz,circ_qt,tring_qt)
+sigma_v = Definitions.von_mises_stress (nodepos2, Ilocal, ndis, Mx, My, Mz,circ_qt,tring_qt, tskin, tspar)
 
 
 

@@ -1477,7 +1477,7 @@ def offset(zcg, theta, nodepos, v2, u2, xt):
     
     
 def von_mises_stress (nodepos2, Ilocal, ndis, Mx, My, Mz,circ_qt,tring_qt,tsk,tspar):
-    i = 0
+    i = 1
     sigma_x = []
     for j in range (13):
         My = My[i*ndis]
