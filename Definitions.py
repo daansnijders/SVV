@@ -1478,24 +1478,26 @@ def offset(zcg, theta, nodepos, v2, u2, xt):
     
 def von_mises_stress (nodepos, Ilocal, ndis, Mx, My, Mz,circ_qt,tring_qt,tsk,tspar):
     i = 1
+    a = int(i * ndis)
     sigma_x = []
-    for j in range (13):
-        My = My[i*ndis]
-        Mx = Mx[i*ndis]
-        Mz = Mz[i*ndis]
+    My = My[a]
+    Mx = Mx[a]
+    Mz = Mz[a]
+    for j in range (14):
         Ixx = 0.
         Iyy = Ilocal[0,0][i*ndis]
         Izz = Ilocal[1,1][i*ndis]
         Ixy = 0.
         Iyz = Ilocal[1,0][i*ndis]
         Ixz = 0.
-        x = nodepos[j+1][0]
-        y = nodepos[j+1][1]
-        z = nodepos[j+1][2]
+        x = nodepos[j][0]
+        y = nodepos[j][1]
+        z = nodepos[j][2]
     
     
     
         sigma_x.append((Mz*Iyy-My*Iyz)/(Iyy*Izz-Iyz**2)*y + (My*Izz-Mz*Iyz)/(Iyy*Izz-Iyz**2)*z)
+    
     sigma_y = 14*[0.]
     sigma_z = 14*[0.]
     
@@ -1546,12 +1548,13 @@ def von_mises_stress (nodepos, Ilocal, ndis, Mx, My, Mz,circ_qt,tring_qt,tsk,tsp
     tau_xy = 0.
     tau_xz = 0.
     
+    sigma_v = []
     for i in range (14):
-        sigma_v = np.sqrt(0.5((sigma_x[i]-sigma_y[i])**2+(sigma_y[i]-sigma_z[i])**2+(sigma_z[i]-sigma_x[i])**2)+3*(tau_xy[i]**2 + tau_yz[i]**2 + tau_xz[i]**2))
+        sigma_v.append( np.sqrt(0.5*((sigma_x[i]-sigma_y[i])**2 +(sigma_y[i]-sigma_z[i])**2 + (sigma_z[i]-sigma_x[i])**2 )+3*((tau_xy)**2 + (tau_yz[i])**2 + (tau_xz)**2 )))
     
     
     
-    return sigma_v, sigma_x
+    return sigma_v
     
     
     
