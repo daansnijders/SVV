@@ -1398,7 +1398,10 @@ def offset(zcg, theta, nodepos, v2, u2, xt):
     for i in range(0,(len(nodepos))):
         y = np.cos(theta)*nodepos[i][1]-np.sin(theta)*nodepos[i][2]+yoffset
         z = np.cos(theta)*nodepos[i][2]+np.sin(theta)*nodepos[i][1]+zoffset
+        print(xt,y,z)
         nodepos2 += [np.reshape(np.ravel([xt,y,z],'F'),(len(xt),3),'C')]
+        if v2 == v2:
+            break
 
 
     return nodepos2
