@@ -19,7 +19,7 @@ G = 28e+09
 
 ndis = 100 #No. of Sections per section discretized
 spread = 0.00001 #dx for Jacobian Convergence
-tol = 0.0001
+tol = 0.0005
 c = 0.01
 
 
@@ -150,12 +150,6 @@ nodepos2 = Definitions.offset(zcg, theta, nodepos, v2, u2, xt)
 #Print Forces
 
 print('\n'+'Ry1 = ' , float(r1[0]) ,' Ry2 = ', float(r2[0]) , ' Ry3 = ', float(r3[0]) , '\r'+'\n'+' Rz1 = ', float(rz1[0]) , ' Rz2 = ', float(rz2[0]) ,' Rz3 = ',float(rz3[0]), '\n', 'P1 = ', P1, 'P2 = ',P2)
-
-
-#Calculate von mises stress
-sigma_v = Definitions.von_mises_stress (nodepos2, Ilocal, ndis, Mx, My, Mz,circ_qt,tring_qt, tskin, tspar)
-
-
 
 
 #Plot node positions
