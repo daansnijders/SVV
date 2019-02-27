@@ -953,7 +953,7 @@ def shear_flow_finder(boom_area_inclskin, Izz, Iyy, theta, node_pos, Ca, ha, Mx,
     s=math.sqrt((ha/2)**2+(Ca-ha/2)**2)
     peri=(ha/2)*math.pi
     AI=0.5*math.pi*(ha/2)**2
-    AII=0.5*(Ca-ha/2)*(ha)
+    AII=0.5*(Ca-ha/2)*(ha/2)
     #define distances between boom and next one and associated thicknesses
     spac = 0.1015545
     edge = 0.0766246
@@ -1407,9 +1407,25 @@ def offset(zcg, theta, nodepos, v2, u2, xt):
     
     
     
-def von_mises_stress (nodepos2, I, Mx, My, Mz):
-       
-    sigma_x = (Mz*I[0,0] - My*I[0,1])/(I[0,0]*I[1,1]-I[1,0]**2)
+def von_mises_stress (nodepos2, Ilocal, ndis, Mx, My, Mz):
+    j = 0
+    i = 1
+    My = My[i*ndis]
+    Mx = Mx[i*ndis]
+    Mz = Mz[i*ndis]
+    Ixx = 0.
+    Iyy = I[0,0][i*ndis]
+    Izz = I[1,1][i*ndis]
+    Ixy = 0.
+    Iyz = 0.
+    Ixz = 0.
+    x = nodepos[j][0]
+    y = nodepos[j][1]
+    z = nodepos[j][2]
+    
+    
+    
+    sigma_x = 0.
     sigma_y = 0.
     sigma_z = 0.
     tau_xy = 0.
