@@ -953,7 +953,7 @@ def shear_flow_finder(boom_area_inclskin, Izz, Iyy, theta, node_pos, Ca, ha, Mx,
     s=math.sqrt((ha/2)**2+(Ca-ha/2)**2)
     peri=(ha/2)*math.pi
     AI=0.5*math.pi*(ha/2)**2
-    AII=0.5*(Ca-ha/2)*(ha/2)
+    AII=0.5*(Ca-ha/2)*(ha)
     #define distances between boom and next one and associated thicknesses
     spac = 0.1015545
     edge = 0.0766246
