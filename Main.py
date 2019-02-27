@@ -18,7 +18,9 @@ G = 28e+09
 ###Convergence Variables ###
 
 ndis = 100 #No. of Sections per section discretized
-spread = 0.001 #dx for Jacobian Convergence
+spread = 0.00001 #dx for Jacobian Convergence
+tol = 0.0001
+c = 0.01
 
 
 ###Aileron Geometry ###
@@ -66,6 +68,7 @@ zsc = 0 #Shear Center Location (Required but left at 0)
 
 ##################################### General Code #############################################################################
 
+
 #Initial Centroid - Working
 
 spacing, Cr, alpharad, Ct = Definitions.boom_spacing(ha, Ca, n)
@@ -76,8 +79,6 @@ area_stiff = Definitions.area_stiff(t_stiff, h_stiff, w_stiff)
 
 ycg, zcg = Definitions.centroid_nonidealized(tskin, ha, Ca, Ct, tspar, nodepos, area_stiff)
 
-
-
 #Initial Moment of Inertia - Working
 
 I, Ilocal = Definitions.ExactMOIdiscretisation(q,ndis,l1,l2,l3,l4,tskin,tspar,t_stiff,w_stiff,h_stiff,zcg,n,spacing,nodepos,xa,Ca,ha,theta,zsc)
@@ -85,21 +86,11 @@ I, Ilocal = Definitions.ExactMOIdiscretisation(q,ndis,l1,l2,l3,l4,tskin,tspar,t_
 
 #Initial reaction forces
 
-
-
-##r1, rz1, rx2, r2, rz2, r3, rz3, P1 = Definitions.ReactionForces(theta[4*n],P2,-q,Ca,ha,E,I[1][1][3*ndis],l1,l2,l3,l4,xa,d1,d3)
-##P1 = -P1
-
 v2, u2, xt, r1, r2, r3, Vy, Vz, My, Mz, rz1, rz2, rz3, P1 = Definitions.bendingconvergence(q,ndis,l1,l2,l3,l4,E,I,d1,d2,d3,P2,xa,Ca,ha,theta,spread)
-
-
-
-
 
 #Initial Twist Calculation
 
 Mx,xt = Definitions.torque(q,ndis,l1,l2,l3,l4,P1,P2,xa,Ca,ha,theta,zsc)
-
 
 theta, rate_twist_lst,xt = Definitions.overalltwist(Mx,A1,A2,arc,Cr,ha,xa,G,tskin,l1,l2,l3,l4,ndis,inittwist)
 
@@ -110,32 +101,44 @@ theta, rate_twist_lst,xt = Definitions.overalltwist(Mx,A1,A2,arc,Cr,ha,xa,G,tski
 
 iteration = 0
 
-while iteration < 20:
+error = 1
+
+while error > tol:
 
     iteration += 1
     print('Iteration no. ' + str(iteration)+'\n')
 
     #Geometrical Update
+
+    if iteration >1:
+        boom_areaold = boom_area
     
     boom_area, twist_rate, qrib_1, qrib_2 = Definitions.ratetwistandshearflowdiscretisation(tskin, tspar, spacing, l1,l2,l3,l4,xa, Mz, My, Mx, Vy, Vz, Ilocal, area_stiff, zcg, nodepos, dist, arc, Ca, ha, G, theta, alpharad, ndis)
+
+    if iteration >1:
+        boom_area = boom_areaold + (boom_area-boom_areaold)*c
 
     #Initial Moment of Inertia - Working
 
     I, Ilocal = Definitions.idealisedMOIdiscretisation(ndis,l1,l2,l3,l4,xa,list_length, nodepos, boom_area, theta)
-
+    
     #Beam Deflection Convergence
+
+    r1old, r2old, r3old, rz1old, rz2old, rz3old, P1old = r1, r2,r3,rz1,rz2,rz3,P1
 
     v2, u2, xt, r1, r2, r3, Vy, Vz, My, Mz, rz1, rz2, rz3, P1 = Definitions.bendingconvergence(q,ndis,l1,l2,l3,l4,E,I,d1,d2,d3,P2,xa,Ca,ha,theta,spread)
 
     #Initial Twist Calculation
 
     Mx,xt = Definitions.torque(q,ndis,l1,l2,l3,l4,P1,P2,xa,Ca,ha,theta,zsc)
+    
+    theta, rate_twist_lst,xt = Definitions.overalltwist(-Mx,A1,A2,arc,Cr,ha,xa,G,tskin,l1,l2,l3,l4,ndis,inittwist)
 
-    theta, xt =  Definitions.overalltwist2(twist_rate,xa,G,l1,l2,l3,l4,ndis,inittwist)
-##    theta, rate_twist_lst,xt = Definitions.overalltwist(-Mx,A1,A2,arc,Cr,ha,xa,G,tskin,l1,l2,l3,l4,ndis,inittwist)
+    #Print Results
 
-   
-    print('\n'+'Ry1 = ' , float(r1[0]) ,' Ry2 = ', float(r2[0]) , ' Ry3 = ', float(r3[0]) , '\r'+'\n'+' Rz1 = ', float(rz1[0]) , ' Rz2 = ', float(rz2[0]) ,' Rz3 = ',float(rz3[0]), '\n', 'P1 = ', P1)
+    error = np.max([(abs(r1-r1old)/r1old),abs((r2-r2old)/r2old), abs((r3-r3old)/r3old),abs((rz1-rz1old)/rz1old), abs((rz2-rz2old)/rz2old), abs((rz3-rz3old)/rz3old), abs((P1-P1old)/P1old)])
+       
+    print('\n'+'Ry1 = ' , float(r1) ,' Ry2 = ', float(r2) , ' Ry3 = ', float(r3) , '\r'+'\n'+' Rz1 = ', float(rz1) , ' Rz2 = ', float(rz2) ,' Rz3 = ',float(rz3), '\n', 'P1 = ', P1, '\n', 'Error = ', float(error))
 
 
 #Update q-rib1 and qrib2 and find nodepositions
@@ -151,23 +154,15 @@ print('\n'+'Ry1 = ' , float(r1[0]) ,' Ry2 = ', float(r2[0]) , ' Ry3 = ', float(r
 
 #Plot node positions
 
-
-"""TRAILING EDGE PLOTS"""
-
-#Plotting X (index 0) and Y (index 1)
 plt.subplot(2,2,1)
-plt.plot(nodepos2[0][:,0],nodepos2[0][:,1], 'ro',label = 'Numerical Data')
-
-#Plotting X (index 0) and Z (index 2)
+plt.plot(nodepos2[0][:,0],nodepos2[0][:,1])
 plt.subplot(2,2,2)
 plt.plot(nodepos2[0][:,0], nodepos2[0][:,2])
 
-#"""PLOTTING THE LEADING EDGE"""
-#
-#plt.subplot(2,2,3)
-#plt.plot(nodepos2[6][:,0],nodepos2[6][:,1])
-#plt.subplot(2,2,4)
-#plt.plot(nodepos2[6][:,0], nodepos2[6][:,2])
+plt.subplot(2,2,3)
+plt.plot(nodepos2[6][:,0],nodepos2[6][:,1])
+plt.subplot(2,2,4)
+plt.plot(nodepos2[6][:,0], nodepos2[6][:,2])
 
 plt.show()
 
