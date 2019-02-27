@@ -64,6 +64,9 @@ noderib_b_element = np.array(noderib_b_element)
 noderib_c_element = np.array(noderib_c_element)
 noderib_d_element = np.array(noderib_d_element)
 
+
+"""VON MISSES CALCULATIONS"""
+
 von_misses_stress = []
 
 #Open and extract the von mise stresses per element from the following document:
@@ -85,8 +88,6 @@ with open ("./data/F100_SLC1.rpt") as g2:
     von_misses_stress = np.column_stack((von_misses_stress[:,0],((von_misses_stress[:,2]+von_misses_stress[:,3])/2)))
     von_misses_stress = von_misses_stress[np.argsort(von_misses_stress[:,0])]
 
-#----------------------------------
-
 k = 0
 von_misses_stress_element = []
 
@@ -100,6 +101,7 @@ for i in range (0, 13045):
 von_misses_stress_element = np.array(von_misses_stress_element)
 von_misses_stress_element = np.column_stack((np.arange(1, len(von_misses_stress_element)+1), von_misses_stress_element))
 
+"""PLOTTING THE AIRFOIL 3D:"""
 #We have now used the node list to find the elements and their associated vm stresses,
 #But will now set it again to make a plot 
 x = [] 
@@ -131,12 +133,10 @@ axis.set_zlim3d(-200,200)
 plt.show()
 
 
-
+"""CALC DEFLECTIONS"""
 
 deflection = []
 l = []
-
-"""Opening the F100_ULC1_rpt file """
 
 with open("./data/F100_ULC1.rpt") as g3:
     l = (regel.rstrip().split() for regel in g3)
