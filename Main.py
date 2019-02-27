@@ -149,6 +149,12 @@ nodepos2 = Definitions.offset(zcg, theta, nodepos, v2, u2, xt)
 print('\n'+'Ry1 = ' , float(r1[0]) ,' Ry2 = ', float(r2[0]) , ' Ry3 = ', float(r3[0]) , '\r'+'\n'+' Rz1 = ', float(rz1[0]) , ' Rz2 = ', float(rz2[0]) ,' Rz3 = ',float(rz3[0]), '\n', 'P1 = ', P1, 'P2 = ',P2)
 
 
+#Calculate von mises stress
+sigma_v = Definitions.von_mises_stress (nodepos2, Ilocal, ndis, Mx, My, Mz,circ_qt,tring_qt)
+
+
+
+
 #Plot node positions
 
 
