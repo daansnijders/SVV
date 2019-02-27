@@ -1464,13 +1464,17 @@ def offset(zcg, theta, nodepos, v2, u2, xt):
     yoffset = u2 #+ zcg*np.cos(theta)
 
     nodepos2 = ([])
+    rot =  ([])
     for i in range(0,(len(nodepos))):
+        roty = np.cos(theta)*nodepos[i][1]-np.sin(theta)*nodepos[i][2]
+        rotz = np.cos(theta)*nodepos[i][2]+np.sin(theta)*nodepos[i][1]
         y = np.cos(theta)*nodepos[i][1]-np.sin(theta)*nodepos[i][2]+yoffset
         z = np.cos(theta)*nodepos[i][2]+np.sin(theta)*nodepos[i][1]+zoffset
+        rot += [np.reshape(np.ravel([xt,roty,rotz],'F'),(len(xt),3),'C')]
         nodepos2 += [np.reshape(np.ravel([xt,y,z],'F'),(len(xt),3),'C')]
 
 
-    return nodepos2
+    return nodepos2, rot
         
         
     
