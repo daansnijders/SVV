@@ -1477,6 +1477,7 @@ def offset(zcg, theta, nodepos, v2, u2, xt):
     
     
 def von_mises_stress (nodepos, Ilocal, ndis, Mx, My, Mz,circ_qt,tring_qt,tsk,tspar):
+    #Enter rib number here below:
     i = 1
     a = int(i * ndis)
     sigma_x = []
