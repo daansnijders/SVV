@@ -725,7 +725,7 @@ def shear_flow_rib(tring_qt,circ_qt,nodepos,ha,circ_booms,tring_booms,alpharad):
         
         r=r+1
         mom_sumy=mom_sumy+i*(nodepos[r][1]-nodepos[r-1][1])*(nodepos[r-1][0])#-nodepos[r-1][0])
-        mom_sumz=mom_sumz+i*(nodepos[r][0]-nodepos[r-1][0])*(ha/2+(nodepos[r-1][1])#-nodepos[r-1][1]))
+        mom_sumz=mom_sumz+i*(nodepos[r][0]-nodepos[r-1][0])*(ha/2+(nodepos[r-1][1]))#-nodepos[r-1][1]))
         mom_sum=mom_sum+mom_sumz+mom_sumy
         
     Pz=mom_sum/ha # flange force in the z direction
