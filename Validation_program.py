@@ -181,6 +181,8 @@ TEzi = np.argwhere(z == min(z))
 TEzn = np.take(node[:,0],TEzi)
 LEzn = np.take(node[:,0],LEzi)
 
+
+
 dypos_trailingedge = np.take(deflection[:,3],TEzi)
 dypos_leadingedge = np.take(deflection[:,3],LEzi)
 ypos_trailingedge = np.take(location_y[:,3],TEzi)
@@ -188,14 +190,16 @@ ypos_leadingedge = np.take(location_y[:,3],LEzi)
 xpos_trailingedge = np.take(node[:,1],TEzi)
 xpos_leadingedge = np.take(node[:,1],LEzi)
 
-#ypos_trailingedge = np.take(node[:,2],TEzi)
-#ypos_leadingedge = np.take(node[:,2],LEzi)
-#ypos_trailingedge = (dypos_trailingedge - ypos_trailingedge)
-#ypos_leadingedge = (dypos_leadingedge - ypos_leadingedge)
+ypos_trailingedge = np.take(node[:,2],TEzi)
+ypos_leadingedge = np.take(node[:,2],LEzi)
+ypos_trailingedge = (dypos_trailingedge - ypos_trailingedge)
+ypos_leadingedge = (dypos_leadingedge - ypos_leadingedge)
 
 
-dist = np.column_stack((xpos_trailingedge ,dypos_trailingedge))
+dist = np.column_stack((xpos_trailingedge , ypos_trailingedge))
 dist = dist[np.argsort(dist[:,0])]
+distdy = np.column_stack((xpos_trailingedge , dypos_trailingedge))
+distdy = distdy[np.argsort(distdy[:,0])]
 
 """Import nummerical Data from TE and LE """
 
@@ -205,6 +209,7 @@ dist = dist[np.argsort(dist[:,0])]
 
 """Einde nummerical model"""
 
+#Finding (and later plotting) slope
 validation_slope = []
 validation_step = []
 for j in range(dist[:,0].size):
@@ -215,26 +220,38 @@ for j in range(dist[:,0].size):
         validation_step.append(dist[j,0])
 
 #To plot the slope:
-plt.plot(validation_step, validation_slope , 'ro')
-plt.plot(validation_step, validation_slope , 'red')
+#plt.plot(validation_step, validation_slope , 'ro')
+#plt.plot(validation_step, validation_slope , 'red')
 
 
-#Deflection along x:
-#plt.plot(dist[:,0],dist[:,1], 'ro',label = 'Validation Data' )
-#plt.plot(dist[:,0],dist[:,1], 'k' )
-
+"""PLOTING ZONE""" 
+#Deflection of y (?) along x:
+plt.plot(dist[:,0],dist[:,1], 'ro',label = 'Validation Data' )
+plt.plot(dist[:,0],dist[:,1], 'k' )
+plt.plot(distdy[:,0],distdy[:,1], 'g' )
 
 plt.xlabel("X along span b (mm)")
-plt.ylabel("Y along span b (mm)")
+plt.ylabel("???")
 plt.grid('on')
 axes = plt.gca()
 
 axes.set_xlim([-100,1700])
-axes.set_ylim([-1,1])
+axes.set_ylim([210,250])
 #plt.scatter(xpos_leadingedge , ypos_leadingedge , alpha=0.5)
 #plt.legend(['Data validation','Data numerical model'])
 plt.show()
-        
+"""END PLOTTING ZONE"""        
+
+
+
+
+
+
+
+
+
+
+
         
 element_set = np.array(element_set)
 element_hinges = element_set[0][1:],element_set[2][1:],element_set[4][1:]
