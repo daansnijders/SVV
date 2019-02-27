@@ -180,8 +180,8 @@ Izz=3.6621e-5
 Iyy=1.35357e-5
 Mx=1664.25
 
-Mz=-1.14161513e+04
-My=3.74664695e+03
+#Mz=-1.14161513e+04
+#My=3.74664695e+03
 
 Vz=49200  #value to be checked 
 Vy=3860   # value to be checked 
