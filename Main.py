@@ -38,7 +38,7 @@ ha = 0.161
 ###Beam Deflection and Mx Distribution Variables ###
 
 
-inittwist = 30 #Twist of rib C in degrees (counterclockwise upwards)
+inittwist = -30 #Twist of rib C in degrees (counterclockwise upwards)
 
 theta = np.ones(ndis*6+1)*inittwist/180*np.pi #theta[4*n] is actuator 2 and theta[2*n] is actuator 1
 
@@ -144,7 +144,7 @@ while error > tol:
 #Update q-rib1 and qrib2 and find nodepositions
 
 boom_area, twist_rate, qrib_1, qrib_2 = Definitions.ratetwistandshearflowdiscretisation(tskin, tspar, spacing, l1,l2,l3,l4,xa, Mz, My, Mx, Vy, Vz, Ilocal, area_stiff, zcg, nodepos, dist, arc, Ca, ha, G, theta, alpharad, ndis)
-nodepos2 = Definitions.offset(zcg, theta, nodepos, v2, u2, xt)
+nodepos2, rot = Definitions.offset(zcg, theta, nodepos, v2, u2, xt)
 
 
 #Print Forces
