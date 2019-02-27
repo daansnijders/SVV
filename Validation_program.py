@@ -228,22 +228,25 @@ nodepos2, rot = Definitions.offset(zcg, theta, nodepos, v2, u2, xt)
 
 
 
-"""PLOTING DEFLECTIONS""" 
-#Deflection of y (?) along x:
-plt.plot(dist[:,0],dist[:,1], 'r',label = 'Validation Data' )
-#plt.plot(distdy[:,0],distdy[:,1], 'g' )
+"""PLOTING DEFLECTIONS (Take close care of limits)""" 
 
+#INDIVIDUAL: NUMERICAL:
+#plt.plot(dist[:,0],(dist[:,1]/1000.), 'r',label = 'Validation Data' )
+#plt.plot(distdy[:,0],distdy[:,1], 'g' )
+#INDIVIDUAL: VALIDATION 
 #plt.plot(nodepos2[0][:,0],nodepos2[0][:,1])
 
-plt.xlabel("X along span b (mm)")
-plt.ylabel("Y-Deflection of Validated (red line) and Numerical (Blue)???")
+plt.plot(nodepos2[0][:,0],nodepos2[0][:,1],"g.-",
+                (dist[:,0]/1000.),(dist[:,1]/1000.),"r.-")
+plt.xlabel("X along span b (m)")
+plt.ylabel("Y-Deflection on points along x (m)")
+plt.title('Deflection over Trailing Edge (Numerical vs. Validated)')
 plt.grid('on')
 axes = plt.gca()
-
-axes.set_xlim([-100,1700])
-axes.set_ylim([210,250])
+axes.set_xlim([-0.1,1.700])
+axes.set_ylim([0.21,0.24])
 #plt.scatter(xpos_leadingedge , ypos_leadingedge , alpha=0.5)
-#plt.legend(['Data validation','Data numerical model'])
+plt.legend(['Numerical Data','Validation Data'])
 plt.show()
 
 
@@ -252,7 +255,25 @@ plt.show()
 
 
 
-     
+
+#"""NEWTRY"""
+#
+#plt.xlabel("X along span b (mm)")
+#plt.ylabel("Y-Deflection of Validated (red line) and Numerical (Blue)???")
+#plt.grid('on')
+#axes = plt.gca()
+#axes.set_xlim([-100,1700])
+#axes.set_ylim([0.18,0.26])
+#fig=plt.figure()
+#
+#ax=fig.add_subplot(111, label="1")
+#ax2=fig.add_subplot(111, label="2", frame_on=False)
+#
+#ax.plot(dist[:,0],(dist[:,1]/1000.), 'r',label = 'Validation Data')
+#ax2.plot(nodepos2[0][:,0],nodepos2[0][:,1], 'g', label = 'Numerical Data')
+#
+#
+#     
 
 
 
