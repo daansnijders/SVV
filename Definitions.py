@@ -1495,12 +1495,13 @@ def von_mises_stress (nodepos2, Ilocal, ndis, Mx, My, Mz,circ_qt,tring_qt):
     
     
     
+        
         sigma_x.append((Mz*Iyy-My*Iyz)/(Iyy*Izz-Iyz**2)*y + (My*Izz-Mz*Iyz)/(Iyy*Izz-Iyz**2)*z)
     sigma_y = 14*[0.]
     sigma_z = 14*[0.]
     
-    circ_ss=[]
-    tring_ss=[]
+    circ_ss=[0]
+    tring_ss=[0]
     
     r=0
     for i in circ_qt:
