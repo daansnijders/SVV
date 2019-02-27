@@ -1476,26 +1476,29 @@ def offset(zcg, theta, nodepos, v2, u2, xt):
     
     
     
-def von_mises_stress (nodepos2, Ilocal, ndis, Mx, My, Mz,circ_qt,tring_qt):
-    i = 0
+def von_mises_stress (nodepos, Ilocal, ndis, Mx, My, Mz,circ_qt,tring_qt,tsk,tspar):
+    #Enter rib number here below:
+    i = 1
+    a = int(i * ndis)
     sigma_x = []
-    for j in range (13):
-        My = My[i*ndis]
-        Mx = Mx[i*ndis]
-        Mz = Mz[i*ndis]
+    My = My[a]
+    Mx = Mx[a]
+    Mz = Mz[a]
+    for j in range (14):
         Ixx = 0.
         Iyy = Ilocal[0,0][i*ndis]
         Izz = Ilocal[1,1][i*ndis]
         Ixy = 0.
         Iyz = Ilocal[1,0][i*ndis]
         Ixz = 0.
-        x = nodepos[j+1][0]
-        y = nodepos[j+1][1]
-        z = nodepos[j+1][2]
+        x = nodepos[j][0]
+        y = nodepos[j][1]
+        z = nodepos[j][2]
     
     
     
         sigma_x.append((Mz*Iyy-My*Iyz)/(Iyy*Izz-Iyz**2)*y + (My*Izz-Mz*Iyz)/(Iyy*Izz-Iyz**2)*z)
+    
     sigma_y = 14*[0.]
     sigma_z = 14*[0.]
     
@@ -1510,9 +1513,9 @@ def von_mises_stress (nodepos2, Ilocal, ndis, Mx, My, Mz,circ_qt,tring_qt):
         if r==4:
             ssc=i*tspar
         
-        circ_ss.append(ss)
+        circ_ss.append(ssc)
         r=r+1
-    print(max(circ_ss))
+    #print(max(circ_ss))
     
     r=0
     for j in tring_qt:
@@ -1522,37 +1525,37 @@ def von_mises_stress (nodepos2, Ilocal, ndis, Mx, My, Mz,circ_qt,tring_qt):
         if r==4:
             sst=i*tspar
         
-        tring_ss.append(ss)
+        tring_ss.append(sst)
         r=r+1
-    print(max(tring_ss))
+    #print(max(tring_ss))
 
     tau_yz = 14*[0.]
     tau_yz[1] = (tring_ss[9] + tring_ss[0])/2
     tau_yz[2] = (tring_ss[0] + tring_ss[1])/2
     tau_yz[3] = (tring_ss[1] + tring_ss[2])/2
     tau_yz[4] = (tring_ss[3] + tring_ss[2])/2
-    tau_yz[5] = (tring_ss[0] + tring_ss[1])/2
-    tau_yz[6] = (tring_ss[0] + tring_ss[1])/2
-    tau_yz[7] = (tring_ss[0] + tring_ss[1])/2
-    tau_yz[8] = (tring_ss[0] + tring_ss[1])/2
-    tau_yz[9] = (tring_ss[0] + tring_ss[1])/2
-    tau_yz[10] = (tring_ss[0] + tring_ss[1])/2
-    tau_yz[11] = (tring_ss[0] + tring_ss[1])/2
-    tau_yz[12] = (tring_ss[0] + tring_ss[1])/2
-    tau_yz[13] = (tring_ss[0] + tring_ss[1])/2
+    tau_yz[5] = (circ_ss[0] + circ_ss[1])/2
+    tau_yz[6] = (circ_ss[1] + circ_ss[2])/2
+    tau_yz[7] = (circ_ss[2] + circ_ss[3])/2
+    tau_yz[8] = (tring_ss[5] + tring_ss[6])/2
+    tau_yz[9] = (tring_ss[6] + tring_ss[7])/2
+    tau_yz[10] = (tring_ss[7] + tring_ss[8])/2
+    tau_yz[11] = (tring_ss[8] + tring_ss[9])/2
+    tau_yz[12] = (tring_ss[3] + circ_ss[0]+(abs(tring_ss[4]-circ_ss[4])))/3
+    tau_yz[13] = (tring_ss[5] + circ_ss[3]+ (abs(tring_ss[4]-circ_ss[4])))/3
         
     
         
     tau_xy = 0.
-    tau_yz = 0.
     tau_xz = 0.
     
+    sigma_v = []
     for i in range (14):
-        sigma_v = np.sqrt(0.5((sigma_x[i]-sigma_y[i])**2+(sigma_y[i]-sigma_z[i])**2+(sigma_z[i]-sigma_x[i])**2)+3*(tau_xy**2 + tau_yz**2 + tau_xz**2))
+        sigma_v.append( np.sqrt(0.5*((sigma_x[i]-sigma_y[i])**2 +(sigma_y[i]-sigma_z[i])**2 + (sigma_z[i]-sigma_x[i])**2 )+3*((tau_xy)**2 + (tau_yz[i])**2 + (tau_xz)**2 )))
     
     
     
-    return sigma_v, sigma_x
+    return sigma_v
     
     
     
