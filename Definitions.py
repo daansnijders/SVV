@@ -1407,32 +1407,65 @@ def offset(zcg, theta, nodepos, v2, u2, xt):
     
     
     
-def von_mises_stress (nodepos2, Ilocal, ndis, Mx, My, Mz):
-    j = 0
-    i = 1
-    My = My[i*ndis]
-    Mx = Mx[i*ndis]
-    Mz = Mz[i*ndis]
-    Ixx = 0.
-    Iyy = Ilocal[0,0][i*ndis]
-    Izz = Ilocal[1,1][i*ndis]
-    Ixy = 0.
-    Iyz = Ilocal[1,0][i*ndis]
-    Ixz = 0.
-    x = nodepos[j][0]
-    y = nodepos[j][1]
-    z = nodepos[j][2]
+def von_mises_stress (nodepos2, Ilocal, ndis, Mx, My, Mz,circ_qt,tring_qt):
+    i = 0
+    sigma_x = []
+    for j in range (14):
+        My = My[i*ndis]
+        Mx = Mx[i*ndis]
+        Mz = Mz[i*ndis]
+        Ixx = 0.
+        Iyy = Ilocal[0,0][i*ndis]
+        Izz = Ilocal[1,1][i*ndis]
+        Ixy = 0.
+        Iyz = Ilocal[1,0][i*ndis]
+        Ixz = 0.
+        x = nodepos[j][0]
+        y = nodepos[j][1]
+        z = nodepos[j][2]
     
     
     
-    sigma_x = (Mz*Iyy-My*Iyz)/(Iyy*Izz-Iyz**2)*y + (My*Izz-Mz*Iyz)/(Iyy*Izz-Iyz**2)*z
-    sigma_y = 0.
-    sigma_z = 0.
+        sigma_x.append((Mz*Iyy-My*Iyz)/(Iyy*Izz-Iyz**2)*y + (My*Izz-Mz*Iyz)/(Iyy*Izz-Iyz**2)*z)
+    sigma_y = 14*[0.]
+    sigma_z = 14*[0.]
+    
+    circ_ss=[]
+    tring_ss=[]
+    
+    r=0
+    for i in circ_qt:
+        ssc=i*tsk
+        
+    
+        if r==4:
+            ssc=i*tspar
+        
+        circ_ss.append(ss)
+        r=r+1
+    print(max(circ_ss))
+    
+    r=0
+    for j in tring_qt:
+        sst=i*tsk
+        
+    
+        if r==4:
+            sst=i*tspar
+        
+        tring_ss.append(ss)
+        r=r+1
+    print(max(tring_ss))
+    
+    
+        
+        
     tau_xy = 0.
     tau_yz = 0.
     tau_xz = 0.
     
-    sigma_v = np.sqrt(0.5((sigma_x-sigma_y)**2+(sigma_y-sigma_z)**2+(sigma_z-sigma_x)**2)+3*(tau_xy**2 + tau_yz**2 + tau_xz**2))
+    for i in range (14):
+        sigma_v = np.sqrt(0.5((sigma_x[i]-sigma_y[i])**2+(sigma_y[i]-sigma_z[i])**2+(sigma_z[i]-sigma_x[i])**2)+3*(tau_xy**2 + tau_yz**2 + tau_xz**2))
     
     
     
