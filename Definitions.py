@@ -1531,24 +1531,23 @@ def von_mises_stress (nodepos2, Ilocal, ndis, Mx, My, Mz,circ_qt,tring_qt):
     tau_yz[2] = (tring_ss[0] + tring_ss[1])/2
     tau_yz[3] = (tring_ss[1] + tring_ss[2])/2
     tau_yz[4] = (tring_ss[3] + tring_ss[2])/2
-    tau_yz[5] = (tring_ss[0] + tring_ss[1])/2
-    tau_yz[6] = (tring_ss[0] + tring_ss[1])/2
-    tau_yz[7] = (tring_ss[0] + tring_ss[1])/2
-    tau_yz[8] = (tring_ss[0] + tring_ss[1])/2
-    tau_yz[9] = (tring_ss[0] + tring_ss[1])/2
-    tau_yz[10] = (tring_ss[0] + tring_ss[1])/2
-    tau_yz[11] = (tring_ss[0] + tring_ss[1])/2
-    tau_yz[12] = (tring_ss[0] + tring_ss[1])/2
-    tau_yz[13] = (tring_ss[0] + tring_ss[1])/2
+    tau_yz[5] = (circ_ss[0] + circ_ss[1])/2
+    tau_yz[6] = (circ_ss[1] + circ_ss[2])/2
+    tau_yz[7] = (circ_ss[2] + circ_ss[3])/2
+    tau_yz[8] = (tring_ss[5] + tring_ss[6])/2
+    tau_yz[9] = (tring_ss[6] + tring_ss[7])/2
+    tau_yz[10] = (tring_ss[7] + tring_ss[8])/2
+    tau_yz[11] = (tring_ss[8] + tring_ss[9])/2
+    tau_yz[12] = (tring_ss[3] + circ_ss[0]+(abs(tring_ss[4]-circ_ss[4])))/3
+    tau_yz[13] = (tring_ss[5] + circ_ss[3]+ (abs(tring_ss[4]-circ_ss[4])))/3
         
     
         
     tau_xy = 0.
-    tau_yz = 0.
     tau_xz = 0.
     
     for i in range (14):
-        sigma_v = np.sqrt(0.5((sigma_x[i]-sigma_y[i])**2+(sigma_y[i]-sigma_z[i])**2+(sigma_z[i]-sigma_x[i])**2)+3*(tau_xy**2 + tau_yz**2 + tau_xz**2))
+        sigma_v = np.sqrt(0.5((sigma_x[i]-sigma_y[i])**2+(sigma_y[i]-sigma_z[i])**2+(sigma_z[i]-sigma_x[i])**2)+3*(tau_xy[i]**2 + tau_yz[i]**2 + tau_xz[i]**2))
     
     
     
