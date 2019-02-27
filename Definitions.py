@@ -1407,9 +1407,9 @@ def offset(zcg, theta, nodepos, v2, u2, xt):
     
     
     
-def von_mises_stress ():
+def von_mises_stress (nodepos2, I, Mx, My, Mz):
        
-    sigma_x = 0.
+    sigma_x = (Mz*I[0,0] - My*I[0,1])/(I[0,0]*I[1,1]-I[1,0]**2)
     sigma_y = 0.
     sigma_z = 0.
     tau_xy = 0.
@@ -1420,7 +1420,7 @@ def von_mises_stress ():
     
     
     
-    return sigma_v
+    return sigma_v, sigma_x
     
     
     

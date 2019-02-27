@@ -282,6 +282,6 @@ stress_rib_d = np.take(von_misses_stress_element[:,1],noderib_d_element)
 #print (max(stress_rib_b)*1000)
 #print (max(stress_rib_c)*1000)
 #print (max(stress_rib_d)*1000)
-#print (((max(stress_rib_a)*1000) - ribas) ,((max(stress_rib_b)*1000) -ribbs) ,((max(stress_rib_c)*1000)-ribcs) ,((max(stress_rib_d)*1000) -ribds))
+print (((max(stress_rib_a)*1000) - ribas) ,((max(stress_rib_b)*1000) -ribbs) ,((max(stress_rib_c)*1000)-ribcs) ,((max(stress_rib_d)*1000) -ribds))
 
 
