@@ -1009,10 +1009,10 @@ def shear_flow_finder(boom_area_inclskin, Izz, Iyy, theta, node_pos, Ca, ha, Mx,
         moments += tring_fy[i]*(-1)*bxyz[tring_booms[i]][2]
 
     for i in range(len(circ_fz)):
-        moments += circ_fz[i]*bxyz[tring_booms[i]][1]          
+        moments += circ_fz[i]*bxyz[circ_booms[i]][1]          
 
     for i in range(len(circ_fy)):
-        moments += circ_fy[i]*(-1)*bxyz[tring_booms[i]][2] 
+        moments += circ_fy[i]*(-1)*bxyz[circ_booms[i]][2] 
     
     #find line integral of (qbi*ds)/(t*G)
     tring_li=0
