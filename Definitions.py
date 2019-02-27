@@ -724,8 +724,8 @@ def shear_flow_rib(tring_qt,circ_qt,nodepos,ha,circ_booms,tring_booms,alpharad):
     for i in lst_tri_mom:
         
         r=r+1
-        mom_sumy=mom_sumy+i*(nodepos[r][1]-nodepos[r-1][1])*(nodepos[r][0]-nodepos[r-1][0])
-        mom_sumz=mom_sumz+i*(nodepos[r][0]-nodepos[r-1][0])*(ha/2+(nodepos[r][1]-nodepos[r-1][1]))
+        mom_sumy=mom_sumy+i*(nodepos[r][1]-nodepos[r-1][1])*(nodepos[r-1][0])#-nodepos[r-1][0])
+        mom_sumz=mom_sumz+i*(nodepos[r][0]-nodepos[r-1][0])*(ha/2+(nodepos[r-1][1])#-nodepos[r-1][1]))
         mom_sum=mom_sum+mom_sumz+mom_sumy
         
     Pz=mom_sum/ha # flange force in the z direction
@@ -1398,10 +1398,7 @@ def offset(zcg, theta, nodepos, v2, u2, xt):
     for i in range(0,(len(nodepos))):
         y = np.cos(theta)*nodepos[i][1]-np.sin(theta)*nodepos[i][2]+yoffset
         z = np.cos(theta)*nodepos[i][2]+np.sin(theta)*nodepos[i][1]+zoffset
-        print(xt,y,z)
         nodepos2 += [np.reshape(np.ravel([xt,y,z],'F'),(len(xt),3),'C')]
-        if v2 == v2:
-            break
 
 
     return nodepos2
