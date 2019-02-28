@@ -153,7 +153,7 @@ print('\n'+'Ry1 = ' , float(r1[0]) ,' Ry2 = ', float(r2[0]) , ' Ry3 = ', float(r
 
 #Plot node positions
 
-<<<<<<< HEAD
+
 #plt.subplot(2,2,1)
 #plt.plot(nodepos2[0][:,0],nodepos2[0][:,1])
 #plt.subplot(2,2,2)
@@ -166,19 +166,18 @@ print('\n'+'Ry1 = ' , float(r1[0]) ,' Ry2 = ', float(r2[0]) , ' Ry3 = ', float(r
 #
 #plt.show()
 
-=======
-plt.subplot(2,2,1)
-plt.plot(nodepos2local[0][:,0],nodepos2local[0][:,1])
-plt.subplot(2,2,2)
-plt.plot(nodepos2local[0][:,0], nodepos2local[0][:,2])
+#plt.subplot(2,2,1)
+#plt.plot(nodepos2local[0][:,0],nodepos2local[0][:,1])
+#plt.subplot(2,2,2)
+#plt.plot(nodepos2local[0][:,0], nodepos2local[0][:,2])
+#
+#
+#
+#plt.subplot(2,2,3)
+#plt.plot(nodepos2local[6][:,0],nodepos2local[6][:,1])
+#plt.subplot(2,2,4)
+#plt.plot(nodepos2local[6][:,0], nodepos2local[6][:,2])
 
-
-
-plt.subplot(2,2,3)
-plt.plot(nodepos2local[6][:,0],nodepos2local[6][:,1])
-plt.subplot(2,2,4)
-plt.plot(nodepos2local[6][:,0], nodepos2local[6][:,2])
->>>>>>> 7f1c809087bd24d4abcecd10a5c761b4db74751b
 
 anx=[0.0,0.125,0.3755,0.6205,1.494,1.611]
 antwist=[-5.3e-5,-6.7e-5,0,-0.004335,-0]
