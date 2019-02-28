@@ -38,7 +38,7 @@ ha = 0.161
 ###Beam Deflection and Mx Distribution Variables ###
 
 
-inittwist = 30 #Twist of rib C in degrees (counterclockwise upwards)
+inittwist = 30. #Twist of rib C in degrees (counterclockwise upwards)
 
 theta = np.ones(ndis*6+1)*inittwist/180*np.pi #theta[4*n] is actuator 2 and theta[2*n] is actuator 1
 
@@ -154,16 +154,38 @@ print('\n'+'Ry1 = ' , float(r1[0]) ,' Ry2 = ', float(r2[0]) , ' Ry3 = ', float(r
 
 #Plot node positions
 
-plt.subplot(2,2,1)
-plt.plot(nodepos2[0][:,0],nodepos2[0][:,1])
-plt.subplot(2,2,2)
-plt.plot(nodepos2[0][:,0], nodepos2[0][:,2])
+#plt.subplot(2,2,1)
+#plt.plot(nodepos2[0][:,0],nodepos2[0][:,1])
+#plt.subplot(2,2,2)
+#plt.plot(nodepos2[0][:,0], nodepos2[0][:,2])
+#
+#plt.subplot(2,2,3)
+#plt.plot(nodepos2[6][:,0],nodepos2[6][:,1])
+#plt.subplot(2,2,4)
+#plt.plot(nodepos2[6][:,0], nodepos2[6][:,2])
+#
+#plt.show()
 
-plt.subplot(2,2,3)
-plt.plot(nodepos2[6][:,0],nodepos2[6][:,1])
-plt.subplot(2,2,4)
-plt.plot(nodepos2[6][:,0], nodepos2[6][:,2])
 
+anx=[0.0,0.125,0.3755,0.6205,1.494,1.611]
+antwist=[-5.3e-5,-6.7e-5,0,-0.004335,-0]
+
+
+
+r=0
+
+for i in theta:
+    
+    i=i-np.pi/6
+    theta[r]=i
+    r=r+1
+
+
+plt.subplot(1,1,1)
+plt.plot(xt,theta)
+plt.xlabel('Aileron span [m]')
+plt.ylabel('Twist [rad]')
+#plt.title('Twist distribution numerical model')
 plt.show()
 
 
