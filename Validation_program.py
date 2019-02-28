@@ -249,7 +249,7 @@ for j in range(dist[:,0].size):
     if j+1 < dist[:,1].size:
         s = dist[j+1,0] - dist[j,0]
         pitch = (dist[j+1,1] - dist[j,1])
-        validation_slope.append(pitch/35.) #FIX 
+        validation_slope.append(pitch/1000.) #FIX 
         validation_step.append(dist[j,0]/1000.)
 
 #Extract and plot the Numerical Slope
