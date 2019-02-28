@@ -113,7 +113,7 @@ while error > tol:
     if iteration >1:
         boom_areaold = boom_area
     
-    boom_area, twist_rate, qrib_1, qrib_2 = Definitions.ratetwistandshearflowdiscretisation(tskin, tspar, spacing, l1,l2,l3,l4,xa, Mz, My, Mx, Vy, Vz, Ilocal, area_stiff, zcg, nodepos, dist, arc, Ca, ha, G, theta, alpharad, ndis)
+    boom_area, twist_rate, qrib_1, qrib_2, circ_qtout, tring_qtout = Definitions.ratetwistandshearflowdiscretisation(tskin, tspar, spacing, l1,l2,l3,l4,xa, Mz, My, Mx, Vy, Vz, Ilocal, area_stiff, zcg, nodepos, dist, arc, Ca, ha, G, theta, alpharad, ndis)
 
     if iteration >1:
         boom_area = boom_areaold + (boom_area-boom_areaold)*c
@@ -143,8 +143,9 @@ while error > tol:
 
 #Update q-rib1 and qrib2 and find nodepositions
 
-boom_area, twist_rate, qrib_1, qrib_2 = Definitions.ratetwistandshearflowdiscretisation(tskin, tspar, spacing, l1,l2,l3,l4,xa, Mz, My, Mx, Vy, Vz, Ilocal, area_stiff, zcg, nodepos, dist, arc, Ca, ha, G, theta, alpharad, ndis)
+boom_area, twist_rate, qrib_1, qrib_2, circ_qt, tring_qt = Definitions.ratetwistandshearflowdiscretisation(tskin, tspar, spacing, l1,l2,l3,l4,xa, Mz, My, Mx, Vy, Vz, Ilocal, area_stiff, zcg, nodepos, dist, arc, Ca, ha, G, theta, alpharad, ndis)
 nodepos2, nodepos2local, rot = Definitions.offset(zcg, theta, nodepos, v2, u2, xt,ndis)
+sigma_v = Definitions.von_mises_stress(nodepos, Ilocal, ndis, Mx, My, Mz,circ_qt,tring_qt,tskin,tspar)
 
 #Print Forces
 
@@ -153,51 +154,38 @@ print('\n'+'Ry1 = ' , float(r1[0]) ,' Ry2 = ', float(r2[0]) , ' Ry3 = ', float(r
 
 #Plot node positions
 
-
-#plt.subplot(2,2,1)
-#plt.plot(nodepos2[0][:,0],nodepos2[0][:,1])
-#plt.subplot(2,2,2)
-#plt.plot(nodepos2[0][:,0], nodepos2[0][:,2])
-#
-#plt.subplot(2,2,3)
-#plt.plot(nodepos2[6][:,0],nodepos2[6][:,1])
-#plt.subplot(2,2,4)
-#plt.plot(nodepos2[6][:,0], nodepos2[6][:,2])
-#
-#plt.show()
-
-#plt.subplot(2,2,1)
-#plt.plot(nodepos2local[0][:,0],nodepos2local[0][:,1])
-#plt.subplot(2,2,2)
-#plt.plot(nodepos2local[0][:,0], nodepos2local[0][:,2])
-#
-#
-#
-#plt.subplot(2,2,3)
-#plt.plot(nodepos2local[6][:,0],nodepos2local[6][:,1])
-#plt.subplot(2,2,4)
-#plt.plot(nodepos2local[6][:,0], nodepos2local[6][:,2])
-
-
-anx=[0.0,0.125,0.3755,0.6205,1.494,1.611]
-antwist=[-5.3e-5,-6.7e-5,0,-0.004335,-0]
+plt.subplot(2,2,1)
+plt.plot(nodepos2local[0][:,0],nodepos2local[0][:,1])
+plt.subplot(2,2,2)
+plt.plot(nodepos2local[0][:,0], nodepos2local[0][:,2])
 
 
 
-r=0
-
-for i in theta:
-    
-    i=i-np.pi/6
-    theta[r]=i
-    r=r+1
+plt.subplot(2,2,3)
+plt.plot(nodepos2local[6][:,0],nodepos2local[6][:,1])
+plt.subplot(2,2,4)
+plt.plot(nodepos2local[6][:,0], nodepos2local[6][:,2])
 
 
-plt.subplot(1,1,1)
-plt.plot(xt,theta)
-plt.xlabel('Aileron span [m]')
-plt.ylabel('Twist [rad]')
-#plt.title('Twist distribution numerical model')
+##anx=[0.0,0.125,0.3755,0.6205,1.494,1.611]
+##antwist=[-5.3e-5,-6.7e-5,0,-0.004335,-0]
+##
+##
+##
+##r=0
+##
+##for i in theta:
+##    
+##    i=i-np.pi/6
+##    theta[r]=i
+##    r=r+1
+##
+##
+##plt.subplot(1,1,1)
+##plt.plot(xt,theta)
+##plt.xlabel('Aileron span [m]')
+##plt.ylabel('Twist [rad]')
+###plt.title('Twist distribution numerical model')
 plt.show()
 
 
