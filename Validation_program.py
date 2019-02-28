@@ -319,10 +319,10 @@ yh2 = -303060
 yh3 = 19581
 
 #MAX VM STRESSES AT RIBS
-ribas =  526899.8894651352#[Pa]
-ribbs =   755360565.2803401
-ribcs =  953518167.8435055
-ribds =  785905370.6257389
+ribas =  526899.8894651352 *10**-9#[Pa]
+ribbs =   755360565.2803401 *10**-9
+ribcs =  953518167.8435055 *10**-9
+ribds =  785905370.6257389 *10**-9
 
 """VALIDAING"""
 noderib_a_element = np.array([i for sl in noderib_a_element for i in sl]) - 1
