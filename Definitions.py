@@ -1459,22 +1459,26 @@ def ratetwistandshearflowdiscretisation(t_skin, t_spar, spacing, l1,l2,l3,l4,xa,
     return boom_area, twist_rate, qrib_1, qrib_2
 
 
-def offset(zcg, theta, nodepos, v2, u2, xt):
+def offset(zcg, theta, nodepos, v2, u2, xt,ndis):
     zoffset = v2 #- zcg*np.sin(theta)
     yoffset = u2 #+ zcg*np.cos(theta)
 
     nodepos2 = ([])
+    nodepos2local = ([])
     rot =  ([])
     for i in range(0,(len(nodepos))):
         roty = np.cos(theta)*nodepos[i][1]-np.sin(theta)*nodepos[i][2]
         rotz = np.cos(theta)*nodepos[i][2]+np.sin(theta)*nodepos[i][1]
-        y = np.cos(theta)*nodepos[i][1]-np.sin(theta)*nodepos[i][2]+yoffset
+        y = np.cos(theta)*nodepos[i][1]-np.sin(theta)*nodepos[i][2]+v2
         z = np.cos(theta)*nodepos[i][2]+np.sin(theta)*nodepos[i][1]+zoffset
+        ylocal = -(theta)*nodepos[i][2]+v2*np.cos(theta)+u2*np.sin(theta)
+        zlocal =  -v2*np.sin(theta)+u2*np.cos(theta)
         rot += [np.reshape(np.ravel([xt,roty,rotz],'F'),(len(xt),3),'C')]
         nodepos2 += [np.reshape(np.ravel([xt,y,z],'F'),(len(xt),3),'C')]
+        nodepos2local += [np.reshape(np.ravel([xt,ylocal,zlocal],'F'),(len(xt),3),'C')]
 
 
-    return nodepos2, rot
+    return nodepos2, nodepos2local, rot
         
         
     
