@@ -249,14 +249,13 @@ for j in range(dist[:,0].size):
     if j+1 < dist[:,1].size:
         s = dist[j+1,0] - dist[j,0]
         pitch = (dist[j+1,1] - dist[j,1])
-        validation_slope.append(pitch)
+        validation_slope.append(pitch/35.) #FIX 
         validation_step.append(dist[j,0]/1000.)
 
 #Extract and plot the Numerical Slope
 dy_dx = [0]
 for i in range (len(nodepos2local[0])-1):
     dy_dx.append((nodepos2local[0][i+1, 1]-nodepos2local[0][i, 1])/(nodepos2local[0][i+1, 0]-nodepos2local[0][i, 0]))
-
 
 plt.plot(validation_step, validation_slope , 'k-',
                 nodepos2local[0][1:602,0],dy_dx[1:602],'b--')
@@ -267,7 +266,7 @@ plt.title('Slope of deflection along Trailing Edge')
 plt.grid('on')
 axes = plt.gca()
 axes.set_xlim([-0.1,1.700])
-axes.set_ylim([-0.4,0.55])
+axes.set_ylim([-0.02,0.02])
 plt.show()
 
 #LEADING SLOPE LEADING SLOPE LEADING SLOPE LEADING SLOPE LEADING SLOPE LEADING SLOPE LEADING SLOPE LEADING SLOPE LEADING SLOPE 
@@ -279,7 +278,7 @@ for j in range(dist[:,0].size):
         s = LEdist[j+1,0] - LEdist[j,0]
         pitch = (LEdist[j+1,1] - LEdist[j,1])
         LEvalidation_slope.append(pitch)
-        LEvalidation_step.append(LEdist[j,0]/1000.)
+        LEvalidation_step.append(LEdist[j,0]/35.)
 
 #Extract and plot the Numerical Slope
 LEdy_dx = [0]
@@ -299,14 +298,6 @@ axes.set_ylim([-0.4,0.55])
 plt.show()
 
 
-
-
-
-
-
-
-
-
 """ON TO THE VON MISSES STRESS"""
 
 
@@ -319,17 +310,21 @@ stress_hinge_2 = (von_misses_stress_element[[int(element_hinges[4])],1]+von_miss
 stress_hinge_3 = (von_misses_stress_element[[int(element_hinges[8])],1]+von_misses_stress_element[[int(element_hinges[9])],1] + von_misses_stress_element[[int(element_hinges[10])],1] + von_misses_stress_element[[int(element_hinges[11])],1])/4
 oppervlakte = ((max(x)-min(x))/(len(TEzn)-1))**2
 
-"""INSERT REACTION FORCES IN Y-DIR AT HINGES"""
-yh1 = 1.
-yh2 = 1.
-yh3 = 1.
+"""INSERT NUMERICAL VALUES FOR VON MISSES"""
 
-"""INSERT MAX STRESSES AT RIBS """
-ribas = 1.
-ribbs = 1.
-ribcs = 1
-ribds = 1.
 
+#REACTION FORCES IN Y-DIR AT HINGES
+yh1 = 233148
+yh2 = -303060
+yh3 = 19581
+
+#MAX VM STRESSES AT RIBS
+ribas =  526899.8894509056 #[Pa]
+ribbs =  755360565.2799867
+ribcs =  953518167.8433025
+ribds = 785905370.625671
+
+"""VALIDAING"""
 noderib_a_element = np.array([i for sl in noderib_a_element for i in sl]) - 1
 noderib_a_element = noderib_a_element.astype(np.int)
 stress_rib_a = np.take(von_misses_stress_element[:,1],noderib_a_element)
@@ -346,16 +341,16 @@ noderib_d_element = np.array([i for sl in noderib_d_element for i in sl]) - 1
 noderib_d_element = noderib_d_element.astype(np.int)
 stress_rib_d = np.take(von_misses_stress_element[:,1],noderib_d_element)
 
+print (stress_hinge_1*1000,stress_hinge_2*1000,stress_hinge_3*1000)
+print (stress_hinge_1*(4*oppervlakte),stress_hinge_2*(4*oppervlakte),stress_hinge_3*(4*oppervlakte))
+print ("ABS",(stress_hinge_1*(4*oppervlakte) -yh1), stress_hinge_2*(4*oppervlakte) -yh2, stress_hinge_3*(4*oppervlakte)- yh3)
+print ("Abs" ,(((stress_hinge_1*(4*oppervlakte) -yh1)/yh1))*100, ((stress_hinge_2*(4*oppervlakte) -yh2)/yh2)*100, ((stress_hinge_3*(4*oppervlakte)- yh3)/yh3)*100)
+print (max(stress_rib_a)*1000)
+print (max(stress_rib_b)*1000)
+print (max(stress_rib_c)*1000)
+print (max(stress_rib_d)*1000)
 
-
-#print (stress_hinge_1*1000,stress_hinge_2*1000,stress_hinge_3*1000)
-#print (stress_hinge_1*(4*oppervlakte),stress_hinge_2*(4*oppervlakte),stress_hinge_3*(4*oppervlakte))
-#print ("ABS",(stress_hinge_1*(4*oppervlakte) -yh1), stress_hinge_2*(4*oppervlakte) -yh2, stress_hinge_3*(4*oppervlakte)- yh3)
-#print ("Abs" ,(((stress_hinge_1*(4*oppervlakte) -yh1)/yh1))*100, ((stress_hinge_2*(4*oppervlakte) -yh2)/yh2)*100, ((stress_hinge_3*(4*oppervlakte)- yh3)/yh3)*100)
-#print (max(stress_rib_a)*1000)
-#print (max(stress_rib_b)*1000)
-#print (max(stress_rib_c)*1000)
-#print (max(stress_rib_d)*1000)
+#Print the maximum difference in Max Von Miss (Numerical vs Validatical)
 print (((max(stress_rib_a)*1000) - ribas) ,((max(stress_rib_b)*1000) -ribbs) ,((max(stress_rib_c)*1000)-ribcs) ,((max(stress_rib_d)*1000) -ribds))
 
 
