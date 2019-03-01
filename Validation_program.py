@@ -219,11 +219,12 @@ plt.plot(nodepos2local[0][:,0],nodepos2local[0][:,1],"b--",
 plt.legend(['Numerical Data','Validation Data'])
 plt.xlabel("X along span b (m)")
 plt.ylabel("Y-Deflection on points along x (m)")
-plt.title('Local Deflection over Trailing Edge (Numerical vs. Validated)')
+#plt.title('Local Deflection over Trailing Edge (Numerical vs. Validated)')
 plt.grid('on')
 axes = plt.gca()
 axes.set_xlim([-0.1,1.700])
 axes.set_ylim([0.22,0.24])
+plt.savefig("DeflectionComparisonTrailingEdge.png", bbox_inches='tight')
 plt.show()
 
 #Plotting LEADING EDGE Numerical vs Validatical
@@ -232,11 +233,12 @@ plt.plot(nodepos2local[6][:,0],nodepos2local[6][:,1],"b--",
 plt.legend(['Numerical Data','Validation Data'])
 plt.xlabel("X along span b (m)")
 plt.ylabel("Y-Deflection on points along x (m)")
-plt.title('Local Deflection over Leading Edge (Numerical vs. Validated)')
+#plt.title('Local Deflection over Leading Edge (Numerical vs. Validated)')
 plt.grid('on')
 axes = plt.gca()
 axes.set_xlim([-0.1,1.700])
 axes.set_ylim([-0.05,-0.02])
+plt.savefig("DeflectionComparisonLeadingEdge.png", bbox_inches='tight')
 plt.show()
 
 """ON TO SLOPE STUFF:"""
@@ -267,6 +269,7 @@ plt.grid('on')
 axes = plt.gca()
 axes.set_xlim([-0.1,1.700])
 axes.set_ylim([-0.02,0.02])
+#plt.savefig("SlopeTrailing.png", bbox_inches='tight')
 plt.show()
 
 #LEADING SLOPE LEADING SLOPE LEADING SLOPE LEADING SLOPE LEADING SLOPE LEADING SLOPE LEADING SLOPE LEADING SLOPE LEADING SLOPE 
@@ -295,6 +298,7 @@ plt.grid('on')
 axes = plt.gca()
 axes.set_xlim([-0.1,1.700])
 axes.set_ylim([-0.4,0.55])
+#plt.savefig("SlopeLeading.png", bbox_inches='tight')
 plt.show()
 
 
