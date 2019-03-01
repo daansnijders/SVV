@@ -322,10 +322,11 @@ yh2 = -303060 / 1000.
 yh3 = 19581/ 1000.
 
 #MAX VM STRESSES AT RIBS
-ribas =  526899.8894651352 *10**-9#[Pa]
-ribbs =   755360565.2803401 *10**-9
-ribcs =  953518167.8435055 *10**-9
-ribds =  785905370.6257389 *10**-9
+ribas =  526899.8894651352 *10**-6#[Pa]
+ribbs =  755360565.2803401 *10**-6
+ribcs =  953518167.8435055 *10**-6
+ribds =  785905370.6257389 *10**-6
+
 
 """VALIDAING"""
 noderib_a_element = np.array([i for sl in noderib_a_element for i in sl]) - 1
@@ -348,10 +349,10 @@ print (stress_hinge_1*1000,stress_hinge_2*1000,stress_hinge_3*1000)
 print (stress_hinge_1*(4*oppervlakte),stress_hinge_2*(4*oppervlakte),stress_hinge_3*(4*oppervlakte))
 print ("ABS",(stress_hinge_1*(4*oppervlakte) -yh1), stress_hinge_2*(4*oppervlakte) -yh2, stress_hinge_3*(4*oppervlakte)- yh3)
 print ("Abs" ,(((stress_hinge_1*(4*oppervlakte) -yh1)/yh1))*100, ((stress_hinge_2*(4*oppervlakte) -yh2)/yh2)*100, ((stress_hinge_3*(4*oppervlakte)- yh3)/yh3)*100)
-print (max(stress_rib_a)*1000)
-print (max(stress_rib_b)*1000)
-print (max(stress_rib_c)*1000)
-print (max(stress_rib_d)*1000)
+print (max(stress_rib_a*1000))
+print (max(stress_rib_b*1000))
+print (max(stress_rib_c*1000))
+print (max(stress_rib_d*1000))
 
 #Print the maximum difference in Max Von Miss (Numerical vs Validatical)
 print (((max(stress_rib_a)*1000) - ribas) ,((max(stress_rib_b)*1000) -ribbs) ,((max(stress_rib_c)*1000)-ribcs) ,((max(stress_rib_d)*1000) -ribds))
