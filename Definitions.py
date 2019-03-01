@@ -222,20 +222,6 @@ def bendingconvergence(q,n,l1,l2,l3,l4,E,I,d1,d2,d3,P2,xa,Ca,ha,theta,spread):
     return v2, u2, xt, r1, r2, r3, Vy, Vz, My, Mz, rz1, rz2, rz3, P1
 
 
-
-
-##def centroid(nodepos, boom_area, list_length):  #TO BE CHECKED
-##    ycg = 0
-##    frac1 = 0.
-##    frac2 = 0.
-##    for i in range (list_length):    
-##       frac1 = frac1 + nodepos[i][2]*boom_area[i]
-##       frac2 = frac2 + boom_area[i]
-##    
-##    zcg = frac1/frac2
-##    
-##    return ycg, zcg
-
 def centroid_nonidealized(tskin, ha, Ca, Ct, tspar, nodepos, area_stiff):
     ycg = 0
     
@@ -321,43 +307,6 @@ def boom_location(spacing, Cr, alpharad, list_length, ha):
 def area_stiff(t_stiff, h_stiff, w_stiff):
     area_stiff = t_stiff * h_stiff + w_stiff * t_stiff
     return area_stiff
-#
-##def boom_area_inclskin(tskin, tspar, spacing, nodepos, area_stiff, dist, arc, ha):
-##    boom_area = 14*[0]
-##    boom_area[1] = area_stiff + tskin*spacing/6*(2+nodepos[11][1]/nodepos[1][1]) + tskin*spacing/6*(2+nodepos[2][1]/nodepos[1][1])
-##    boom_area[2] = area_stiff + tskin*spacing/6*(2+nodepos[1][1]/nodepos[2][1]) + tskin*spacing/6*(2+nodepos[3][1]/nodepos[2][1])
-##    boom_area[3] = area_stiff + tskin*spacing/6*(2+nodepos[2][1]/nodepos[3][1]) + tskin*spacing/6*(2+nodepos[4][1]/nodepos[3][1])
-##    boom_area[4] = area_stiff + tskin*spacing/6*(2+nodepos[3][1]/nodepos[4][1]) + tskin*dist/6*(2+nodepos[12][1]/nodepos[4][1])
-##    boom_area[5] = area_stiff + tskin*arc/6*(2+nodepos[12][1]/nodepos[5][1]) + tskin*spacing/6*(2+nodepos[6][1]/nodepos[5][1])
-##    boom_area[6] = area_stiff 
-##    boom_area[7] = area_stiff + tskin*spacing/6*(2+nodepos[6][1]/nodepos[7][1]) + tskin*arc/6*(2+nodepos[13][1]/nodepos[7][1])
-##    boom_area[8] = area_stiff + tskin*dist/6*(2+nodepos[13][1]/nodepos[8][1]) + tskin*spacing/6*(2+nodepos[9][1]/nodepos[8][1])
-##    boom_area[9] = area_stiff + tskin*spacing/6*(2+nodepos[8][1]/nodepos[9][1]) + tskin*spacing/6*(2+nodepos[10][1]/nodepos[9][1])
-##    boom_area[10] = area_stiff + tskin*spacing/6*(2+nodepos[9][1]/nodepos[10][1]) + tskin*spacing/6*(2+nodepos[11][1]/nodepos[10][1])
-##    boom_area[11] = area_stiff + tskin*spacing/6*(2+nodepos[10][1]/nodepos[11][1]) + tskin*spacing/6*(2+nodepos[1][1]/nodepos[11][1])
-##    boom_area[12] = tskin*dist/6*(2+nodepos[4][1]/nodepos[12][1]) + tskin*arc/6*(2+nodepos[5][1]/nodepos[12][1]) + tspar*ha/6*(2+nodepos[13][1]/nodepos[12][1])
-##    boom_area[13] = tskin*spacing/6*(2+nodepos[11][1]/nodepos[13][1]) + tskin*spacing/6*(2+nodepos[2][1]/nodepos[13][1]) + tspar*ha/6*(2+nodepos[12][1]/nodepos[13][1])
-##
-##    return boom_area
-#    
-##def boom_area_exclskin(area_stiff, nodepos, tspar, ha):
-##    boom_area = 14*[0]
-##    boom_area[1] = area_stiff 
-##    boom_area[2] = area_stiff 
-##    boom_area[3] = area_stiff 
-##    boom_area[4] = area_stiff 
-##    boom_area[5] = area_stiff 
-##    boom_area[6] = area_stiff 
-##    boom_area[7] = area_stiff 
-##    boom_area[8] = area_stiff 
-##    boom_area[9] = area_stiff 
-##    boom_area[10] = area_stiff
-##    boom_area[11] = area_stiff 
-##    boom_area[12] = tspar*ha/6*(2+nodepos[13][1]/nodepos[12][1])
-##    boom_area[13] = tspar*ha/6*(2+nodepos[12][1]/nodepos[13][1])
-##
-##    return boom_area
-    
 
 def boom_inertia(list_length, nodepos, B,theta): #TO BE CHECKED
     
@@ -370,14 +319,6 @@ def boom_inertia(list_length, nodepos, B,theta): #TO BE CHECKED
         Iyy.append( B[i] * (nodepos[i][2]) ** 2) # Iyy = Boom Area * Z distance squared
         Izz.append( B[i] * (nodepos[i][1]) ** 2) # Izz = Boom Area * Y distance squared
         
-    #print()
-    #print("Ixx is: ",Ixx)
-    #print()
-    #print("Iyy is: ",Iyy)
-    #print("Izz is: ",Izz)
-    #print()    
-    #print()
-    
     Iyy_final = 0.
     Izz_final = 0.
     for i in range (14):
@@ -478,157 +419,6 @@ def scatter(nodepos):
     plt.scatter(z,y)
     plt.show()
     
-##def find_shear_center(boom_area_excluding_skin,Izz,node_pos,ha):
-##    #finding shear center
-##    #counter-clockwise movement
-##    baes = boom_area_excluding_skin
-##    bxyz = node_pos
-##    #define the order of booms for circular and triangular cells
-##    tring_booms = [1,2,3,4,12,13,8,9,10,11]
-##    circ_booms = [12,5,6,7,13]
-##    #define distances between boom and the next one 
-##    spac = 0.1015545
-##    edge = 0.0766246
-##    tring_dist = [spac, spac, spac, edge, ha, edge, spac, spac, spac, spac]
-##    circ_dist = [spac-edge, spac, spac, spac-edge, ha]
-##    #find base shear flow for each cell
-##    tring_q = [0]
-##    circ_q = [0]
-##    for i in tring_booms:
-##        tring_q.append(-(1/Izz)*baes[i]*bxyz[i][1]+tring_q[-1])
-##    for j in circ_booms:
-##        circ_q.append(-(1/Izz)*baes[j]*bxyz[j][1]+circ_q[-1])
-##    #find redundant shear flow
-##    tring_qr = 0
-##    circ_qr = 0
-##    for i in range(len(tring_dist)):
-##        tring_qr += tring_q[i+1]*tring_dist[i]
-##    tring_qr=-tring_qr/(sum(tring_dist))
-##
-##    for j in range(len(circ_dist)):
-##        circ_qr += circ_q[j+1]*circ_dist[i]
-##    circ_qr=-circ_qr/(sum(circ_dist))
-##    #find total shear flow
-##    tring_qt = [x+tring_qr for x in tring_q]
-##    circ_qt = [x+circ_qr for x in circ_q]
-##    #find force produced by each boom
-##    tring_fz=[]
-##    tring_fy=[]
-##    circ_fz= []
-##    circ_fy= []
-##    for i in range (len(tring_booms)):
-##        if i == len(tring_booms)-1:
-##            tring_fz.append(tring_qt[i+1]*(bxyz[tring_booms[0]][2]-bxyz[tring_booms[i]][2]))
-##        else:
-##            tring_fz.append(tring_qt[i+1]*(bxyz[tring_booms[i+1]][2]-bxyz[tring_booms[i]][2]))
-##
-##    for i in range (len(tring_booms)):
-##        if i == len(tring_booms)-1:
-##            tring_fy.append(tring_qt[i+1]*(bxyz[tring_booms[0]][1]-bxyz[tring_booms[i]][1]))
-##        else:
-##            tring_fy.append(tring_qt[i+1]*(bxyz[tring_booms[i+1]][1]-bxyz[tring_booms[i]][1]))
-##
-##    for i in range (len(circ_booms)):
-##        if i == len(circ_booms)-1:
-##            circ_fz.append(circ_qt[i+1]*(bxyz[circ_booms[0]][2]-bxyz[circ_booms[i]][2]))
-##        else:
-##            circ_fz.append(circ_qt[i+1]*(bxyz[circ_booms[i+1]][2]-bxyz[circ_booms[i]][2]))
-##
-##    for i in range (len(circ_booms)):
-##        if i == len(circ_booms)-1:
-##            circ_fy.append(circ_qt[i+1]*(bxyz[circ_booms[0]][1]-bxyz[circ_booms[i]][1]))
-##        else:
-##            circ_fy.append(circ_qt[i+1]*(bxyz[circ_booms[i+1]][1]-bxyz[circ_booms[i]][1]))
-##
-##    #find sum of moments about center of coordinate system
-##    #clockwise positive
-##    moments=0
-##    for i in range(len(tring_fz)):
-##        moments += tring_fz[i]*(-1)*bxyz[tring_booms[i]][1]
-##
-##    for i in range(len(tring_fy)):
-##        moments += tring_fy[i]*bxyz[tring_booms[i]][2]
-##
-##    for i in range(len(circ_fz)):
-##        moments += circ_fz[i]*(-1)*bxyz[tring_booms[i]][1]          
-##
-##    for i in range(len(circ_fy)):
-##        moments += circ_fy[i]*bxyz[tring_booms[i]][2] 
-##
-##
-##
-##    #value will equal z distance of shear center
-##    sc_position= [0,0,moments]
-##    return sc_position, tring_booms, circ_booms
-                           
-
-##def shear_flow_shear(boom_area_incl_skin, node_pos, Vy, Vz,ha,Izz,Iyy):
-##    #finding shear center
-##    #counter-clockwise movement
-##    baes = boom_area_incl_skin
-##    bxyz = node_pos
-##    #define the order of booms for circular and triangular cells
-##    tring_booms = [1,2,3,4,12,13,8,9,10,11]
-##    circ_booms = [12,5,6,7,13]
-##    #define distances between boom and the next one 
-##    spac = 0.1015545
-##    edge = 0.0766246
-##    tring_dist = [spac, spac, spac, edge, ha, edge, spac, spac, spac, spac]
-##    circ_dist = [spac-edge, spac, spac, spac-edge, ha]
-##    #find base shear flow for each cell
-##    tring_q = [0]
-##    circ_q = [0]
-##    for i in tring_booms:
-##        tring_q.append(-(Vy/Izz)*baes[i-1]*bxyz[i-1][1]-(Vz/Iyy)*baes[i-1]*bxyz[i-1][1]+tring_q[-1])
-##    for j in circ_booms:
-##        circ_q.append(-(Vy/Izz)*baes[j-1]*bxyz[j-1][1]-(Vz/Iyy)*baes[j-1]*bxyz[j-1][1]+circ_q[-1]) 
-##    
-##     #find redundant shear flow
-##    tring_qr = 0
-##    circ_qr = 0
-##    for i in range(len(tring_dist)):
-##        tring_qr += tring_q[i+1]*tring_dist[i]
-##
-##    tring_qr=-tring_qr/(sum(tring_dist))
-##
-##    for j in range(len(circ_dist)):
-##        circ_qr += circ_q[j+1]*circ_dist[i]
-##    circ_qr=-circ_qr/(sum(circ_dist))
-##
-##    tring_qr= -tring_qr/(sum(tring_dist))
-##
-##    for j in range(len(circ_dist)):
-##        circ_qr += circ_q[j+1]*circ_dist[i]
-##    circ_qr= -circ_qr/(sum(circ_dist))
-##
-##    #find total shear flow
-##    tring_qt = [x+tring_qr for x in tring_q]
-##    circ_qt = [x+circ_qr for x in circ_q]
-##
-##    
-##    return tring_qt, circ_qt
-
-##def shear_flow_torsion(T,A1,A2,arc,l,ha,G,t):
-##    
-##    # T= resultant torque applied to the cross section
-##    # A= area cell
-##    # arc= lenght of the leading edge semicircle
-##    # ha= diameter of the leading edge semi circle
-##    # l= lenght of the triangular section (from tip of the triangle to intersection skin-spar)
-##    # G=shear modulus
-##    # t= skin thickness 
-##    
-##
-##    A=np.matrix([[0,2*A1,2*A2],[-1,(arc+ha)/(2*A1*G*t),-ha/(2*A1*G*t)],[-1,-ha/(2*A2*G*t),(2*l+ha)/(2*A2*G*t)]])
-##    b=np.matrix([[T],[0],[0]])
-##    x = np.linalg.solve(A,b)
-##    rate_twist=x.item(0)
-##    q1=x.item(1) # shear flow due to torsion in cell 1
-##    q2=x.item(2) # shear flow due to torsion in cell 2
-##
-##    
-##    return rate_twist,q1,q2
-
 def shear_flow_total(tring_qt,circ_qt,q1,q2):
     
     tring_qsum=[] # list containing all the total shearflows along the triangular section 
