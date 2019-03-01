@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 import scipy
 from mpl_toolkits.mplot3d import Axes3D
-import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
 import Definitions
@@ -307,7 +306,7 @@ plt.show()
 
 element_set = np.array(element_set)
 element_hinges = element_set[0][1:],element_set[2][1:],element_set[4][1:]
-element_hinges = np.array([i for sl in element_hinges for i in sl]) - 1
+element_hinges = np.array([i for sl in element_hinges for i in sl]) -1
 #Calculate the stresses on the hinges'elements 
 stress_hinge_1 = (von_misses_stress_element[[int(element_hinges[0])],1]+von_misses_stress_element[[int(element_hinges[1])],1] + von_misses_stress_element[[int(element_hinges[2])],1] + von_misses_stress_element[[int(element_hinges[3])],1])/4
 stress_hinge_2 = (von_misses_stress_element[[int(element_hinges[4])],1]+von_misses_stress_element[[int(element_hinges[5])],1] + von_misses_stress_element[[int(element_hinges[6])],1] +von_misses_stress_element[[int(element_hinges[7])],1])/4
@@ -318,9 +317,9 @@ oppervlakte = ((max(x)-min(x))/(len(TEzn)-1))**2
 
 
 #REACTION FORCES IN Y-DIR AT HINGES
-yh1 = 233148
-yh2 = -303060
-yh3 = 19581
+yh1 = 233148 /1000.
+yh2 = -303060 / 1000.
+yh3 = 19581/ 1000.
 
 #MAX VM STRESSES AT RIBS
 ribas =  526899.8894651352 *10**-9#[Pa]
