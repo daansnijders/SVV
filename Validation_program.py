@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 import scipy
 from mpl_toolkits.mplot3d import Axes3D
-import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
 import Definitions
@@ -196,15 +195,15 @@ dist = dist[np.argsort(dist[:,0])]
 distdy = np.column_stack((xpos_trailingedge , dypos_trailingedge))
 distdy = distdy[np.argsort(distdy[:,0])]
 
+LEdist = np.column_stack((xpos_leadingedge , ypos_leadingedge))
+LEdist = LEdist[np.argsort(LEdist[:,0])]
+LEdistdy = np.column_stack((xpos_leadingedge , dypos_leadingedge))
+LEdistdy = LEdistdy[np.argsort(distdy[:,0])]
 
 """PLOTING DEFLECTIONS NUMERICAL VS VALIDATICAL""" 
 
 #Import from Definitions
 nodepos2, nodepos2local, rot = Definitions.offset(zcg, theta, nodepos, v2, u2, xt,ndis)
-
-print (" This is Nodepos 2: ", nodepos2)
-print(" ")
-print (" This is Nodepos 2: ", nodepos2)
 
 #plt.plot(distdy[:,0],distdy[:,1], 'g' )
 #INDIVIDUAL: NUMERICAL:
@@ -213,65 +212,93 @@ print (" This is Nodepos 2: ", nodepos2)
 #INDIVIDUAL: VALIDATION 
 #plt.plot(nodepos2[0][:,0],nodepos2[0][:,1])
 
-plt.xlabel("X along span b (mm)")
-plt.ylabel("Y-Deflection of Validated (red line) and Numerical (Blue)???")
-plt.grid('on')
-axes = plt.gca()
-axes.set_xlim([-0.100,1.700])
-axes.set_ylim([0.18,0.26])
-fig=plt.figure()
+#Plotting TRAILING EDGE Numerical vs Validatical
+plt.plot(nodepos2local[0][:,0],nodepos2local[0][:,1],"b--",
+                (dist[:,0]/1000.),(dist[:,1]/1000.),"k-")
 plt.legend(['Numerical Data','Validation Data'])
-plt.xlabel("X along span b (mm)")
-plt.ylabel("Y-Deflection of Validated (red line) and Numerical (Blue)???")
-plt.plot(nodepos2local[0][:,0],nodepos2local[0][:,1],"g.-",
-                (dist[:,0]/1000.),(dist[:,1]/1000.),"r.-")
-plt.xlabel("X along span b (m)")
-plt.ylabel("Y-Deflection on points along x (m)")
-plt.title('Deflection over Trailing Edge (Numerical vs. Validated)')
+plt.xlabel("X along span b [m]")
+plt.ylabel("Y-Deflection on points along x [m]")
+#plt.title('Local Deflection over Trailing Edge (Numerical vs. Validated)')
 plt.grid('on')
 axes = plt.gca()
-
-#axes.set_xlim([-100,1700])
-#axes.set_ylim([210,250])
 axes.set_xlim([-0.1,1.700])
-axes.set_ylim([0.21,0.24])
-#plt.scatter(xpos_leadingedge , ypos_leadingedge , alpha=0.5)
-
+axes.set_ylim([0.22,0.24])
+plt.savefig("DeflectionComparisonTrailingEdge.png", bbox_inches='tight')
 plt.show()
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+#Plotting LEADING EDGE Numerical vs Validatical
+plt.plot(nodepos2local[6][:,0],nodepos2local[6][:,1],"b--",
+                (LEdist[:,0]/1000.),(LEdist[:,1]/1000.),"k-")
+plt.legend(['Numerical Data','Validation Data'])
+plt.xlabel("X along span b [m]")
+plt.ylabel("Y-Deflection on points along x [m]")
+#plt.title('Local Deflection over Leading Edge (Numerical vs. Validated)')
+plt.grid('on')
+axes = plt.gca()
+axes.set_xlim([-0.1,1.700])
+axes.set_ylim([-0.05,-0.02])
+plt.savefig("DeflectionComparisonLeadingEdge.png", bbox_inches='tight')
+plt.show()
 
 """ON TO SLOPE STUFF:"""
 
-#Finding (and later plotting) slope
+#TRAILING SLOPE TRAILING SLOPE TRAILING SLOPE TRAILING SLOPE TRAILING SLOPE TRAILING SLOPE  TRAILING SLOPE  TRAILING SLOPE 
+#Plotting the Validated Slopes
 validation_slope = []
 validation_step = []
 for j in range(dist[:,0].size):
-    if j+1 < dist[:,1].size :
+    if j+1 < dist[:,1].size:
         s = dist[j+1,0] - dist[j,0]
         pitch = (dist[j+1,1] - dist[j,1])
-        validation_slope.append(pitch)
-        validation_step.append(dist[j,0])
+        validation_slope.append(pitch/1000.) #FIX 
+        validation_step.append(dist[j,0]/1000.)
 
-#To plot the slope:
-#plt.plot(validation_step, validation_slope , 'ro')
-#plt.plot(validation_step, validation_slope , 'red')
+#Extract and plot the Numerical Slope
+dy_dx = [0]
+for i in range (len(nodepos2local[0])-1):
+    dy_dx.append((nodepos2local[0][i+1, 1]-nodepos2local[0][i, 1])/(nodepos2local[0][i+1, 0]-nodepos2local[0][i, 0]))
+
+plt.plot(validation_step, validation_slope , 'k-',
+                nodepos2local[0][1:602,0],dy_dx[1:602],'b--')
+plt.legend(['Validation Data', 'Numerical Data'])
+plt.xlabel("X along span b (m)")
+plt.ylabel("Y-Slope on points along x (m)")
+plt.title('Slope of deflection along Trailing Edge')
+plt.grid('on')
+axes = plt.gca()
+axes.set_xlim([-0.1,1.700])
+axes.set_ylim([-0.02,0.02])
+#plt.savefig("SlopeTrailing.png", bbox_inches='tight')
+plt.show()
+
+#LEADING SLOPE LEADING SLOPE LEADING SLOPE LEADING SLOPE LEADING SLOPE LEADING SLOPE LEADING SLOPE LEADING SLOPE LEADING SLOPE 
+#Plotting the Validated Slopes
+LEvalidation_slope = []
+LEvalidation_step = []
+for j in range(dist[:,0].size):
+    if j+1 < dist[:,1].size:
+        s = LEdist[j+1,0] - LEdist[j,0]
+        pitch = (LEdist[j+1,1] - LEdist[j,1])
+        LEvalidation_slope.append(pitch)
+        LEvalidation_step.append(LEdist[j,0]/35.)
+
+#Extract and plot the Numerical Slope
+LEdy_dx = [0]
+for i in range (len(nodepos2local[6])-1):
+    LEdy_dx.append((nodepos2local[6][i+1, 1]-nodepos2local[6][i, 1])/(nodepos2local[6][i+1, 0]-nodepos2local[6][i, 0]))
+
+plt.plot(LEvalidation_step, LEvalidation_slope , 'k-',
+                nodepos2local[6][1:602,0],LEdy_dx[1:602],'b--')
+plt.legend(['Validation Data', 'Numerical Data'])
+plt.xlabel("X along span b (m)")
+plt.ylabel("Y-Slope on points along x (m)")
+plt.title('Slope of deflection along Leading Edge')
+plt.grid('on')
+axes = plt.gca()
+axes.set_xlim([-0.1,1.700])
+axes.set_ylim([-0.4,0.55])
+#plt.savefig("SlopeLeading.png", bbox_inches='tight')
+plt.show()
 
 
 """ON TO THE VON MISSES STRESS"""
@@ -279,24 +306,28 @@ for j in range(dist[:,0].size):
 
 element_set = np.array(element_set)
 element_hinges = element_set[0][1:],element_set[2][1:],element_set[4][1:]
-element_hinges = np.array([i for sl in element_hinges for i in sl]) - 1
+element_hinges = np.array([i for sl in element_hinges for i in sl]) -1
 #Calculate the stresses on the hinges'elements 
 stress_hinge_1 = (von_misses_stress_element[[int(element_hinges[0])],1]+von_misses_stress_element[[int(element_hinges[1])],1] + von_misses_stress_element[[int(element_hinges[2])],1] + von_misses_stress_element[[int(element_hinges[3])],1])/4
 stress_hinge_2 = (von_misses_stress_element[[int(element_hinges[4])],1]+von_misses_stress_element[[int(element_hinges[5])],1] + von_misses_stress_element[[int(element_hinges[6])],1] +von_misses_stress_element[[int(element_hinges[7])],1])/4
 stress_hinge_3 = (von_misses_stress_element[[int(element_hinges[8])],1]+von_misses_stress_element[[int(element_hinges[9])],1] + von_misses_stress_element[[int(element_hinges[10])],1] + von_misses_stress_element[[int(element_hinges[11])],1])/4
 oppervlakte = ((max(x)-min(x))/(len(TEzn)-1))**2
 
-"""INSET REACTION FORCES IN Y-DIR AT HINGES"""
-yh1 = 1.
-yh2 = 1.
-yh3 = 1.
+"""INSERT NUMERICAL VALUES FOR VON MISSES"""
 
-"""INSET MAX STRESSES AT RIBS """
-ribas = 1.
-ribbs = 1.
-ribcs = 1
-ribds = 1.
 
+#REACTION FORCES IN Y-DIR AT HINGES
+yh1 = 233148 /1000.
+yh2 = -303060 / 1000.
+yh3 = 19581/ 1000.
+
+#MAX VM STRESSES AT RIBS
+ribas =  526899.8894651352 *10**-9#[Pa]
+ribbs =   755360565.2803401 *10**-9
+ribcs =  953518167.8435055 *10**-9
+ribds =  785905370.6257389 *10**-9
+
+"""VALIDAING"""
 noderib_a_element = np.array([i for sl in noderib_a_element for i in sl]) - 1
 noderib_a_element = noderib_a_element.astype(np.int)
 stress_rib_a = np.take(von_misses_stress_element[:,1],noderib_a_element)
@@ -313,16 +344,16 @@ noderib_d_element = np.array([i for sl in noderib_d_element for i in sl]) - 1
 noderib_d_element = noderib_d_element.astype(np.int)
 stress_rib_d = np.take(von_misses_stress_element[:,1],noderib_d_element)
 
+print (stress_hinge_1*1000,stress_hinge_2*1000,stress_hinge_3*1000)
+print (stress_hinge_1*(4*oppervlakte),stress_hinge_2*(4*oppervlakte),stress_hinge_3*(4*oppervlakte))
+print ("ABS",(stress_hinge_1*(4*oppervlakte) -yh1), stress_hinge_2*(4*oppervlakte) -yh2, stress_hinge_3*(4*oppervlakte)- yh3)
+print ("Abs" ,(((stress_hinge_1*(4*oppervlakte) -yh1)/yh1))*100, ((stress_hinge_2*(4*oppervlakte) -yh2)/yh2)*100, ((stress_hinge_3*(4*oppervlakte)- yh3)/yh3)*100)
+print (max(stress_rib_a)*1000)
+print (max(stress_rib_b)*1000)
+print (max(stress_rib_c)*1000)
+print (max(stress_rib_d)*1000)
 
-
-#print (stress_hinge_1*1000,stress_hinge_2*1000,stress_hinge_3*1000)
-#print (stress_hinge_1*(4*oppervlakte),stress_hinge_2*(4*oppervlakte),stress_hinge_3*(4*oppervlakte))
-#print ("ABS",(stress_hinge_1*(4*oppervlakte) -yh1), stress_hinge_2*(4*oppervlakte) -yh2, stress_hinge_3*(4*oppervlakte)- yh3)
-#print ("Abs" ,(((stress_hinge_1*(4*oppervlakte) -yh1)/yh1))*100, ((stress_hinge_2*(4*oppervlakte) -yh2)/yh2)*100, ((stress_hinge_3*(4*oppervlakte)- yh3)/yh3)*100)
-#print (max(stress_rib_a)*1000)
-#print (max(stress_rib_b)*1000)
-#print (max(stress_rib_c)*1000)
-#print (max(stress_rib_d)*1000)
+#Print the maximum difference in Max Von Miss (Numerical vs Validatical)
 print (((max(stress_rib_a)*1000) - ribas) ,((max(stress_rib_b)*1000) -ribbs) ,((max(stress_rib_c)*1000)-ribcs) ,((max(stress_rib_d)*1000) -ribds))
 
 
