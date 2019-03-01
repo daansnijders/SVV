@@ -1528,11 +1528,11 @@ def von_mises_stress(nodepos, Ilocal, ndis, Mx, My, Mz,circ_qt,tring_qt,tsk,tspa
     
     r=0
     for y in circ_qt[i*ndis]:
-        ssc=y*tsk
+        ssc=y/tsk
         
     
         if r==4:
-            ssc=y*tspar
+            ssc=y/tspar
         
         circ_ss.append(ssc)
         r=r+1
@@ -1540,11 +1540,11 @@ def von_mises_stress(nodepos, Ilocal, ndis, Mx, My, Mz,circ_qt,tring_qt,tsk,tspa
     
     r=0
     for j in tring_qt[i*ndis]:
-        sst=j*tsk
+        sst=j/tsk
         
     
         if r==4:
-            sst=j*tspar
+            sst=j/tspar
         
         tring_ss.append(sst)
         r=r+1
