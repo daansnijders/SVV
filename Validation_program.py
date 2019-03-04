@@ -344,3 +344,14 @@ noderib_d_element = noderib_d_element.astype(np.int)
 stress_rib_d = np.take(von_misses_stress_element[:,1],noderib_d_element)
 
 
+print (stress_hinge_1*1000,stress_hinge_2*1000,stress_hinge_3*1000)
+print (stress_hinge_1*(4*oppervlakte),stress_hinge_2*(4*oppervlakte),stress_hinge_3*(4*oppervlakte))
+print ("ABS",(stress_hinge_1*(4*oppervlakte) -yh1), stress_hinge_2*(4*oppervlakte) -yh2, stress_hinge_3*(4*oppervlakte)- yh3)
+print ("Abs" ,(((stress_hinge_1*(4*oppervlakte) -yh1)/yh1))*100, ((stress_hinge_2*(4*oppervlakte) -yh2)/yh2)*100, ((stress_hinge_3*(4*oppervlakte)- yh3)/yh3)*100)
+print (max(stress_rib_a*1000))
+print (max(stress_rib_b*1000))
+print (max(stress_rib_c*1000))
+print (max(stress_rib_d*1000))
+
+#Print the maximum difference in Max Von Miss (Numerical vs Validatical)
+print (((max(stress_rib_a)*1000) - ribas) ,((max(stress_rib_b)*1000) -ribbs) ,((max(stress_rib_c)*1000)-ribcs) ,((max(stress_rib_d)*1000) -ribds))

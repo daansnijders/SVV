@@ -1,11 +1,9 @@
 # -*- coding: utf-8 -*-
-#import math
+
 import Definitions
 import numpy as np
 import matplotlib.pyplot as plt
-#import sys
-#import time
-#from mpl_toolkits.mplot3d import Axes3D
+
 
 ################################# Variable Definition ########################################################################
 
